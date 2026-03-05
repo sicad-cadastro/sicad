@@ -1045,13 +1045,10 @@ async function savePerson(){
       atualizado_em:now
     };
     console.log('[SICAD] Salvando campos:', JSON.stringify({...campos, foto:'[foto]', tatuagens:'[tats]'}));
-    if(editMode){
+    if(editMode && editId){
       const idParaEditar = editId;
       if(!idParaEditar){
-        // Tenta recuperar o id do título da página (fallback)
-        toast('Erro: sessão expirou. Abra o cadastro novamente para editar.','error');
-        go('consultar');
-        return;
+        editMode=false;
       }
       console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
       const resultado = await DB.updPerson(idParaEditar, campos);
@@ -1065,7 +1062,8 @@ async function savePerson(){
         allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
         toast('Atualizado! ✅','success');
       }
-    } else {
+    }
+    if(!editMode){
       const d={id:'p'+Date.now(), ...campos, criado_por:CU.usuario||'admin', criado_em:now};
       await DB.addPerson(d);
       allP.unshift(d);
@@ -1085,6 +1083,7 @@ function cadClear(){
   document.getElementById('faceBtnsWrap').style.display='flex';
   document.getElementById('tatThumbs').innerHTML='';
   editMode=false;editId=null;
+  _tipoSenha=null;window._tipoSenha=null;
   document.getElementById('cadTitle').textContent='NOVO CADASTRO';
 }
 
@@ -1251,14 +1250,15 @@ function setTipoSenha(tipo) {
 }
 
 function dotClick(n) {
-  if (_pattern.includes(String(n))) return;
-  _pattern.push(String(n));
+  const s = String(n);
+  if (_pattern.includes(s)) return; // já clicado, ignora
+  _pattern.push(s);
   renderPattern();
 }
 
 function renderPattern() {
   document.querySelectorAll('.pdot').forEach(d => {
-    const n = d.getAttribute('data-n');
+    const n = String(d.getAttribute('data-n'));
     const idx = _pattern.indexOf(n);
     if (idx >= 0) {
       d.classList.add('ativo');
@@ -1268,7 +1268,8 @@ function renderPattern() {
       d.removeAttribute('data-order');
     }
   });
-  document.getElementById('padSequencia').textContent = _pattern.length ? _pattern.join(' → ') : '—';
+  const seq = document.getElementById('padSequencia');
+  if (seq) seq.textContent = _pattern.length ? _pattern.join(' → ') : '—';
 }
 
 function clearPattern() {
@@ -1277,10 +1278,17 @@ function clearPattern() {
 }
 
 function getSenhaCelular() {
-  if (!_tipoSenha) return null;
-  if (_tipoSenha === 'numeros') return document.getElementById('fSenhaNum').value.trim() || null;
-  if (_tipoSenha === 'alfanumerico') return document.getElementById('fSenhaAlf').value.trim() || null;
-  if (_tipoSenha === 'padrao') return _pattern.length ? _pattern.join('') : null;
+  const ts = _tipoSenha || window._tipoSenha;
+  if (!ts) return null;
+  if (ts === 'numeros') {
+    const el = document.getElementById('fSenhaNum');
+    return el ? el.value.trim() || null : null;
+  }
+  if (ts === 'alfanumerico') {
+    const el = document.getElementById('fSenhaAlf');
+    return el ? el.value.trim() || null : null;
+  }
+  if (ts === 'padrao') return _pattern.length ? _pattern.join('') : null;
   return null;
 }
 
