@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0c10">
+<title>SICAD — Sistema de Cadastro</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0c10;--surface:#12151c;--surface2:#1a1f2b;--border:#252c3a;
+  --accent:#00d4ff;--accent2:#ff6b35;--danger:#ff3d3d;--success:#00e676;
+  --text:#e8eaf0;--text-dim:#6b7898;--text-mid:#a0aec0;--card:#151b26;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── LAYOUT PRINCIPAL ── */
+#shell{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 16px;height:56px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:200;
+  flex-shrink:0;
+}
+.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:var(--accent);line-height:1;text-shadow:0 0 16px rgba(0,212,255,.4)}
+.hdr-logo small{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-top:-2px}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.user-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-chip b{color:var(--accent)}
+.btn-sair{background:transparent;border:1px solid var(--border);color:var(--text-dim);width:38px;height:38px;border-radius:8px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-sair:hover,.btn-sair:active{border-color:var(--danger);color:var(--danger)}
+
+/* ── TOP NAV (desktop) ── */
+.top-nav{background:var(--surface);border-bottom:1px solid var(--border);display:none;padding:0 16px;flex-shrink:0}
+@media(min-width:768px){.top-nav{display:flex}}
+.tnav-btn{padding:14px 18px;font-size:12px;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;color:var(--text-dim);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tnav-btn:hover{color:var(--text)}.tnav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── CONTEÚDO PRINCIPAL ── */
+.content{flex:1;padding:16px;max-width:960px;margin:0 auto;width:100%;padding-bottom:80px}
+@media(min-width:768px){.content{padding-bottom:24px}}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;position:sticky;bottom:0;z-index:200;flex-shrink:0;
+  height:64px;padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media(min-width:768px){.bottom-nav{display:none}}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;border:none;background:transparent;
+  color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:.5px;font-weight:600;transition:color .2s;position:relative;padding:6px 4px;
+}
+.bnav-btn .ni{font-size:20px;line-height:1}
+.bnav-btn.active{color:var(--accent)}
+.bnav-btn.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--accent);border-radius:0 0 2px 2px}
+.bnav-btn:active{opacity:.7}
+
+/* ── PAGES ── */
+.page{display:none}.page.active{display:block}
+
+/* ── LOGIN ── */
+#loginWrap{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse at 20% 40%,rgba(0,212,255,.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(255,107,53,.05) 0%,transparent 50%);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.login-box{width:100%;max-width:380px}
+.login-logobox{text-align:center;margin-bottom:28px}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:10px;color:var(--accent);text-shadow:0 0 40px rgba(0,212,255,.6);line-height:1}
+.login-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);margin-top:4px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px}
+.login-err{background:rgba(255,61,61,.1);border:1px solid rgba(255,61,61,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:16px;display:none}
+.mode-lbl{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:16px;letter-spacing:1px}
+
+/* ── FORMS ── */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase}
+.fg input,.fg select{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:13px 14px;
+  font-size:16px;/* 16px evita zoom automático no iOS */
+  font-family:'IBM Plex Sans',sans-serif;color:var(--text);
+  transition:border-color .2s;outline:none;-webkit-appearance:none;appearance:none;
+}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.12)}
+.fg input::placeholder{color:var(--text-dim)}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7898' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.fg select option{background:var(--surface2)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:480px){.fgrid{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 20px;border-radius:10px;font-size:14px;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.5px;
+  cursor:pointer;border:none;transition:all .15s;user-select:none;
+  min-height:48px;
+}
+.btn:active{opacity:.8;transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--accent);color:var(--bg)}.btn-primary:hover{background:#1ddeff}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-mid)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:rgba(255,61,61,.1);border:1px solid rgba(255,61,61,.3);color:var(--danger)}
+.btn-success{background:var(--success);color:var(--bg)}.btn-success:hover{background:#2fffa0}
+.btn-sm{padding:10px 14px;font-size:12px;min-height:40px}
+.btn-full{width:100%}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap}
+.row-btns .btn{flex:1}
+
+/* ── CARDS / SECTION ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--accent);line-height:1}
+.stat-lbl{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);margin-top:4px;letter-spacing:1px}
+
+/* ── PERSON CARDS ── */
+.pgrid{display:flex;flex-direction:column;gap:10px}
+@media(min-width:600px){.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}}
+.pcard{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:12px;
+}
+.pcard:active{background:var(--surface2);border-color:var(--accent)}
+@media(min-width:600px){.pcard:hover{border-color:var(--accent);transform:translateY(-1px)}}
+.pavatar{width:56px;height:56px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
+.pavatar img{width:100%;height:100%;object-fit:cover}
+.pinfo{flex:1;min-width:0}
+.pname{font-weight:600;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pnick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-top:1px}
+.pmeta{font-size:12px;color:var(--text-dim);margin-top:3px;line-height:1.5}
+.pmeta strong{color:var(--text-mid)}
+.parrow{color:var(--text-dim);font-size:20px;flex-shrink:0}
+@media(min-width:600px){.parrow{display:none}}
+.tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-top:5px;margin-right:3px}
+.tag-b{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+.tag-q{background:rgba(255,107,53,.1);color:var(--accent2);border:1px solid rgba(255,107,53,.2)}
+
+/* ── SEARCH ── */
+.search-box{margin-bottom:16px}
+.s-main{position:relative;margin-bottom:10px}
+.s-main input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 14px 13px 46px;font-size:16px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
+.s-main input:focus{border-color:var(--accent)}
+.s-main input::placeholder{color:var(--text-dim)}
+.s-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.s-filters{display:flex;gap:8px}
+.s-filters input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
+.s-filters input:focus{border-color:var(--accent)}
+.s-filters input::placeholder{color:var(--text-dim)}
+.rcnt{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);z-index:500;display:none;flex-direction:column;justify-content:flex-end}
+.modal-overlay.open{display:flex}
+@media(min-width:600px){.modal-overlay{align-items:center;justify-content:center;padding:20px}}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:mUp .28s ease;width:100%}
+@media(min-width:600px){.modal{border-radius:16px;border-bottom:1px solid var(--border);max-width:680px;animation:mFade .2s ease}}
+@keyframes mUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes mFade{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.mhandle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
+@media(min-width:600px){.mhandle{display:none}}
+.mi{padding:20px 20px 32px}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.mtitle{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--accent)}
+.mclose{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text-dim);flex-shrink:0}
+.mclose:active{border-color:var(--danger);color:var(--danger)}
+
+/* ── PHOTO UPLOAD ── */
+.photo-row{display:flex;gap:12px;margin-bottom:14px}
+.pdrop{flex:1;border:2px dashed var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90px;-webkit-tap-highlight-color:rgba(0,212,255,.1)}
+.pdrop:active,.pdrop:hover{border-color:var(--accent)}
+.pdrop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0;width:100%;height:100%;z-index:10;-webkit-appearance:none}
+.pd-ico{font-size:30px;margin-bottom:4px}
+.pd-lbl{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)}
+.ppreview{width:100%;height:90px;object-fit:cover;border-radius:8px;display:none}
+.ppreview.on{display:block}
+.pcam-col{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.thumb{position:relative;width:70px;height:70px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb-del{position:absolute;top:3px;right:3px;background:rgba(255,61,61,.85);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#fff;font-weight:700}
+.camwrap{border-radius:10px;overflow:hidden;background:#000;aspect-ratio:4/3;display:none;margin-top:10px}
+.camwrap.on{display:block}
+.camwrap video{width:100%;height:100%;object-fit:cover;display:block}
+.cam-btns{display:flex;gap:8px;margin-top:8px}
+
+/* ── DETAIL ── */
+.d-hero{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.d-avatar{width:80px;height:80px;border-radius:12px;background:var(--surface2);border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;cursor:pointer}
+.d-avatar img{width:100%;height:100%;object-fit:cover}
+.d-name{font-size:20px;font-weight:600;line-height:1.2}
+.d-nick{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:13px;margin-top:3px}
+.d-flds{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:360px){.d-flds{grid-template-columns:1fr}}
+.d-fld label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px}
+.d-fld span{font-size:14px;color:var(--text);word-break:break-word}
+.d-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.d-photo{width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+.d-actions{display:flex;gap:10px;margin-top:18px}
+.d-actions .btn{flex:1}
+
+/* ── USER LIST ── */
+.ulist{display:flex;flex-direction:column;gap:10px}
+.uitem{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.uitem-info{flex:1;min-width:0}
+.ulogin{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--text)}
+.unome{font-size:12px;color:var(--text-dim);margin-top:2px}
+.uactions{display:flex;gap:6px;flex-shrink:0}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.badge-admin{background:rgba(255,107,53,.15);color:var(--accent2);border:1px solid rgba(255,107,53,.3)}
+.badge-editor{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+
+/* ── EMPTY / TOAST / OVERLAY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text-dim)}
+.empty .ei{font-size:44px;margin-bottom:12px;opacity:.35}
+.empty p{font-size:14px}
+.toast{position:fixed;bottom:76px;right:16px;left:16px;max-width:400px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:13px;font-family:'IBM Plex Mono',monospace;z-index:9999;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+@media(min-width:768px){.toast{bottom:20px}}
+.toast.on{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(0,230,118,.4);color:var(--success)}
+.toast.error{border-color:rgba(255,61,61,.4);color:var(--danger)}
+.toast.info{border-color:rgba(0,212,255,.4);color:var(--accent)}
+.overlay{position:fixed;inset:0;background:rgba(10,12,16,.82);z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.overlay.on{display:flex}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ov-msg{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px}
+.pdot{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--border);
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:transparent;
+  position:relative;
+}
+.pdot:active{transform:scale(.9)}
+.pdot.ativo{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700;font-size:13px}
+.pdot.ativo::after{content:attr(data-order);color:var(--bg);font-weight:700;font-size:13px}
+.link-card:hover{transform:translateY(-2px);filter:brightness(1.1)}.link-card:active{transform:scale(.98)}
+#mapaContainer{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative}
+@media(max-width:600px){#mapaContainer{height:320px}}
+.leaflet-popup-content-wrapper{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.5)!important;color:var(--text)!important}
+.leaflet-popup-tip{background:var(--surface)!important}
+.leaflet-popup-content{margin:12px 16px!important;min-width:180px}
+.map-popup-name{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
+.map-popup-nick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px}
+.map-popup-info{font-size:12px;color:var(--text-mid);line-height:1.6}
+.map-popup-btn{display:block;margin-top:10px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center}
+.map-legend{position:absolute;bottom:24px;left:12px;z-index:1000;background:rgba(18,21,28,.92);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+.map-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:var(--text-mid)}
+.map-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.map-stat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.map-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex:1;min-width:100px;text-align:center}
+.map-stat-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1}
+.map-stat-l{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:2px}
+.fcard{background:var(--card);border:2px solid rgba(255,61,61,.4);border-radius:14px;padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.fcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--danger)}
+.fcard:active{border-color:var(--danger);background:rgba(255,61,61,.08)}
+.fcard:hover{border-color:var(--danger);transform:translateY(-1px)}
+.perig-1{background:rgba(255,200,0,.15);border:1px solid rgba(255,200,0,.4);color:#ffd700}
+.perig-2{background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.4);color:var(--accent2)}
+.perig-3{background:rgba(255,61,61,.15);border:1px solid rgba(255,61,61,.4);color:var(--danger)}
+.perig-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px}
+@keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,61,61,.3)}50%{box-shadow:0 0 0 8px rgba(255,61,61,0)}}
+.ld{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.on{display:flex}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:10px}
+.lb-x{position:absolute;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.1);border:none;border-radius:10px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY CARREGANDO -->
+<div class="overlay" id="ov" style="display:none"><div class="spin"></div><p class="ov-msg" id="ovMsg">CONECTANDO...</p></div>
+
+<!-- LOGIN -->
+<div id="loginWrap" style="display:flex">
+  <div class="login-box">
+    <div class="login-logobox">
+      <div class="login-logo">SICAD</div>
+      <div class="login-sub">SISTEMA DE CADASTRO</div>
+    </div>
+    <div class="login-card">
+      <div class="login-err" id="loginErr"></div>
+      <div class="fg"><label>Usuário</label><input type="text" id="lu" placeholder="Digite seu usuário" autocomplete="username"></div>
+      <div class="fg"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">ENTRAR</button>
+    </div>
+    <div class="mode-lbl" id="modeLbl"></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="shell" style="display:none">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-logo">SICAD <small>SISTEMA DE CADASTRO</small></div>
+    <div class="hdr-right" id="hdrRight">
+      <button id="backDashBtn" onclick="go('dashboard')" title="Voltar ao Dashboard" style="display:none;background:transparent;border:1px solid var(--border);color:var(--accent);width:auto;padding:0 12px;height:38px;border-radius:8px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px;cursor:pointer;display:none;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">⬅ DASHBOARD</button>
+      <div class="user-chip" id="userChip"></div>
+      <button class="btn-sair" onclick="logout()" title="Sair" style="width:auto;padding:0 12px;gap:6px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px;display:flex;align-items:center">↩ SAIR</button>
+    </div>
+  </div>
+  <!-- Top nav (desktop) -->
+  <div class="top-nav" id="topNav">
+    <button class="tnav-btn active" onclick="go('dashboard')" data-p="dashboard">DASHBOARD</button>
+    <button class="tnav-btn" onclick="go('cadastrar')" data-p="cadastrar">+ CADASTRAR</button>
+    <button class="tnav-btn" onclick="go('consultar')" data-p="consultar">CONSULTAR</button>
+    <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios">USUÁRIOS</button>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">CARREGANDO</div></div>
+      </div>
+
+      <!-- FORAGIDOS CARD -->
+      <div onclick="go('foragidos')" style="cursor:pointer;background:rgba(255,61,61,.1);border:2px solid var(--danger);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s;animation:pulseRed 2s infinite" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <div style="width:60px;height:60px;background:rgba(255,61,61,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🚨</div>
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 16px rgba(255,61,61,.5)">FORAGIDOS</div>
+          <div style="font-size:12px;color:#ff8080;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">⚠️ ALERTAS E LISTA OFICIAL PPDF</div>
+        </div>
+        <div style="color:var(--danger);font-size:28px;font-weight:700">›</div>
+      </div>
+
+      <!-- MAPA CARD -->
+      <div onclick="go('mapa')" style="cursor:pointer;background:rgba(0,212,255,.06);border:2px solid rgba(0,212,255,.3);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <div style="width:60px;height:60px;background:rgba(0,212,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🗺️</div>
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent)">MAPA INTERATIVO</div>
+          <div style="font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">MARCADORES POR BAIRRO — BRAZLÂNDIA DF</div>
+        </div>
+        <div style="color:var(--accent);font-size:28px;font-weight:700">›</div>
+      </div>
+
+      <!-- SITES DE PESQUISA CARD -->
+      <div onclick="go('pesquisa')" style="cursor:pointer;background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <div style="width:60px;height:60px;background:rgba(255,107,53,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🔗</div>
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
+          <div style="font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">BNMP · NEXUS · GENESIS · FORAGIDOS</div>
+        </div>
+        <div style="color:var(--accent2);font-size:28px;font-weight:700">›</div>
+      </div>
+
+      <!-- ÚLTIMOS CADASTRADOS (compacto) -->
+      <div class="sec-title" style="margin-top:8px">ÚLTIMOS CADASTRADOS</div>
+      <div id="recentList"></div>
+    </div>
+
+    <!-- CADASTRAR -->
+    <div class="page" id="page-cadastrar">
+      <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
+      <div class="card">
+        <!-- Foto rosto -->
+        <div class="fg">
+          <label>FOTO DO ROSTO</label>
+          <div id="facePreviewWrap" style="display:none;margin-bottom:10px;position:relative">
+            <img id="facePreview" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:2px solid var(--accent);display:block">
+            <button type="button" onclick="faceRem()" style="position:absolute;top:-8px;right:-8px;background:var(--danger);border:none;border-radius:50%;width:26px;height:26px;color:white;font-size:14px;cursor:pointer;font-weight:700">✕</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="faceBtnsWrap">
+            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
+              <input type="file" id="faceFileGal" accept="image/*" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            </div>
+            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
+              <input type="file" id="faceFileCam" accept="image/*" capture="user" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            </div>
+          </div>
+          <div class="camwrap" id="faceCam"><video id="faceVid" autoplay playsinline muted></video></div>
+          <div class="cam-btns" id="faceCamBtns" style="display:none">
+            <button class="btn btn-primary btn-sm" onclick="camCapture('face')">📸 CAPTURAR</button>
+            <button class="btn btn-outline btn-sm" onclick="camClose('face')">✕ CANCELAR</button>
+          </div>
+        </div>
+
+
+        <div class="fgrid">
+          <div class="fg"><label>Nome Completo *</label><input type="text" id="fNome" placeholder="Nome completo" autocomplete="off"></div>
+          <div class="fg"><label>Apelido / Alcunha</label><input type="text" id="fApelido" placeholder="Apelido" autocomplete="off"></div>
+          <div class="fg"><label>Nome da Mãe</label><input type="text" id="fMae" placeholder="Nome da mãe" autocomplete="off"></div>
+          <div class="fg"><label>Data de Nascimento</label><input type="date" id="fNasc"></div>
+          <div class="fg"><label>CPF</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off"></div>
+          <div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="fTelefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" autocomplete="off"></div>
+          <div class="fg"><label>Endereço</label><input type="text" id="fEnd" placeholder="Rua, Nº" autocomplete="off"></div>
+          <div class="fg"><label>Quadra</label><input type="text" id="fQuadra" placeholder="Quadra / Setor" autocomplete="off"></div>
+          <div class="fg"><label>Bairro</label>
+<select id="fBairro">
+  <option value="">Selecione o bairro...</option>
+  <option value="SETOR NORTE">SETOR NORTE</option>
+  <option value="SETOR SUL">SETOR SUL</option>
+  <option value="VILA SAO JOSE">VILA SAO JOSE</option>
+  <option value="VEREDAS">VEREDAS</option>
+  <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
+  <option value="MARANATA">MARANATA</option>
+  <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
+  <option value="VENDINHA">VENDINHA</option>
+  <option value="PADRE BERNARDO">PADRE BERNARDO</option>
+  <option value="AGUAS LINDAS">AGUAS LINDAS</option>
+  <option value="PADRE LUCIO">PADRE LUCIO</option>
+  <option value="OUTROS">OUTROS</option>
+</select></div>
+        </div>
+
+        <!-- Redes Sociais -->
+        <div class="fg" style="margin-top:4px">
+          <label>📱 REDES SOCIAIS</label>
+          <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
+              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 1</div>
+                <input type="text" id="fInsta1" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
+              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 2</div>
+                <input type="text" id="fInsta2" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
+              <div style="width:40px;height:40px;border-radius:8px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">👤</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">FACEBOOK</div>
+                <input type="text" id="fFacebook" placeholder="nome.usuario ou link" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Senha do Celular -->
+        <div class="fg" style="margin-top:4px">
+          <label>SENHA DO CELULAR DA PESSOA</label>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">🔢 NÚMEROS</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">🔤 LETRAS+NÚM</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">⬛ PADRÃO</button>
+          </div>
+
+          <!-- Numérica -->
+          <div id="senhaNumeros" style="display:none">
+            <input type="text" id="fSenhaNum" placeholder="Ex: 1234 ou 123456" inputmode="numeric" maxlength="10" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:20px;font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:6px;text-align:center;outline:none">
+          </div>
+
+          <!-- Alfanumérica -->
+          <div id="senhaAlfanumerico" style="display:none">
+            <input type="text" id="fSenhaAlf" placeholder="Ex: abc123 ou Maria@1" maxlength="20" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:3px;text-align:center;outline:none">
+          </div>
+
+          <!-- Padrão desenho 3x3 -->
+          <div id="senhaPadrao" style="display:none">
+            <p style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);margin-bottom:10px;letter-spacing:1px">DESENHE O PADRÃO DE DESBLOQUEIO:</p>
+            <div style="display:flex;justify-content:center">
+              <div id="patternGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:var(--surface2);padding:20px;border-radius:14px;border:1px solid var(--border);width:220px">
+                <div class="pdot" data-n="1" onclick="dotClick(1)"></div>
+                <div class="pdot" data-n="2" onclick="dotClick(2)"></div>
+                <div class="pdot" data-n="3" onclick="dotClick(3)"></div>
+                <div class="pdot" data-n="4" onclick="dotClick(4)"></div>
+                <div class="pdot" data-n="5" onclick="dotClick(5)"></div>
+                <div class="pdot" data-n="6" onclick="dotClick(6)"></div>
+                <div class="pdot" data-n="7" onclick="dotClick(7)"></div>
+                <div class="pdot" data-n="8" onclick="dotClick(8)"></div>
+                <div class="pdot" data-n="9" onclick="dotClick(9)"></div>
+              </div>
+            </div>
+            <div style="text-align:center;margin-top:12px">
+              <span id="padSequencia" style="font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--accent);letter-spacing:6px">—</span>
+            </div>
+            <div style="text-align:center;margin-top:8px">
+              <button type="button" class="btn btn-outline btn-sm" onclick="clearPattern()">↺ LIMPAR PADRÃO</button>
+            </div>
+          </div>
+
+          <div id="senhaVazia" style="padding:14px;text-align:center;font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">
+            ↑ SELECIONE O TIPO DE SENHA ACIMA
+          </div>
+        </div>
+
+        <!-- Tatuagens -->
+        <div class="fg">
+          <label>FOTOS DE TATUAGENS</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <div style="flex:1;min-width:130px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
+              <input type="file" id="tatFileGal" accept="image/*" multiple onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            </div>
+            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
+              <input type="file" id="tatFileCam" accept="image/*" capture="environment" onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            </div>
+          </div>
+          <div class="thumbs" id="tatThumbs"></div>
+          <div class="camwrap" id="tatCam"><video id="tatVid" autoplay playsinline muted></video></div>
+          <div class="cam-btns" id="tatCamBtns" style="display:none">
+            <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">📸 CAPTURAR</button>
+            <button class="btn btn-outline btn-sm" onclick="camClose('tat')">✕ CANCELAR</button>
+          </div>
+        </div>
+
+        <div class="row-btns" style="margin-top:8px">
+          <button class="btn btn-outline" onclick="cadClear()">LIMPAR</button>
+          <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">💾 SALVAR CADASTRO</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSULTAR -->
+    <div class="page" id="page-consultar">
+      <div class="sec-title">CONSULTAR</div>
+      <div class="search-box">
+        <div class="s-main">
+          <span class="s-ico">🔍</span>
+          <input type="text" id="sNome" placeholder="Nome, Apelido ou Mãe..." oninput="filterList()" autocomplete="off">
+        </div>
+        <div class="s-filters">
+          <select id="sBairro" onchange="filterList()" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;appearance:none;flex:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7898' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px">
+  <option value="">Todos os bairros</option>
+  <option value="SETOR NORTE">SETOR NORTE</option>
+  <option value="SETOR SUL">SETOR SUL</option>
+  <option value="VILA SAO JOSE">VILA SAO JOSE</option>
+  <option value="VEREDAS">VEREDAS</option>
+  <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
+  <option value="MARANATA">MARANATA</option>
+  <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
+  <option value="VENDINHA">VENDINHA</option>
+  <option value="PADRE BERNARDO">PADRE BERNARDO</option>
+  <option value="AGUAS LINDAS">AGUAS LINDAS</option>
+  <option value="PADRE LUCIO">PADRE LUCIO</option>
+  <option value="OUTROS">OUTROS</option>
+</select>
+          <input type="text" id="sQuadra" placeholder="Quadra" oninput="filterList()" autocomplete="off" style="max-width:110px">
+          <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="min-width:44px;padding:10px">✕</button>
+        </div>
+      </div>
+      <div class="rcnt" id="rcnt"></div>
+      <div class="pgrid" id="pgrid"></div>
+      <div id="emptyList" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum cadastro encontrado.</p></div>
+    </div>
+
+    <!-- USUÁRIOS -->
+    <div class="page" id="page-usuarios">
+      <div class="sec-title">USUÁRIOS</div>
+      <div id="noAdmin" class="card" style="display:none"><p style="color:var(--text-dim);text-align:center;padding:8px">⚠️ Apenas administradores podem gerenciar usuários.</p></div>
+      <div id="adminPanel">
+        <button class="btn btn-primary btn-full" onclick="openUserModal()" style="margin-bottom:16px">+ NOVO USUÁRIO</button>
+        <div class="ulist" id="ulist"></div>
+      </div>
+    </div>
+
+
+    <!-- MAPA -->
+    <div class="page" id="page-mapa">
+      <div class="sec-title">🗺️ MAPA — BRAZLÂNDIA DF</div>
+
+      <div class="map-stat-bar" id="mapaStats">
+        <div class="map-stat"><div class="map-stat-n" id="msTot">—</div><div class="map-stat-l">COM ENDEREÇO</div></div>
+        <div class="map-stat"><div class="map-stat-n" id="msBairros">—</div><div class="map-stat-l">BAIRROS</div></div>
+        <div class="map-stat"><div class="map-stat-n" id="msAlrt">—</div><div class="map-stat-l">ALERTAS</div></div>
+      </div>
+
+      <!-- Filtros -->
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <select id="mapFiltBairro" onchange="applyMapFilter()" style="flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none">
+          <option value="">Todos os bairros</option>
+          <option value="SETOR NORTE">SETOR NORTE</option>
+          <option value="SETOR SUL">SETOR SUL</option>
+          <option value="VILA SAO JOSE">VILA SAO JOSE</option>
+          <option value="VEREDAS">VEREDAS</option>
+          <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
+          <option value="MARANATA">MARANATA</option>
+          <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
+          <option value="VENDINHA">VENDINHA</option>
+          <option value="PADRE BERNARDO">PADRE BERNARDO</option>
+          <option value="AGUAS LINDAS">AGUAS LINDAS</option>
+          <option value="PADRE LUCIO">PADRE LUCIO</option>
+          <option value="OUTROS">OUTROS</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
+        <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px">🎯</button>
+      </div>
+
+      <div style="position:relative">
+        <div id="mapaContainer"></div>
+        <div class="map-legend" id="mapaLegend"></div>
+      </div>
+
+      <div style="margin-top:12px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:center">
+        🗺️ OpenStreetMap · Clique nos marcadores para ver a ficha
+      </div>
+    </div>
+
+    <!-- FORAGIDOS -->
+    <div class="page" id="page-foragidos">
+
+      <!-- Banner alerta -->
+      <div style="background:rgba(255,61,61,.12);border:2px solid var(--danger);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;animation:pulseRed 2s infinite">
+        <div style="font-size:36px;margin-bottom:8px">🚨</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">ATENÇÃO — FORAGIDOS</div>
+        <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">⚠️ VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
+        <a href="https://seape.df.gov.br/foragidos/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--danger);color:white;padding:13px 24px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 20px rgba(255,61,61,.5)">
+          🔴 LISTA OFICIAL DE FORAGIDOS PPDF
+        </a>
+      </div>
+
+      <!-- Tabs internas -->
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">🚨 ALERTAS CADASTRADOS</button>
+        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">👥 NO SISTEMA</button>
+      </div>
+
+      <!-- Tab alertas -->
+      <div id="tabAlertas">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div class="sec-title" style="color:var(--danger);margin-bottom:0">ALERTAS ATIVOS</div>
+          <button class="btn btn-danger btn-sm" onclick="openAlertaModal()">+ NOVO ALERTA</button>
+        </div>
+        <div id="alertasList"></div>
+        <div id="alertasEmpty" class="empty" style="display:none">
+          <div class="ei">🚨</div>
+          <p>Nenhum alerta cadastrado.<br>Clique em <strong>+ NOVO ALERTA</strong> para adicionar.</p>
+        </div>
+      </div>
+
+      <!-- Tab sistema -->
+      <div id="tabSistema" style="display:none">
+        <div class="sec-title" style="color:var(--danger)">CADASTRADOS NO SISTEMA</div>
+        <p style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:14px">Consulte e verifique na lista oficial de foragidos</p>
+        <div class="search-box">
+          <div class="s-main">
+            <span class="s-ico">🔍</span>
+            <input type="text" id="sForagido" placeholder="Buscar nome no sistema..." oninput="filterForagidos()" autocomplete="off">
+          </div>
+        </div>
+        <div class="pgrid" id="foragidoGrid"></div>
+        <div id="foragidoEmpty" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum resultado.</p></div>
+      </div>
+
+    </div>
+
+    <!-- SITES DE PESQUISA -->
+    <div class="page" id="page-pesquisa">
+      <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
+        <div style="font-size:32px;margin-bottom:6px">🔗</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
+        <div style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">ACESSO RÁPIDO AOS SISTEMAS</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <a href="https://portalbnmp.cnj.jus.br/#/captcha/" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a6fa8;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+          <div style="width:52px;height:52px;background:rgba(26,111,168,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">⚖️</div>
+          <div style="flex:1">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4db8ff">BNMP</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Banco Nacional de Mandados de Prisão — CNJ</div>
+            <div style="font-size:10px;color:#1a6fa8;font-family:'IBM Plex Mono',monospace;margin-top:4px">portalbnmp.cnj.jus.br</div>
+          </div>
+          <div style="color:var(--text-dim);font-size:20px">›</div>
+        </a>
+
+        <a href="https://auth2.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=nexus-pmdf&redirect_uri=https%3A%2F%2Fnexus.pm.df.gov.br%2F&state=9419fdaa-0d42-4dc0-882b-cf5740f279fa&response_mode=fragment&response_type=code&scope=openid&nonce=c9fe45ab-80e1-4efe-82e3-db128596162f&code_challenge=x7U2mILgus8ex_hk6fCyXzlHNn8BUKNBjNtA4EQgihk&code_challenge_method=S256" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a5c1a;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+          <div style="width:52px;height:52px;background:rgba(26,92,26,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🛡️</div>
+          <div style="flex:1">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4dff88">NEXUS</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema NEXUS — Polícia Militar DF</div>
+            <div style="font-size:10px;color:#1a5c1a;font-family:'IBM Plex Mono',monospace;margin-top:4px">nexus.pm.df.gov.br</div>
+          </div>
+          <div style="color:var(--text-dim);font-size:20px">›</div>
+        </a>
+
+        <a href="https://auth.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=genesis-app&redirect_uri=https%3A%2F%2Fgenesis.pm.df.gov.br%2Fsignin-oidc&response_type=code&scope=openid%20profile&code_challenge=frNtMDKzlAU5o5yTcrUF3aJronRcQmrIRI-RGYMdSQA&code_challenge_method=S256&response_mode=form_post&nonce=639082571488975056.ZmM1YmYwM2MtODY3YS00YmEyLWJhMzktZDYyYTUxMjk5ZTRhMzM3MTk2YTItZjczOC00YmI0LTljNDctYmY2YjliYzg5YmVj&state=CfDJ8BJm6v3R8WRGuMVFriNhiT2LKbhG6holwOrCoDvOrxrbNkgg2mdInbien3dVEEFS4S8HVuQrYw2gG-be5gAM0IDeOomDsaOtvk0D11sZXJ0NEeoiQtT8-NBJ-fj6p0puQcTBl9HUPayzPgUFLYszN16Zk4o9rGnpILD_IpqG-GykS8X2H_WDLMyHFW8gz-1TixlsTOg4YJ5r5TwuYYRWH2S9eYkzWXUf1L13C_42c1RPfn5C590UEKvFvTIdjDU4ey8TlUmeKOMeoK96QAUz9L5K5daT9Cwu9t8j1U4oPBFxiYNZu6bi6CenbDOPDeWNhngVfE-AGfUjsKaJQUyJy9ah5OWIHSZxODKg9CjX5hUWs5u1Yrkb80lTVY-S4UCLkg&x-client-SKU=ID_NET8_0&x-client-ver=7.5.1.0" target="_blank" class="link-card" style="background:var(--card);border:1px solid #4a1a6e;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+          <div style="width:52px;height:52px;background:rgba(74,26,110,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🔮</div>
+          <div style="flex:1">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#c084fc">GENESIS</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema Genesis — Polícia Militar DF</div>
+            <div style="font-size:10px;color:#4a1a6e;font-family:'IBM Plex Mono',monospace;margin-top:4px">genesis.pm.df.gov.br</div>
+          </div>
+          <div style="color:var(--text-dim);font-size:20px">›</div>
+        </a>
+
+        <a href="https://seape.df.gov.br/foragidos/" target="_blank" class="link-card" style="background:var(--card);border:1px solid rgba(255,61,61,.4);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+          <div style="width:52px;height:52px;background:rgba(255,61,61,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🚨</div>
+          <div style="flex:1">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--danger)">FORAGIDOS PPDF</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Lista oficial de foragidos — SEAPE DF</div>
+            <div style="font-size:10px;color:rgba(255,61,61,.6);font-family:'IBM Plex Mono',monospace;margin-top:4px">seape.df.gov.br/foragidos</div>
+          </div>
+          <div style="color:var(--text-dim);font-size:20px">›</div>
+        </a>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- Bottom nav (mobile) -->
+  <div class="bottom-nav">
+    <button class="bnav-btn active" onclick="go('dashboard')" data-p="dashboard"><span class="ni">📊</span>DASHBOARD</button>
+    <button class="bnav-btn" onclick="go('cadastrar')" data-p="cadastrar"><span class="ni">➕</span>CADASTRAR</button>
+    <button class="bnav-btn" onclick="go('consultar')" data-p="consultar"><span class="ni">🔍</span>CONSULTAR</button>
+    <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios"><span class="ni">👥</span>USUÁRIOS</button>
+  </div>
+</div><!-- /app -->
+
+<!-- MODAL PESSOA -->
+<div class="modal-overlay" id="personModal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="mtitle" id="personTitle">DETALHES</div>
+        <div class="mclose" onclick="closePersonModal()">✕</div>
+      </div>
+      <div id="personBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ALERTA FORAGIDO -->
+<div class="modal-overlay" id="alertaModal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="mtitle" id="alertaModalTitle">🚨 NOVO ALERTA</div>
+        <div class="mclose" onclick="closeAlertaModal()">✕</div>
+      </div>
+
+      <!-- Tipo de alerta -->
+      <div class="fg">
+        <label>TIPO DE ALERTA</label>
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">👥 PESSOA DO SISTEMA</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">➕ NOVO FORAGIDO</button>
+        </div>
+      </div>
+
+      <!-- Selecionar pessoa existente -->
+      <div id="aExistente" style="display:none">
+        <div class="fg">
+          <label>BUSCAR PESSOA CADASTRADA</label>
+          <input type="text" id="aBuscaPessoa" placeholder="Digite o nome..." oninput="buscaPessoaAlerta()" autocomplete="off">
+          <div id="aBuscaResultados" style="margin-top:8px;max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;display:none"></div>
+          <div id="aPessoaSelecionada" style="margin-top:8px;display:none"></div>
+        </div>
+      </div>
+
+      <!-- Novo foragido -->
+      <div id="aNovoFora" style="display:none">
+        <div class="fg"><label>NOME COMPLETO *</label><input type="text" id="aNovoNome" placeholder="Nome do foragido" autocomplete="off"></div>
+        <div class="fg">
+          <label>FOTO</label>
+          <div class="pdrop" style="min-height:80px">
+            <input type="file" id="aFotoFile" accept="image/*" onchange="onAlertaFoto(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10">
+            <img class="ppreview" id="aFotoPreview">
+            <div id="aFotoDrop"><div class="pd-ico">📷</div><div class="pd-lbl">ADICIONAR FOTO</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos comuns -->
+      <div id="aCamposComuns" style="display:none">
+        <div class="fg">
+          <label>NÍVEL DE PERICULOSIDADE</label>
+          <div style="display:flex;gap:8px">
+            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">⚠️ MÉDIO</button>
+            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">🔶 ALTO</button>
+            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">🔴 EXTREMO</button>
+          </div>
+        </div>
+        <div class="fg"><label>OBSERVAÇÕES</label><input type="text" id="aObs" placeholder="Informações relevantes..." autocomplete="off"></div>
+      </div>
+
+      <div class="row-btns" style="margin-top:8px">
+        <button class="btn btn-outline" onclick="closeAlertaModal()">CANCELAR</button>
+        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">🚨 SALVAR ALERTA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL USUÁRIO -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="mtitle" id="userModalTitle">NOVO USUÁRIO</div>
+        <div class="mclose" onclick="closeUserModal()">✕</div>
+      </div>
+      <div class="fg"><label>Login *</label><input type="text" id="uLogin" placeholder="nome.usuario" autocomplete="off"></div>
+      <div class="fg"><label>Nome Completo *</label><input type="text" id="uNome" placeholder="Nome completo" autocomplete="off"></div>
+      <div class="fg"><label>Senha *</label><input type="password" id="uSenha" placeholder="Mínimo 6 caracteres"></div>
+      <div class="fg"><label>Confirmar Senha</label><input type="password" id="uSenha2" placeholder="Repita a senha"></div>
+      <div class="fg"><label>Função</label>
+        <select id="uRole"><option value="editor">Editor</option><option value="admin">Administrador</option></select>
+      </div>
+      <div class="row-btns" style="margin-top:4px">
+        <button class="btn btn-outline" onclick="closeUserModal()">CANCELAR</button>
+        <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">SALVAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lb" onclick="lbClose()">
+  <button class="lb-x">✕</button>
+  <img id="lbImg">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── SUPABASE ──
+const SB = 'https://vkrkirientpljlxstafm.supabase.co';
+const KEY = 'sb_publishable_TwGmCKZpIJyysIWqjI0MQw_gv2A8uvM';
+
+async function q(method, tbl, body, qs) {
+  const prefer = (method==='PATCH'||method==='DELETE') ? 'return=representation' : 'return=representation';
+  const r = await fetch(`${SB}/rest/v1/${tbl}${qs?'?'+qs:''}`, {
+    method,
+    headers: {
+      'apikey': KEY,
+      'Authorization': `Bearer ${KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': prefer
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const t = await r.text();
+  console.log(`[SICAD] ${method} ${tbl} | status:${r.status} | qs:${qs} | resp:${t.substring(0,200)}`);
+  if (!r.ok) { let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{} throw new Error(m); }
+  try{return JSON.parse(t);}catch{return[];}
+}
+
+// ── STATE ──
+let CU=null, allP=[], faceD=null, tatD=[], camStr=null, editId=null, editMode=false;
+
+// ── OVERLAY ──
+const showOv=m=>{if(m)document.getElementById('ovMsg').textContent=m;document.getElementById('ov').classList.add('on');};
+const hideOv=()=>document.getElementById('ov').classList.remove('on');
+
+// ── LOCAL STORAGE ──
+const lsG=k=>{try{return JSON.parse(localStorage.getItem('sicad_'+k)||'[]');}catch{return[];}};
+const lsS=(k,v)=>localStorage.setItem('sicad_'+k,JSON.stringify(v));
+
+// ── INIT ──
+async function init() {
+  showOv('CONECTANDO AO BANCO DE DADOS...');
+  try {
+    await q('GET','sicad_users',null,'limit=1');
+    document.getElementById('modeLbl').textContent='☁️ SUPABASE CONECTADO';
+  } catch(e) {
+    window._L=true;
+    if(!lsG('u').length)lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
+    document.getElementById('modeLbl').textContent='📱 MODO LOCAL';
+  }
+  hideOv();
+}
+
+// ── DB ──
+const DB={
+  async getUsers(){if(window._L)return lsG('u');return await q('GET','sicad_users',null,'order=criado_em.asc');},
+  async findUser(u,s){if(window._L)return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;const r=await q('GET','sicad_users',null,`usuario=eq.${enc(u)}&senha=eq.${enc(s)}`);return r[0]||null;},
+  async addUser(d){if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}const r=await q('POST','sicad_users',d);return Array.isArray(r)?r[0]:r;},
+  async updUser(id,d){if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}return await q('PATCH','sicad_users',d,`id=eq.${id}`);},
+  async delUser(id){if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_users',null,`id=eq.${id}`);},
+  async getPersons(f={}){
+    if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
+    let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
+    return await q('GET','sicad_pessoas',null,qs);
+  },
+  async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await q('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
+  async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await q('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
+  async updPerson(id,d){
+    if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}
+    const clean={};Object.keys(d).forEach(k=>{if(d[k]!==undefined)clean[k]=d[k];});
+    // Use direct fetch for PATCH to have full control
+    const url = `${SB}/rest/v1/sicad_pessoas?id=eq.${encodeURIComponent(id)}`;
+    const r = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(clean)
+    });
+    const t = await r.text();
+    console.log('[SICAD] PATCH status:', r.status, 'body:', t.substring(0,300));
+    if(!r.ok){let m=t;try{const j=JSON.parse(t);m=j.message||j.hint||t;}catch{}throw new Error('Erro ao salvar: '+m);}
+    try{return JSON.parse(t);}catch{return[];}
+  },
+  async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
+};
+
+// ── LOGIN ──
+async function login(){
+  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  if(!u||!p){errLg('Preencha usuário e senha.');return;}
+  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> ENTRANDO...';
+  document.getElementById('loginErr').style.display='none';
+  try{
+    let found=null;try{found=await DB.findUser(u,p);}catch(e){}
+    if(!found&&u==='admin'&&p==='admin123')found={id:'u1',usuario:'admin',nome:'Administrador',role:'admin'};
+    if(!found){errLg('Usuário ou senha inválidos.');return;}
+    CU=found;
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('shell').style.display='block';
+    document.getElementById('userChip').innerHTML=`${esc(found.nome)} <b>${(found.role||'editor').toUpperCase()}</b>`;
+    const isA=found.role==='admin';
+    document.getElementById('bnUsuarios').style.display=isA?'':'none';
+    document.getElementById('tnUsuarios').style.display=isA?'':'none';
+    go('dashboard');
+  }catch(e){errLg('Erro: '+e.message);}
+  finally{btn.disabled=false;btn.textContent='ENTRAR';}
+}
+function errLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginWrap').style.display!=='none')login();});
+function logout(){CU=null;allP=[];document.getElementById('shell').style.display='none';document.getElementById('loginWrap').style.display='flex';['lu','lp'].forEach(id=>document.getElementById(id).value='');}
+
+// ── NAV ──
+function go(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  document.querySelectorAll(`[data-p="${n}"]`).forEach(b=>b.classList.add('active'));
+  window.scrollTo&&window.scrollTo(0,0);
+  // Mostrar botão voltar quando não estiver no dashboard
+  const backBtn = document.getElementById('backDashBtn');
+  if(backBtn) backBtn.style.display = n!=='dashboard' ? 'flex' : 'none';
+  if(n==='dashboard')loadDash();
+  if(n==='consultar')loadPersons();
+  if(n==='usuarios')loadUsers();
+  if(n==='foragidos'){loadAlertas();showForagidoTab('alertas');}
+  if(n==='mapa')loadMapa();
+}
+
+// ── DASHBOARD ──
+async function loadDash(){
+  showOv('CARREGANDO...');
+  try{
+    const ps=await DB.getPersons();allP=ps;
+    const bairros=[...new Set(ps.map(p=>p.bairro).filter(Boolean))];
+    const quadras=[...new Set(ps.map(p=>p.quadra).filter(Boolean))];
+    document.getElementById('statsGrid').innerHTML=`
+      <div class="stat-card"><div class="stat-num">${ps.length}</div><div class="stat-lbl">CADASTRADOS</div></div>
+      <div class="stat-card"><div class="stat-num">${bairros.length}</div><div class="stat-lbl">BAIRROS</div></div>
+      <div class="stat-card"><div class="stat-num">${quadras.length}</div><div class="stat-lbl">QUADRAS</div></div>
+      <div class="stat-card"><div class="stat-num">${ps.filter(p=>p.foto).length}</div><div class="stat-lbl">COM FOTO</div></div>`;
+    const rec=ps.slice(0,6);
+    document.getElementById('recentList').innerHTML=rec.length
+      ?`<div class="pgrid">${rec.map(pCard).join('')}</div>`
+      :`<div class="empty"><div class="ei">📋</div><p>Nenhum cadastro.<br><a href="#" onclick="go('cadastrar')" style="color:var(--accent)">Adicionar o primeiro →</a></p></div>`;
+  }catch(e){toast('Erro ao carregar.','error');}
+  finally{hideOv();}
+}
+
+function pCard(p){
+  const av=p.foto?`<div class="pavatar"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar">👤</div>`;
+  return `<div class="pcard" onclick="viewPerson('${p.id}')">
+    ${av}
+    <div class="pinfo">
+      <div class="pname">${esc(p.nome)}</div>
+      <div class="pnick">${p.apelido?esc(p.apelido):'—'}</div>
+      <div class="pmeta"><strong>MÃE:</strong> ${esc(p.mae||'—')}</div>
+      <div>${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
+    </div>
+    <div class="parrow">›</div>
+  </div>`;
+}
+
+// ── CONSULTAR ──
+async function loadPersons(){
+  showOv('BUSCANDO...');
+  try{allP=await DB.getPersons();renderList(allP);}
+  catch(e){toast('Erro ao buscar.','error');}
+  finally{hideOv();}
+}
+function renderList(l){
+  document.getElementById('rcnt').textContent=`${l.length} registro${l.length!==1?'s':''} encontrado${l.length!==1?'s':''}`;
+  document.getElementById('emptyList').style.display=l.length?'none':'block';
+  document.getElementById('pgrid').innerHTML=l.map(pCard).join('');
+}
+function filterList(){
+  const n=document.getElementById('sNome').value.trim().toLowerCase();
+  const b=document.getElementById('sBairro').value.toLowerCase();
+  const qq=document.getElementById('sQuadra').value.trim().toLowerCase();
+  let l=allP;
+  if(n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(n)));
+  if(b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(b));
+  if(qq)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(qq));
+  renderList(l);
+}
+function clearSearch(){['sNome','sBairro','sQuadra'].forEach(id=>document.getElementById(id).value='');renderList(allP);}
+
+// ── CADASTRAR ──
+async function savePerson(){
+  const nome=document.getElementById('fNome').value.trim();
+  if(!nome){toast('Nome completo é obrigatório.','error');return;}
+  const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> SALVANDO...';
+  try{
+    const now=new Date().toISOString();
+    const campos={
+      nome, mae:gv('fMae'), apelido:gv('fApelido'), nascimento:gv('fNasc'),
+      cpf:gv('fCpf'), endereco:gv('fEnd'), quadra:gv('fQuadra'), bairro:gv('fBairro'),
+      telefone:gv('fTelefone'), insta1:gv('fInsta1'), insta2:gv('fInsta2'), facebook:gv('fFacebook'),
+      tipo_senha:window._tipoSenha||null, senha_celular:getSenhaCelular(),
+      foto:faceD||null, tatuagens:JSON.stringify(tatD),
+      atualizado_em:now
+    };
+    if(editMode){
+      const idParaEditar = editId; // captura antes de qualquer async
+      console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
+      await DB.updPerson(idParaEditar, campos);
+      allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
+      toast('Atualizado! ✅','success');
+    } else {
+      const d={id:'p'+Date.now(), ...campos, criado_por:CU.usuario||'admin', criado_em:now};
+      await DB.addPerson(d);
+      allP.unshift(d);
+      toast('Cadastro salvo! ✅','success');
+    }
+    cadClear();renderList(allP);go('consultar');
+  }catch(e){toast('Erro: '+e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='💾 SALVAR CADASTRO';}
+}
+function gv(id){return document.getElementById(id).value.trim()||null;}
+
+function cadClear(){
+  ['fNome','fMae','fApelido','fNasc','fCpf','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf'].forEach(id=>document.getElementById(id).value='');
+  clearPattern();setTipoSenha(null);
+  faceD=null;tatD=[];
+  document.getElementById('facePreviewWrap').style.display='none';
+  document.getElementById('faceBtnsWrap').style.display='flex';
+  document.getElementById('tatThumbs').innerHTML='';
+  editMode=false;editId=null;
+  document.getElementById('cadTitle').textContent='NOVO CADASTRO';
+}
+document.getElementById('fCpf').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').substring(0,11);
+  if(v.length>9)v=v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  else if(v.length>6)v=v.replace(/(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
+  else if(v.length>3)v=v.replace(/(\d{3})(\d{3})/,'$1.$2');
+  this.value=v;
+});
+
+// ── VIEW PERSON ──
+async function viewPerson(id){
+  showOv('CARREGANDO...');
+  try{
+    const p=await DB.getPerson(id)||allP.find(x=>x.id===id);if(!p)return;
+    editId=id;
+    document.getElementById('personTitle').textContent=p.nome.toUpperCase().substring(0,22);
+    const tats=parseTats(p.tatuagens);
+    const av=p.foto?`<div class="d-avatar" onclick="lbOpen('${p.foto}')"><img src="${p.foto}"></div>`:`<div class="d-avatar">👤</div>`;
+    const tatH=tats.length?`<div style="margin-top:14px"><div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px">TATUAGENS (${tats.length})</div><div class="d-photos">${tats.map(t=>`<img class="d-photo" src="${t}" onclick="lbOpen('${t}')" loading="lazy">`).join('')}</div></div>`:'';
+    const canEdit=true; // todos podem editar
+    const canDelete=CU.role==='admin';
+    document.getElementById('personBody').innerHTML=`
+      <div class="d-hero">${av}
+        <div><div class="d-name">${esc(p.nome)}</div>
+        <div class="d-nick">${p.apelido?'@ '+esc(p.apelido):'Sem apelido'}</div>
+        <div style="margin-top:6px">${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
+      </div></div>
+      <div class="d-flds">
+        <div class="d-fld"><label>Nome da Mãe</label><span>${esc(p.mae||'—')}</span></div>
+        <div class="d-fld"><label>Nascimento</label><span>${p.nascimento?fmtD(p.nascimento):'—'}</span></div>
+        <div class="d-fld"><label>CPF</label><span>${esc(p.cpf||'—')}</span></div>
+        <div class="d-fld"><label>Endereço</label><span>${esc(p.endereco||'—')}</span></div>
+        <div class="d-fld"><label>Quadra</label><span>${esc(p.quadra||'—')}</span></div>
+        <div class="d-fld"><label>Bairro</label><span>${esc(p.bairro||'—')}</span></div>
+        <div class="d-fld"><label>Telefone</label><span>${esc(p.telefone||'—')}</span></div>
+        <div class="d-fld"><label>Instagram 1</label><span style="color:#fd1d1d">${p.insta1?'@ '+esc(p.insta1):'—'}</span></div>
+        <div class="d-fld"><label>Instagram 2</label><span style="color:#fd1d1d">${p.insta2?'@ '+esc(p.insta2):'—'}</span></div>
+        <div class="d-fld"><label>Facebook</label><span style="color:#1877f2">${esc(p.facebook||'—')}</span></div>
+        <div class="d-fld"><label>Senha Celular</label><span style="font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:3px">${p.tipo_senha?'['+p.tipo_senha.toUpperCase()+'] '+esc(p.senha_celular||'—'):'—'}</span></div>
+        <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
+        <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
+      </div>${tatH}
+      <div class="d-actions"><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+    document.getElementById('personModal').classList.add('open');
+  }catch(e){toast('Erro.','error');}
+  finally{hideOv();}
+}
+function closePersonModal(){document.getElementById('personModal').classList.remove('open');editId=null;}
+async function editPerson(){
+  const p=allP.find(x=>x.id===editId)||await DB.getPerson(editId);if(!p)return;
+  closePersonModal();go('cadastrar');editMode=true;
+  document.getElementById('cadTitle').textContent='EDITAR CADASTRO';
+  document.getElementById('fNome').value=p.nome||'';document.getElementById('fMae').value=p.mae||'';
+  document.getElementById('fApelido').value=p.apelido||'';document.getElementById('fNasc').value=p.nascimento||'';
+  document.getElementById('fCpf').value=p.cpf||'';document.getElementById('fEnd').value=p.endereco||'';
+  document.getElementById('fQuadra').value=p.quadra||'';document.getElementById('fBairro').value=p.bairro||'';
+  document.getElementById('fTelefone').value=p.telefone||'';
+  document.getElementById('fInsta1').value=p.insta1||'';
+  document.getElementById('fInsta2').value=p.insta2||'';
+  document.getElementById('fFacebook').value=p.facebook||'';
+  if(p.tipo_senha)setTipoSenha(p.tipo_senha);
+  if(p.senha_celular){if(p.tipo_senha==='numeros')document.getElementById('fSenhaNum').value=p.senha_celular;else if(p.tipo_senha==='alfanumerico')document.getElementById('fSenhaAlf').value=p.senha_celular;else if(p.tipo_senha==='padrao'){window._pattern=p.senha_celular.split('');renderPattern();}}
+  faceD=p.foto||null;tatD=parseTats(p.tatuagens);
+  if(faceD){document.getElementById('facePreview').src=faceD;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';}
+  renderTats();
+}
+async function deletePerson(){
+  if(!confirm('Excluir este cadastro?'))return;
+  showOv('EXCLUINDO...');
+  try{await DB.delPerson(editId);allP=allP.filter(x=>x.id!==editId);closePersonModal();renderList(allP);toast('Excluído.','info');}
+  catch(e){toast('Erro: '+e.message,'error');}finally{hideOv();}
+}
+
+// ── FOTOS ──
+function onFaceFile(inp){if(!inp.files||!inp.files[0])return;resize(inp.files[0],d=>{faceD=d;const prev=document.getElementById('facePreview');prev.src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';});}
+function faceRem(){faceD=null;document.getElementById('facePreviewWrap').style.display='none';document.getElementById('faceBtnsWrap').style.display='flex';}
+function onTatFiles(inp){if(!inp.files)return;Array.from(inp.files).forEach(f=>resize(f,d=>{tatD.push(d);renderTats();}));}
+function renderTats(){document.getElementById('tatThumbs').innerHTML=tatD.map((d,i)=>`<div class="thumb"><img src="${d}" loading="lazy"><div class="thumb-del" onclick="rmTat(${i})">✕</div></div>`).join('');}
+function rmTat(i){tatD.splice(i,1);renderTats();}
+
+// ── CÂMERA ──
+async function camOpen(t){
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:t==='face'?'user':'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+    camStr=s;document.getElementById(t==='face'?'faceVid':'tatVid').srcObject=s;
+    document.getElementById(t==='face'?'faceCam':'tatCam').classList.add('on');
+    document.getElementById(t==='face'?'faceCamBtns':'tatCamBtns').style.display='flex';
+  }catch(e){toast('Câmera indisponível.','error');}
+}
+function camCapture(t){
+  const v=document.getElementById(t==='face'?'faceVid':'tatVid');
+  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0);const d=c.toDataURL('image/jpeg',.75);
+  if(t==='face'){faceD=d;document.getElementById('facePreview').src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';}
+  else{tatD.push(d);renderTats();}
+  camClose(t);
+}
+function camClose(t){if(camStr){camStr.getTracks().forEach(x=>x.stop());camStr=null;}document.getElementById(t==='face'?'faceCam':'tatCam').classList.remove('on');document.getElementById(t==='face'?'faceCamBtns':'tatCamBtns').style.display='none';}
+
+// ── USUÁRIOS ──
+async function loadUsers(){
+  if(CU.role!=='admin'){document.getElementById('noAdmin').style.display='block';document.getElementById('adminPanel').style.display='none';return;}
+  document.getElementById('noAdmin').style.display='none';document.getElementById('adminPanel').style.display='block';
+  showOv('CARREGANDO...');
+  try{
+    const us=await DB.getUsers();
+    document.getElementById('ulist').innerHTML=us.map(u=>`
+      <div class="uitem">
+        <div class="uitem-info">
+          <div class="ulogin">${esc(u.usuario||'')} <span class="badge badge-${u.role||'editor'}">${(u.role||'editor').toUpperCase()}</span></div>
+          <div class="unome">${esc(u.nome)} · ${u.criado_em?new Date(u.criado_em).toLocaleDateString('pt-BR'):'—'}</div>
+        </div>
+        <div class="uactions">${u.id!=='u1'?`<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u)})'>✏️</button><button class="btn btn-danger btn-sm" onclick="delUser('${u.id}')">🗑</button>`:''}</div>
+      </div>`).join('');
+  }catch(e){toast('Erro: '+e.message,'error');}finally{hideOv();}
+}
+let euId=null;
+function openUserModal(u){euId=u?u.id:null;document.getElementById('userModalTitle').textContent=u?'EDITAR USUÁRIO':'NOVO USUÁRIO';document.getElementById('uLogin').value=u?(u.usuario||''):'';document.getElementById('uNome').value=u?u.nome:'';document.getElementById('uSenha').value='';document.getElementById('uSenha2').value='';document.getElementById('uRole').value=u?(u.role||'editor'):'editor';document.getElementById('userModal').classList.add('open');}
+function closeUserModal(){document.getElementById('userModal').classList.remove('open');euId=null;}
+async function saveUser(){
+  const login=document.getElementById('uLogin').value.trim(),nome=document.getElementById('uNome').value.trim(),senha=document.getElementById('uSenha').value,senha2=document.getElementById('uSenha2').value,role=document.getElementById('uRole').value;
+  if(!login||!nome){toast('Login e nome obrigatórios.','error');return;}
+  if(!euId&&(!senha||senha.length<6)){toast('Senha mínima 6 caracteres.','error');return;}
+  if(senha&&senha!==senha2){toast('Senhas não conferem.','error');return;}
+  const btn=document.getElementById('saveUserBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span>';
+  try{
+    if(euId){const upd={usuario:login,nome,role};if(senha)upd.senha=senha;await DB.updUser(euId,upd);}
+    else{await DB.addUser({id:'u'+Date.now(),usuario:login,nome,senha,role,criado_em:new Date().toISOString()});}
+    closeUserModal();loadUsers();toast('Usuário salvo!','success');
+  }catch(e){toast('Erro: '+e.message,'error');}finally{btn.disabled=false;btn.textContent='SALVAR';}
+}
+async function delUser(id){if(!confirm('Excluir usuário?'))return;showOv('...');try{await DB.delUser(id);loadUsers();toast('Removido.','info');}catch(e){toast('Erro.','error');}finally{hideOv();}}
+
+// ── LIGHTBOX ──
+function lbOpen(s){document.getElementById('lbImg').src=s;document.getElementById('lb').classList.add('on');}
+function lbClose(){document.getElementById('lb').classList.remove('on');}
+
+// ── UTILS ──
+// ── SENHA CELULAR ──
+let _pattern = [];
+let _tipoSenha = null;
+
+function setTipoSenha(tipo) {
+  _tipoSenha = tipo;
+  window._tipoSenha = tipo;
+  ['senhaNumeros','senhaAlfanumerico','senhaPadrao','senhaVazia'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  ['btnTipoNum','btnTipoAlf','btnTipoPad'].forEach(id => {
+    document.getElementById(id).classList.remove('btn-primary');
+    document.getElementById(id).classList.add('btn-outline');
+  });
+  if (tipo === 'numeros') {
+    document.getElementById('senhaNumeros').style.display = 'block';
+    document.getElementById('btnTipoNum').classList.replace('btn-outline','btn-primary');
+  } else if (tipo === 'alfanumerico') {
+    document.getElementById('senhaAlfanumerico').style.display = 'block';
+    document.getElementById('btnTipoAlf').classList.replace('btn-outline','btn-primary');
+  } else if (tipo === 'padrao') {
+    document.getElementById('senhaPadrao').style.display = 'block';
+    document.getElementById('btnTipoPad').classList.replace('btn-outline','btn-primary');
+  } else {
+    document.getElementById('senhaVazia').style.display = 'block';
+  }
+}
+
+function dotClick(n) {
+  if (_pattern.includes(String(n))) return;
+  _pattern.push(String(n));
+  renderPattern();
+}
+
+function renderPattern() {
+  document.querySelectorAll('.pdot').forEach(d => {
+    const n = d.getAttribute('data-n');
+    const idx = _pattern.indexOf(n);
+    if (idx >= 0) {
+      d.classList.add('ativo');
+      d.setAttribute('data-order', idx + 1);
+    } else {
+      d.classList.remove('ativo');
+      d.removeAttribute('data-order');
+    }
+  });
+  document.getElementById('padSequencia').textContent = _pattern.length ? _pattern.join(' → ') : '—';
+}
+
+function clearPattern() {
+  _pattern = [];
+  renderPattern();
+}
+
+function getSenhaCelular() {
+  if (!_tipoSenha) return null;
+  if (_tipoSenha === 'numeros') return document.getElementById('fSenhaNum').value.trim() || null;
+  if (_tipoSenha === 'alfanumerico') return document.getElementById('fSenhaAlf').value.trim() || null;
+  if (_tipoSenha === 'padrao') return _pattern.length ? _pattern.join('') : null;
+  return null;
+}
+
+// Telefone mask
+document.addEventListener('DOMContentLoaded', () => {
+  const tel = document.getElementById('fTelefone');
+  if (tel) tel.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,11);
+    if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');
+    else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/,'($1) $2');
+    else if (v.length > 0) v = v.replace(/(\d{0,2})/,'($1');
+    this.value = v;
+  });
+});
+
+function resize(file,cb){
+  if(!file){return;}
+  // iOS fix: use blob URL as fallback
+  const r=new FileReader();
+  r.onerror=()=>{
+    // Fallback: use object URL directly
+    const url=URL.createObjectURL(file);
+    const i=new Image();
+    i.onload=()=>{
+      const c=document.createElement('canvas');
+      const M=800;let{width:w,height:h}=i;
+      if(w>M){h=Math.round(h*M/w);w=M;}
+      if(h>M){w=Math.round(w*M/h);h=M;}
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(i,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',.72));
+      URL.revokeObjectURL(url);
+    };
+    i.src=url;
+  };
+  r.onload=e=>{
+    const i=new Image();
+    i.onerror=()=>r.onerror();
+    i.onload=()=>{
+      const c=document.createElement('canvas');
+      const M=800;let{width:w,height:h}=i;
+      if(w>M){h=Math.round(h*M/w);w=M;}
+      if(h>M){w=Math.round(w*M/h);h=M;}
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(i,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',.72));
+    };
+    i.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function parseTats(v){if(!v)return[];if(Array.isArray(v))return v;try{return JSON.parse(v);}catch{return[];}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function enc(s){return encodeURIComponent(s);}
+function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
+let toastT;
+function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
+
+
+// ── MAPA INTERATIVO ──
+let mapaInst = null;
+let mapaMarkers = [];
+let mapaLayer = null;
+let allMapPersons = [];
+
+const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#c084fc", "CAPAOZINHO 3": "#ffd700", "MARANATA": "#ff8fab", "CAPÃO DA ONÇA": "#4fc3f7", "VENDINHA": "#a5d6a7", "PADRE BERNARDO": "#ffb74d", "AGUAS LINDAS": "#80cbc4", "PADRE LUCIO": "#ef9a9a", "OUTROS": "#b0bec5"};
+const BAIRRO_COORDS = {"SETOR NORTE": [-15.672, -48.18], "SETOR SUL": [-15.682, -48.182], "VILA SAO JOSE": [-15.665, -48.175], "VEREDAS": [-15.678, -48.195], "CAPAOZINHO 3": [-15.69, -48.185], "MARANATA": [-15.66, -48.19], "CAPÃO DA ONÇA": [-15.675, -48.205], "VENDINHA": [-15.685, -48.17], "PADRE BERNARDO": [-15.668, -48.165], "AGUAS LINDAS": [-15.695, -48.195], "PADRE LUCIO": [-15.673, -48.2], "OUTROS": [-15.676, -48.187]};
+const BRAZLANDIA_CENTER = [-15.6760, -48.1870];
+
+function mkIcon(color, isAlert) {
+  const size = isAlert ? 22 : 16;
+  const border = isAlert ? '3px solid #ff3d3d' : '2px solid rgba(0,0,0,.4)';
+  const shadow = isAlert ? '0 0 12px rgba(255,61,61,.8)' : '0 2px 6px rgba(0,0,0,.4)';
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:${border};box-shadow:${shadow};${isAlert?'animation:pulseRed 1.5s infinite':''}"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],
+    popupAnchor: [0, -size/2]
+  });
+}
+
+function initMapa() {
+  if (mapaInst) return;
+  mapaInst = L.map('mapaContainer', {
+    center: BRAZLANDIA_CENTER,
+    zoom: 14,
+    zoomControl: true,
+  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 19
+  }).addTo(mapaInst);
+
+  // Forçar resize após render
+  setTimeout(() => mapaInst.invalidateSize(), 200);
+}
+
+function centerMap() {
+  if (mapaInst) mapaInst.setView(BRAZLANDIA_CENTER, 14);
+}
+
+function resetMapFilter() {
+  document.getElementById('mapFiltBairro').value = '';
+  applyMapFilter();
+}
+
+async function loadMapa() {
+  initMapa();
+  showOv('CARREGANDO MAPA...');
+  try {
+    if (!allP.length) allP = await DB.getPersons();
+    allMapPersons = allP;
+    renderMapMarkers(allP);
+    updateMapStats(allP);
+    renderMapLegend();
+  } catch(e) { toast('Erro ao carregar mapa.','error'); }
+  finally { hideOv(); setTimeout(()=>mapaInst&&mapaInst.invalidateSize(),300); }
+}
+
+function applyMapFilter() {
+  const b = document.getElementById('mapFiltBairro').value;
+  const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
+  renderMapMarkers(filtered);
+  updateMapStats(filtered);
+  if (b && BAIRRO_COORDS[b]) mapaInst.setView(BAIRRO_COORDS[b], 16);
+}
+
+function renderMapMarkers(persons) {
+  // Remove old markers
+  mapaMarkers.forEach(m => m.remove());
+  mapaMarkers = [];
+
+  // IDs de foragidos
+  const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
+  const alertNames = new Set(allAlertas.map(a=>(a.nome||'').toLowerCase()));
+
+  persons.forEach(p => {
+    if (!p.bairro) return;
+
+    // Geolocalização aproximada por bairro + offset aleatório para não sobrepor
+    const base = BAIRRO_COORDS[p.bairro.toUpperCase()] || BRAZLANDIA_CENTER;
+    const lat = base[0] + (Math.random() - 0.5) * 0.004;
+    const lng = base[1] + (Math.random() - 0.5) * 0.004;
+
+    const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
+    const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[p.bairro.toUpperCase()] || '#b0bec5');
+
+    const marker = L.marker([lat, lng], { icon: mkIcon(color, isAlert) })
+      .addTo(mapaInst)
+      .bindPopup(`
+        <div class="map-popup-name">${isAlert ? '🚨 ' : ''}${esc(p.nome)}</div>
+        ${p.apelido ? `<div class="map-popup-nick">@ ${esc(p.apelido)}</div>` : ''}
+        <div class="map-popup-info">
+          ${p.bairro ? `📍 ${esc(p.bairro)}` : ''}
+          ${p.endereco ? `<br>🏠 ${esc(p.endereco)}` : ''}
+          ${isAlert ? '<br><span style="color:#ff3d3d;font-weight:700">⚠️ ALERTA DE FORAGIDO</span>' : ''}
+        </div>
+        <button class="map-popup-btn" onclick="viewPerson('${p.id}')">👁 VER FICHA COMPLETA</button>
+      `);
+    mapaMarkers.push(marker);
+  });
+}
+
+function updateMapStats(persons) {
+  const comEnd = persons.filter(p=>p.bairro).length;
+  const bairros = new Set(persons.map(p=>p.bairro).filter(Boolean)).size;
+  const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
+  const alertas = persons.filter(p=>alertIds.has(p.id)).length;
+  document.getElementById('msTot').textContent = comEnd;
+  document.getElementById('msBairros').textContent = bairros;
+  document.getElementById('msAlrt').textContent = alertas || allAlertas.length;
+}
+
+function renderMapLegend() {
+  const bairrosUsados = [...new Set(allMapPersons.map(p=>p.bairro).filter(Boolean))];
+  const legendEl = document.getElementById('mapaLegend');
+  let html = bairrosUsados.slice(0,8).map(b => {
+    const c = BAIRRO_COLORS[b.toUpperCase()] || '#b0bec5';
+    return `<div class="map-legend-item"><div class="map-legend-dot" style="background:${c}"></div><span>${b}</span></div>`;
+  }).join('');
+  html += `<div class="map-legend-item"><div class="map-legend-dot" style="background:#ff3d3d;box-shadow:0 0 6px rgba(255,61,61,.6)"></div><span style="color:#ff8080">FORAGIDO</span></div>`;
+  legendEl.innerHTML = html;
+}
+
+// ── ALERTAS DE FORAGIDOS ──
+let allAlertas = [];
+let alertaEditId = null;
+let alertaTipo = null;
+let alertaPerig = null;
+let alertaPessoaId = null;
+let alertaFotoD = null;
+
+function showForagidoTab(tab) {
+  document.getElementById('tabAlertas').style.display = tab==='alertas' ? 'block' : 'none';
+  document.getElementById('tabSistema').style.display = tab==='sistema' ? 'block' : 'none';
+  document.getElementById('tabAlertasBtn').className = tab==='alertas' ? 'btn btn-danger' : 'btn btn-outline';
+  document.getElementById('tabSistemaBtn').className = tab==='sistema' ? 'btn btn-danger' : 'btn btn-outline';
+  if (tab==='sistema' && !allP.length) loadForagidos();
+}
+
+// DB alertas (localStorage ou Supabase)
+const DBA = {
+  async get() {
+    if(window._L) return lsG('alertas');
+    try { return await q('GET','sicad_alertas',null,'order=criado_em.desc'); } catch(e) { return lsG('alertas'); }
+  },
+  async add(d) {
+    if(window._L){const a=lsG('alertas');a.unshift(d);lsS('alertas',a);return d;}
+    try { const r=await q('POST','sicad_alertas',d); return Array.isArray(r)?r[0]:r; } catch(e) { const a=lsG('alertas');a.unshift(d);lsS('alertas',a);return d; }
+  },
+  async del(id) {
+    if(window._L){lsS('alertas',lsG('alertas').filter(x=>x.id!==id));return;}
+    try { await q('DELETE','sicad_alertas',null,`id=eq.${id}`); } catch(e) { lsS('alertas',lsG('alertas').filter(x=>x.id!==id)); }
+  }
+};
+
+async function loadAlertas() {
+  showOv('CARREGANDO ALERTAS...');
+  try {
+    allAlertas = await DBA.get();
+    renderAlertas();
+  } catch(e) { toast('Erro ao carregar alertas.','error'); }
+  finally { hideOv(); }
+}
+
+const perigInfo = {
+  1: { label:'MÉDIO', icon:'⚠️', cls:'perig-1' },
+  2: { label:'ALTO', icon:'🔶', cls:'perig-2' },
+  3: { label:'EXTREMO', icon:'🔴', cls:'perig-3' }
+};
+
+function renderAlertas() {
+  const el = document.getElementById('alertasList');
+  const empty = document.getElementById('alertasEmpty');
+  if (!allAlertas.length) { el.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  el.innerHTML = allAlertas.map(a => {
+    const pi = perigInfo[a.periculosidade] || perigInfo[1];
+    const av = a.foto ? `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0"><img src="${a.foto}" style="width:100%;height:100%;object-fit:cover"></div>`
+                      : `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0;font-size:28px">👤</div>`;
+    return `<div class="fcard" style="margin-bottom:12px">
+      ${av}
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+          <span style="font-weight:700;font-size:15px;color:var(--text)">${esc(a.nome)}</span>
+          <span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>
+        </div>
+        ${a.obs?`<div style="font-size:12px;color:var(--text-mid);margin-top:2px">${esc(a.obs)}</div>`:''}
+        <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:6px">
+          ${a.tipo==='existente'?'<span style="color:var(--accent)">📋 DO SISTEMA</span>':'<span style="color:#ff8080">➕ NOVO</span>'}
+          · ${a.criado_em ? new Date(a.criado_em).toLocaleDateString('pt-BR') : ''}
+          · por ${esc(a.criado_por||'—')}
+        </div>
+      </div>
+      ${CU.role==='admin'?`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex-shrink:0;padding:8px 10px">🗑</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openAlertaModal(editData) {
+  alertaEditId = editData ? editData.id : null;
+  alertaTipo = null; alertaPerig = null; alertaPessoaId = null; alertaFotoD = null;
+  document.getElementById('alertaModalTitle').textContent = '🚨 NOVO ALERTA DE FORAGIDO';
+  document.getElementById('aTipoExist').className = 'btn btn-outline btn-sm';
+  document.getElementById('aTipoNovo').className = 'btn btn-outline btn-sm';
+  document.getElementById('aExistente').style.display = 'none';
+  document.getElementById('aNovoFora').style.display = 'none';
+  document.getElementById('aCamposComuns').style.display = 'none';
+  document.getElementById('aBuscaPessoa').value = '';
+  document.getElementById('aBuscaResultados').style.display = 'none';
+  document.getElementById('aPessoaSelecionada').style.display = 'none';
+  document.getElementById('aNovoNome').value = '';
+  document.getElementById('aObs').value = '';
+  document.getElementById('aFotoPreview').classList.remove('on');
+  document.getElementById('aFotoDrop').style.display = '';
+  ['aPerig1','aPerig2','aPerig3'].forEach(id => {
+    const b = document.getElementById(id);
+    b.style.opacity = '0.5'; b.style.transform = 'scale(1)';
+  });
+  document.getElementById('alertaModal').classList.add('open');
+}
+
+function closeAlertaModal() {
+  document.getElementById('alertaModal').classList.remove('open');
+}
+
+function setAlertaTipo(tipo) {
+  alertaTipo = tipo;
+  document.getElementById('aExistente').style.display = tipo==='existente' ? 'block' : 'none';
+  document.getElementById('aNovoFora').style.display = tipo==='novo' ? 'block' : 'none';
+  document.getElementById('aCamposComuns').style.display = 'block';
+  document.getElementById('aTipoExist').className = tipo==='existente' ? 'btn btn-danger btn-sm' : 'btn btn-outline btn-sm';
+  document.getElementById('aTipoNovo').className = tipo==='novo' ? 'btn btn-danger btn-sm' : 'btn btn-outline btn-sm';
+}
+
+function setPerig(n) {
+  alertaPerig = n;
+  ['aPerig1','aPerig2','aPerig3'].forEach((id,i) => {
+    const b = document.getElementById(id);
+    b.style.opacity = (i+1===n) ? '1' : '0.4';
+    b.style.transform = (i+1===n) ? 'scale(1.05)' : 'scale(1)';
+  });
+}
+
+function buscaPessoaAlerta() {
+  const v = document.getElementById('aBuscaPessoa').value.trim().toLowerCase();
+  const res = document.getElementById('aBuscaResultados');
+  if (!v) { res.style.display='none'; return; }
+  const found = allP.filter(p => (p.nome||'').toLowerCase().includes(v) || (p.apelido||'').toLowerCase().includes(v));
+  if (!found.length) { res.innerHTML=`<div style="padding:12px;font-size:13px;color:var(--text-dim);text-align:center">Nenhum resultado</div>`; res.style.display='block'; return; }
+  res.style.display = 'block';
+  res.innerHTML = found.slice(0,6).map(p => `
+    <div onclick="selecionarPessoa('${p.id}')" style="padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .15s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+      ${p.foto?`<img src="${p.foto}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>`}
+      <div><div style="font-size:14px;font-weight:600">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''} ${p.bairro||''}</div></div>
+    </div>`).join('');
+}
+
+function selecionarPessoa(id) {
+  const p = allP.find(x => x.id===id);
+  if (!p) return;
+  alertaPessoaId = id;
+  alertaFotoD = p.foto || null;
+  document.getElementById('aBuscaResultados').style.display = 'none';
+  document.getElementById('aBuscaPessoa').value = p.nome;
+  document.getElementById('aPessoaSelecionada').style.display = 'block';
+  document.getElementById('aPessoaSelecionada').innerHTML = `
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px">
+      ${p.foto?`<img src="${p.foto}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:44px;height:44px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px">👤</div>`}
+      <div><div style="font-weight:600;color:var(--accent)">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''}${p.bairro||''}</div></div>
+      <div style="margin-left:auto;color:var(--success);font-size:20px">✅</div>
+    </div>`;
+}
+
+function onAlertaFoto(inp) {
+  if (!inp.files[0]) return;
+  resize(inp.files[0], d => {
+    alertaFotoD = d;
+    document.getElementById('aFotoPreview').src = d;
+    document.getElementById('aFotoPreview').classList.add('on');
+    document.getElementById('aFotoDrop').style.display = 'none';
+  });
+}
+
+async function saveAlerta() {
+  if (!alertaTipo) { toast('Selecione o tipo de alerta.','error'); return; }
+  if (!alertaPerig) { toast('Selecione o nível de periculosidade.','error'); return; }
+  if (alertaTipo==='existente' && !alertaPessoaId) { toast('Selecione uma pessoa do sistema.','error'); return; }
+  const nome = alertaTipo==='existente'
+    ? (allP.find(x=>x.id===alertaPessoaId)||{}).nome||'—'
+    : document.getElementById('aNovoNome').value.trim();
+  if (alertaTipo==='novo' && !nome) { toast('Informe o nome do foragido.','error'); return; }
+
+  const btn = document.getElementById('saveAlertaBtn');
+  btn.disabled=true; btn.innerHTML='<span class="ld"></span> SALVANDO...';
+  try {
+    const d = {
+      id: 'a'+Date.now(),
+      nome, tipo: alertaTipo,
+      pessoa_id: alertaPessoaId||null,
+      foto: alertaFotoD||null,
+      periculosidade: alertaPerig,
+      obs: document.getElementById('aObs').value.trim()||null,
+      criado_por: CU.usuario,
+      criado_em: new Date().toISOString()
+    };
+    await DBA.add(d);
+    allAlertas.unshift(d);
+    renderAlertas();
+    closeAlertaModal();
+    toast('⚠️ Alerta de foragido cadastrado!','error');
+  } catch(e) { toast('Erro: '+e.message,'error'); }
+  finally { btn.disabled=false; btn.innerHTML='🚨 SALVAR ALERTA'; }
+}
+
+async function delAlerta(id) {
+  if (!confirm('Remover este alerta de foragido?')) return;
+  showOv('REMOVENDO...');
+  try {
+    await DBA.del(id);
+    allAlertas = allAlertas.filter(x=>x.id!==id);
+    renderAlertas();
+    toast('Alerta removido.','info');
+  } catch(e) { toast('Erro.','error'); }
+  finally { hideOv(); }
+}
+
+// ── FORAGIDOS ──
+async function loadForagidos() {
+  if (!allP.length) { showOv('CARREGANDO...'); try { allP = await DB.getPersons(); } catch(e){} finally { hideOv(); } }
+  renderForagidos(allP);
+}
+function renderForagidos(l) {
+  document.getElementById('foragidoEmpty').style.display = l.length ? 'none' : 'block';
+  document.getElementById('foragidoGrid').innerHTML = l.map(pCard).join('');
+}
+function filterForagidos() {
+  const n = document.getElementById('sForagido').value.trim().toLowerCase();
+  const l = n ? allP.filter(p => ['nome','apelido','mae'].some(k => (p[k]||'').toLowerCase().includes(n))) : allP;
+  renderForagidos(l);
+}
+
+document.getElementById('personModal').addEventListener('click',e=>{if(e.target===document.getElementById('personModal'))closePersonModal();});
+document.getElementById('alertaModal').addEventListener('click',e=>{if(e.target===document.getElementById('alertaModal'))closeAlertaModal();});
+document.getElementById('userModal').addEventListener('click',e=>{if(e.target===document.getElementById('userModal'))closeUserModal();});
+
+init();
+</script>
+</body>
+</html>
