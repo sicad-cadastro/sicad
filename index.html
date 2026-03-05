@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#0a0c10">
 <title>SICAD — Sistema de Cadastro</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Google Maps carregado dinamicamente -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -255,9 +254,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .link-card:hover{transform:translateY(-2px);filter:brightness(1.1)}.link-card:active{transform:scale(.98)}
 #mapaContainer{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative}
 @media(max-width:600px){#mapaContainer{height:320px}}
-.leaflet-popup-content-wrapper{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.5)!important;color:var(--text)!important}
-.leaflet-popup-tip{background:var(--surface)!important}
-.leaflet-popup-content{margin:12px 16px!important;min-width:180px}
+
 .map-popup-name{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
 .map-popup-nick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px}
 .map-popup-info{font-size:12px;color:var(--text-mid);line-height:1.6}
@@ -610,12 +607,12 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       </div>
 
       <div style="position:relative">
-        <div id="mapaContainer"></div>
+        <div id="mapaContainer" style="border-radius:16px;overflow:hidden;border:1px solid var(--border)"></div>
         <div class="map-legend" id="mapaLegend"></div>
       </div>
 
       <div style="margin-top:12px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:center">
-        🗺️ OpenStreetMap · Clique nos marcadores para ver a ficha
+        🗺️ Google Maps · Clique nos marcadores para ver a ficha
       </div>
     </div>
 
@@ -1326,44 +1323,58 @@ function toast(msg,type='info'){const t=document.getElementById('toast');t.inner
 // ── MAPA INTERATIVO ──
 let mapaInst = null;
 let mapaMarkers = [];
-let mapaLayer = null;
 let allMapPersons = [];
+let gmapsLoaded = false;
 
-const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#c084fc", "CAPAOZINHO 3": "#ffd700", "MARANATA": "#ff8fab", "CAPÃO DA ONÇA": "#4fc3f7", "VENDINHA": "#a5d6a7", "PADRE BERNARDO": "#ffb74d", "AGUAS LINDAS": "#80cbc4", "PADRE LUCIO": "#ef9a9a", "OUTROS": "#b0bec5"};
-const BAIRRO_COORDS = {"SETOR NORTE": [-15.672, -48.18], "SETOR SUL": [-15.682, -48.182], "VILA SAO JOSE": [-15.665, -48.175], "VEREDAS": [-15.678, -48.195], "CAPAOZINHO 3": [-15.69, -48.185], "MARANATA": [-15.66, -48.19], "CAPÃO DA ONÇA": [-15.675, -48.205], "VENDINHA": [-15.685, -48.17], "PADRE BERNARDO": [-15.668, -48.165], "AGUAS LINDAS": [-15.695, -48.195], "PADRE LUCIO": [-15.673, -48.2], "OUTROS": [-15.676, -48.187]};
-const BRAZLANDIA_CENTER = [-15.6760, -48.1870];
+const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#ffd600", "CAPAOZINHO 3": "#e040fb", "MARANATA": "#ff4081", "CAPÃO DA ONÇA": "#69f0ae", "VENDINHA": "#ffab40", "PADRE BERNARDO": "#40c4ff", "AGUAS LINDAS": "#b9f6ca", "PADRE LUCIO": "#ea80fc", "OUTROS": "#b0bec5"};
 
-function mkIcon(color, isAlert) {
-  const size = isAlert ? 22 : 16;
-  const border = isAlert ? '3px solid #ff3d3d' : '2px solid rgba(0,0,0,.4)';
-  const shadow = isAlert ? '0 0 12px rgba(255,61,61,.8)' : '0 2px 6px rgba(0,0,0,.4)';
-  return L.divIcon({
-    className: '',
-    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:${border};box-shadow:${shadow};${isAlert?'animation:pulseRed 1.5s infinite':''}"></div>`,
-    iconSize: [size, size],
-    iconAnchor: [size/2, size/2],
-    popupAnchor: [0, -size/2]
-  });
+// Carregar Google Maps dinamicamente
+function loadGoogleMaps(callback) {
+  if (window.google && window.google.maps) { callback(); return; }
+  window._gmapsCallback = callback;
+  const s = document.createElement('script');
+  // Usando Maps Embed API sem chave para visualização básica
+  // ou usando OpenStreetMap como tiles mas com Google geocoding via Nominatim
+  // ⚠️ Para usar Google Maps sem aviso, adicione sua chave gratuita em:
+  // console.developers.google.com → Maps JavaScript API
+  const GMAPS_KEY = ''; // opcional - funciona sem chave com marca d'água
+  s.src = `https://maps.googleapis.com/maps/api/js?callback=_gmapsCallback&loading=async${GMAPS_KEY?'&key='+GMAPS_KEY:''}`;
+  s.async = true;
+  s.defer = true;
+  document.head.appendChild(s);
 }
 
 function initMapa() {
   if (mapaInst) return;
-  mapaInst = L.map('mapaContainer', {
-    center: BRAZLANDIA_CENTER,
+  // Centro de Brazlândia DF
+  const center = { lat: -15.6760, lng: -48.1870 };
+  mapaInst = new google.maps.Map(document.getElementById('mapaContainer'), {
+    center,
     zoom: 14,
+    mapTypeId: 'roadmap',
+    styles: [
+      {elementType:'geometry', stylers:[{color:'#1a1a2e'}]},
+      {elementType:'labels.text.fill', stylers:[{color:'#9e9e9e'}]},
+      {elementType:'labels.text.stroke', stylers:[{color:'#1a1a2e'}]},
+      {featureType:'road', elementType:'geometry', stylers:[{color:'#2d2d44'}]},
+      {featureType:'road', elementType:'geometry.stroke', stylers:[{color:'#111122'}]},
+      {featureType:'road.highway', elementType:'geometry', stylers:[{color:'#3d3d5c'}]},
+      {featureType:'water', elementType:'geometry', stylers:[{color:'#0d1b2a'}]},
+      {featureType:'poi', elementType:'geometry', stylers:[{color:'#1e2030'}]},
+      {featureType:'transit', elementType:'geometry', stylers:[{color:'#1e2030'}]},
+      {featureType:'administrative', elementType:'geometry.stroke', stylers:[{color:'#4a4a6a'}]},
+      {featureType:'landscape', elementType:'geometry', stylers:[{color:'#1a1a2e'}]},
+    ],
+    disableDefaultUI: false,
     zoomControl: true,
+    mapTypeControl: false,
+    streetViewControl: true,
+    fullscreenControl: true,
   });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap',
-    maxZoom: 19
-  }).addTo(mapaInst);
-
-  // Forçar resize após render
-  setTimeout(() => mapaInst.invalidateSize(), 200);
 }
 
 function centerMap() {
-  if (mapaInst) mapaInst.setView(BRAZLANDIA_CENTER, 14);
+  if (mapaInst) mapaInst.setCenter({ lat: -15.6760, lng: -48.1870 });
 }
 
 function resetMapFilter() {
@@ -1372,16 +1383,19 @@ function resetMapFilter() {
 }
 
 async function loadMapa() {
-  initMapa();
   showOv('CARREGANDO MAPA...');
   try {
     if (!allP.length) allP = await DB.getPersons();
     allMapPersons = allP;
-    renderMapMarkers(allP);
-    updateMapStats(allP);
-    renderMapLegend();
-  } catch(e) { toast('Erro ao carregar mapa.','error'); }
-  finally { hideOv(); setTimeout(()=>mapaInst&&mapaInst.invalidateSize(),300); }
+    // Carrega Google Maps e depois renderiza marcadores
+    loadGoogleMaps(() => {
+      initMapa();
+      renderMapMarkers(allP);
+      updateMapStats(allP);
+      renderMapLegend();
+      hideOv();
+    });
+  } catch(e) { toast('Erro ao carregar mapa: '+e.message,'error'); hideOv(); }
 }
 
 function applyMapFilter() {
@@ -1389,47 +1403,113 @@ function applyMapFilter() {
   const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
   renderMapMarkers(filtered);
   updateMapStats(filtered);
-  if (b && BAIRRO_COORDS[b]) mapaInst.setView(BAIRRO_COORDS[b], 16);
 }
 
-function renderMapMarkers(persons) {
-  // Remove old markers
-  mapaMarkers.forEach(m => m.remove());
-  mapaMarkers = [];
+// Geocodifica endereço usando Nominatim (gratuito, sem chave)
+async function geocodeAddress(endereco, bairro) {
+  const addr = [endereco, bairro, 'Brazlândia', 'DF', 'Brasil'].filter(Boolean).join(', ');
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, {
+      headers: {'User-Agent': 'SICAD-System/1.0'}
+    });
+    const j = await r.json();
+    if (j[0]) return { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
+  } catch {}
+  return null;
+}
 
-  // IDs de foragidos
+// Cache de geocodificação
+const _geocache = {};
+
+async function getCoords(p) {
+  const key = (p.endereco||'')+(p.bairro||'');
+  if (_geocache[key]) return _geocache[key];
+  
+  // Tenta geocodificar endereço real
+  if (p.endereco && p.bairro) {
+    const coords = await geocodeAddress(p.endereco, p.bairro);
+    if (coords) { _geocache[key] = coords; return coords; }
+  }
+  
+  // Fallback: coordenadas por bairro + offset
+  const BAIRRO_COORDS = {
+    "SETOR NORTE":    [-15.6680, -48.1890],
+    "SETOR SUL":      [-15.6830, -48.1860],
+    "VILA SAO JOSE":  [-15.6750, -48.1950],
+    "VEREDAS":        [-15.6710, -48.1820],
+    "CAPAOZINHO 3":   [-15.6790, -48.1920],
+    "MARANATA":       [-15.6650, -48.1840],
+    "CAPÃO DA ONÇA":  [-15.6870, -48.1780],
+    "VENDINHA":       [-15.6720, -48.1760],
+    "PADRE BERNARDO": [-15.6800, -48.1930],
+    "AGUAS LINDAS":   [-15.6740, -48.1810],
+    "PADRE LUCIO":    [-15.6760, -48.1980],
+    "OUTROS":         [-15.6760, -48.1870],
+  };
+  const base = BAIRRO_COORDS[(p.bairro||'').toUpperCase()] || [-15.6760, -48.1870];
+  const coords = {
+    lat: base[0] + (Math.random() - 0.5) * 0.004,
+    lng: base[1] + (Math.random() - 0.5) * 0.004
+  };
+  _geocache[key] = coords;
+  return coords;
+}
+
+async function renderMapMarkers(persons) {
+  // Remove marcadores antigos
+  mapaMarkers.forEach(m => m.setMap(null));
+  mapaMarkers = [];
+  
   const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
   const alertNames = new Set(allAlertas.map(a=>(a.nome||'').toLowerCase()));
+  const infoWindow = new google.maps.InfoWindow();
 
-  persons.forEach(p => {
-    if (!p.bairro) return;
-
-    // Geolocalização aproximada por bairro + offset aleatório para não sobrepor
-    const base = BAIRRO_COORDS[p.bairro.toUpperCase()] || BRAZLANDIA_CENTER;
-    const lat = base[0] + (Math.random() - 0.5) * 0.004;
-    const lng = base[1] + (Math.random() - 0.5) * 0.004;
-
+  for (const p of persons) {
+    if (!p.bairro && !p.endereco) continue;
+    const coords = await getCoords(p);
     const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
-    const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[p.bairro.toUpperCase()] || '#b0bec5');
+    const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[(p.bairro||'').toUpperCase()] || '#b0bec5');
+    
+    const marker = new google.maps.Marker({
+      position: coords,
+      map: mapaInst,
+      title: p.nome,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: isAlert ? 11 : 8,
+        fillColor: color,
+        fillOpacity: 0.9,
+        strokeColor: isAlert ? '#ff0000' : '#000',
+        strokeWeight: isAlert ? 2 : 1,
+      },
+      animation: isAlert ? google.maps.Animation.BOUNCE : null,
+    });
 
-    const marker = L.marker([lat, lng], { icon: mkIcon(color, isAlert) })
-      .addTo(mapaInst)
-      .bindPopup(`
-        <div class="map-popup-name">${isAlert ? '🚨 ' : ''}${esc(p.nome)}</div>
-        ${p.apelido ? `<div class="map-popup-nick">@ ${esc(p.apelido)}</div>` : ''}
-        <div class="map-popup-info">
-          ${p.bairro ? `📍 ${esc(p.bairro)}` : ''}
-          ${p.endereco ? `<br>🏠 ${esc(p.endereco)}` : ''}
-          ${isAlert ? '<br><span style="color:#ff3d3d;font-weight:700">⚠️ ALERTA DE FORAGIDO</span>' : ''}
-        </div>
-        <button class="map-popup-btn" onclick="viewPerson('${p.id}')">👁 VER FICHA COMPLETA</button>
-      `);
+    const content = `
+      <div style="font-family:'IBM Plex Sans',sans-serif;padding:4px;min-width:180px;background:#1a1a2e;color:#e0e0e0;border-radius:8px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px">${isAlert ? '🚨 ' : ''}${esc(p.nome)}</div>
+        ${p.apelido ? `<div style="color:#aaa;font-size:12px;margin-bottom:4px">@ ${esc(p.apelido)}</div>` : ''}
+        ${p.bairro ? `<div style="font-size:12px">📍 ${esc(p.bairro)}</div>` : ''}
+        ${p.endereco ? `<div style="font-size:12px">🏠 ${esc(p.endereco)}</div>` : ''}
+        ${p.quadra ? `<div style="font-size:12px">🔲 ${esc(p.quadra)}</div>` : ''}
+        ${isAlert ? '<div style="color:#ff6666;font-weight:700;margin-top:4px">⚠️ ALERTA DE FORAGIDO</div>' : ''}
+        <button onclick="viewPerson('${p.id}')" style="margin-top:8px;width:100%;padding:8px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">👁 VER FICHA COMPLETA</button>
+      </div>`;
+
+    marker.addListener('click', () => {
+      infoWindow.setContent(content);
+      infoWindow.open(mapaInst, marker);
+    });
+    
+    // Para animação BOUNCE, para após 2s
+    if (isAlert) setTimeout(() => marker.setAnimation(null), 2100);
+    
     mapaMarkers.push(marker);
-  });
+  }
 }
 
 function updateMapStats(persons) {
-  const comEnd = persons.filter(p=>p.bairro).length;
+  const comEnd = persons.filter(p=>p.bairro||p.endereco).length;
   const bairros = new Set(persons.map(p=>p.bairro).filter(Boolean)).size;
   const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
   const alertas = persons.filter(p=>alertIds.has(p.id)).length;
