@@ -901,23 +901,27 @@ const DB={
   async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await q('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
   async updPerson(id,d){
     if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}
-    const clean={};Object.keys(d).forEach(k=>{if(d[k]!==undefined)clean[k]=d[k];});
-    // Use direct fetch for PATCH to have full control
+    const clean={};
+    Object.keys(d).forEach(k=>{ if(d[k]!==undefined) clean[k]=d[k]; });
+    // PATCH sem Prefer:return para evitar erro PGRST116
     const url = `${SB}/rest/v1/sicad_pessoas?id=eq.${encodeURIComponent(id)}`;
     const r = await fetch(url, {
       method: 'PATCH',
       headers: {
         'apikey': KEY,
         'Authorization': `Bearer ${KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(clean)
     });
-    const t = await r.text();
-    console.log('[SICAD] PATCH status:', r.status, 'body:', t.substring(0,300));
-    if(!r.ok){let m=t;try{const j=JSON.parse(t);m=j.message||j.hint||t;}catch{}throw new Error('Erro ao salvar: '+m);}
-    try{return JSON.parse(t);}catch{return[];}
+    console.log('[SICAD] PATCH status:', r.status);
+    if(!r.ok){
+      const t=await r.text();
+      let m=t;
+      try{const j=JSON.parse(t);m=j.message||j.details||j.hint||t;}catch{}
+      throw new Error(m);
+    }
+    return {ok:true};
   },
   async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
 };
@@ -1051,17 +1055,9 @@ async function savePerson(){
         editMode=false;
       }
       console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
-      const resultado = await DB.updPerson(idParaEditar, campos);
-      console.log('[SICAD] Resultado updPerson:', JSON.stringify(resultado));
-      // Verifica se o Supabase realmente atualizou (retorna array com o registro)
-      if(Array.isArray(resultado) && resultado.length === 0){
-        // Supabase retornou array vazio = nenhum registro encontrado com esse id
-        toast('⚠️ Nenhum registro encontrado. Verifique o tipo da coluna id no Supabase.','error');
-        console.error('[SICAD] PATCH retornou vazio - id não encontrado no banco:', idParaEditar);
-      } else {
-        allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
-        toast('Atualizado! ✅','success');
-      }
+      await DB.updPerson(idParaEditar, campos);
+      allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
+      toast('Atualizado! ✅','success');
     }
     if(!editMode){
       const d={id:'p'+Date.now(), ...campos, criado_por:CU.usuario||'admin', criado_em:now};
