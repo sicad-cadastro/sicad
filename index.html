@@ -322,9 +322,6 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <button class="tnav-btn active" onclick="go('dashboard')" data-p="dashboard">DASHBOARD</button>
     <button class="tnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar">+ CADASTRAR</button>
     <button class="tnav-btn" onclick="go('consultar')" data-p="consultar">CONSULTAR</button>
-    <button class="tnav-btn" onclick="go('foragidos')" data-p="foragidos">🚨 FORAGIDOS</button>
-    <button class="tnav-btn" onclick="go('mapa')" data-p="mapa">🗺️ MAPA</button>
-    <button class="tnav-btn" onclick="go('pesquisa')" data-p="pesquisa">📋 PESQUISA</button>
     <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios">USUÁRIOS</button>
   </div>
 
@@ -400,24 +397,6 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           </div>
         </div>
 
-
-        <!-- Alerta Faccionado -->
-        <div id="faccionadoBanner" onclick="toggleFaccionado()" style="cursor:pointer;border-radius:12px;border:2px solid var(--border);padding:14px 18px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;transition:all .3s;background:var(--surface2)" title="Clique para marcar como faccionado">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span id="faccionadoIcon" style="font-size:22px">⚠️</span>
-            <div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text)" id="faccionadoLabel">FACCIONADO</div>
-              <div style="font-size:11px;color:var(--text-dim);margin-top:1px" id="faccionadoSub">Clique para ativar o alerta</div>
-            </div>
-          </div>
-          <div id="faccionadoToggle" style="width:52px;height:28px;border-radius:14px;background:var(--surface3,#333);border:2px solid var(--border);transition:all .3s;position:relative;flex-shrink:0">
-            <div id="faccionadoThumb" style="width:20px;height:20px;border-radius:50%;background:#666;position:absolute;top:2px;left:2px;transition:all .3s"></div>
-          </div>
-        </div>
-        <!-- Facção nome (aparece só quando ativado) -->
-        <div id="faccionadoNomeWrap" style="display:none;margin-bottom:4px">
-          <input type="text" id="fFaccao" placeholder="Nome da facção / grupo / organização" autocomplete="off" style="width:100%;background:rgba(255,50,50,.08);border:2px solid rgba(255,80,80,.4);border-radius:10px;padding:12px 14px;font-size:14px;color:#ff6b6b;outline:none;font-family:'IBM Plex Sans',sans-serif;box-sizing:border-box">
-        </div>
 
         <div class="fgrid">
           <div class="fg"><label>Nome Completo *</label><input type="text" id="fNome" placeholder="Nome completo" autocomplete="off"></div>
@@ -768,14 +747,11 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   </div><!-- /content -->
 
   <!-- Bottom nav (mobile) -->
-  <div class="bottom-nav" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
-    <button class="bnav-btn active" onclick="go('dashboard')" data-p="dashboard" style="min-width:56px"><span class="ni">📊</span>DASH</button>
-    <button class="bnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar" style="min-width:62px"><span class="ni">➕</span>CADASTRAR</button>
-    <button class="bnav-btn" onclick="go('consultar')" data-p="consultar" style="min-width:62px"><span class="ni">🔍</span>CONSULTAR</button>
-    <button class="bnav-btn" onclick="go('foragidos')" data-p="foragidos" style="min-width:64px"><span class="ni">🚨</span>FORAGIDOS</button>
-    <button class="bnav-btn" onclick="go('mapa')" data-p="mapa" style="min-width:48px"><span class="ni">🗺️</span>MAPA</button>
-    <button class="bnav-btn" onclick="go('pesquisa')" data-p="pesquisa" style="min-width:56px"><span class="ni">📋</span>PESQUISA</button>
-    <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios" style="min-width:62px"><span class="ni">👥</span>USUÁRIOS</button>
+  <div class="bottom-nav">
+    <button class="bnav-btn active" onclick="go('dashboard')" data-p="dashboard"><span class="ni">📊</span>DASHBOARD</button>
+    <button class="bnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar"><span class="ni">➕</span>CADASTRAR</button>
+    <button class="bnav-btn" onclick="go('consultar')" data-p="consultar"><span class="ni">🔍</span>CONSULTAR</button>
+    <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios"><span class="ni">👥</span>USUÁRIOS</button>
   </div>
 </div><!-- /app -->
 
@@ -889,24 +865,26 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SUPABASE CONFIG ──
+// ── SUPABASE ──
 const SB = 'https://vkrkirientpljlxstafm.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcmtpcmllbnRwbGpseHN0YWZtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjY1MDI3NSwiZXhwIjoyMDg4MjI2Mjc1fQ.FriB-TPL5uue5xcFXVBcKLp3YEXqes09Sk4KZaRtQow';
 
-async function sbFetch(method, table, body, qs) {
-  const r = await fetch(`${SB}/rest/v1/${table}${qs?'?'+qs:''}`, {
+async function q(method, tbl, body, qs) {
+  const prefer = (method==='PATCH'||method==='DELETE') ? 'return=representation' : 'return=representation';
+  const r = await fetch(`${SB}/rest/v1/${tbl}${qs?'?'+qs:''}`, {
     method,
     headers: {
       'apikey': KEY,
       'Authorization': `Bearer ${KEY}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+      'Prefer': prefer
     },
     body: body ? JSON.stringify(body) : undefined
   });
   const t = await r.text();
+  console.log(`[SICAD] ${method} ${tbl} | status:${r.status} | qs:${qs} | resp:${t.substring(0,200)}`);
   if (!r.ok) { let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{} throw new Error(m); }
-  try{return JSON.parse(t);}catch{return [];}
+  try{return JSON.parse(t);}catch{return[];}
 }
 
 // ── STATE ──
@@ -916,52 +894,67 @@ let CU=null, allP=[], faceD=null, tatD=[], camStr=null, editId=null, editMode=fa
 const showOv=m=>{if(m)document.getElementById('ovMsg').textContent=m;document.getElementById('ov').classList.add('on');};
 const hideOv=()=>document.getElementById('ov').classList.remove('on');
 
-// ── LOCAL STORAGE (fallback offline) ──
+// ── LOCAL STORAGE ──
 const lsG=k=>{try{return JSON.parse(localStorage.getItem('sicad_'+k)||'[]');}catch{return[];}};
 const lsS=(k,v)=>localStorage.setItem('sicad_'+k,JSON.stringify(v));
 
 // ── INIT ──
 async function init() {
-  showOv('CONECTANDO...');
+  showOv('CONECTANDO AO BANCO DE DADOS...');
   try {
-    await sbFetch('GET','sicad_users',null,'limit=1');
+    await q('GET','sicad_users',null,'limit=1');
     document.getElementById('modeLbl').textContent='☁️ SUPABASE CONECTADO';
-    window._L = false;
   } catch(e) {
-    window._L = true;
-    if(!lsG('u').length) lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
+    window._L=true;
+    if(!lsG('u').length)lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
     document.getElementById('modeLbl').textContent='📱 MODO LOCAL';
   }
   hideOv();
 }
 
 // ── DB ──
-const enc = s => encodeURIComponent(s||'');
-const DB = {
-  async getUsers(){if(window._L)return lsG('u');return await sbFetch('GET','sicad_users',null,'order=criado_em.asc');},
-  async findUser(u,s){if(window._L)return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;const r=await sbFetch('GET','sicad_users',null,`usuario=eq.${enc(u)}&senha=eq.${enc(s)}`);return r[0]||null;},
-  async addUser(d){if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}const r=await sbFetch('POST','sicad_users',d);return Array.isArray(r)?r[0]:r;},
-  async updUser(id,d){if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}return await sbFetch('PATCH','sicad_users',d,`id=eq.${id}`);},
-  async delUser(id){if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_users',null,`id=eq.${id}`);},
+const DB={
+  async getUsers(){if(window._L)return lsG('u');return await q('GET','sicad_users',null,'order=criado_em.asc');},
+  async findUser(u,s){if(window._L)return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;const r=await q('GET','sicad_users',null,`usuario=eq.${enc(u)}&senha=eq.${enc(s)}`);return r[0]||null;},
+  async addUser(d){if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}const r=await q('POST','sicad_users',d);return Array.isArray(r)?r[0]:r;},
+  async updUser(id,d){if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}return await q('PATCH','sicad_users',d,`id=eq.${id}`);},
+  async delUser(id){if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_users',null,`id=eq.${id}`);},
   async getPersons(f={}){
     if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
     let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
-    return await sbFetch('GET','sicad_pessoas',null,qs);
+    return await q('GET','sicad_pessoas',null,qs);
   },
-  async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await sbFetch('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
-  async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await sbFetch('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
+  async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await q('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
+  async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await q('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
   async updPerson(id,d){
     if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}
-    const clean={};Object.keys(d).forEach(k=>{if(d[k]!==undefined)clean[k]=d[k];});
-    const r=await fetch(`${SB}/rest/v1/sicad_pessoas?id=eq.${enc(id)}`,{method:'PATCH',headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json'},body:JSON.stringify(clean)});
-    if(!r.ok){const t=await r.text();let m=t;try{const j=JSON.parse(t);m=j.message||j.details||j.hint||t;}catch{}throw new Error(m);}
+    const clean={};
+    Object.keys(d).forEach(k=>{ if(d[k]!==undefined) clean[k]=d[k]; });
+    // PATCH sem Prefer:return para evitar erro PGRST116
+    const url = `${SB}/rest/v1/sicad_pessoas?id=eq.${encodeURIComponent(id)}`;
+    const r = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(clean)
+    });
+    console.log('[SICAD] PATCH status:', r.status);
+    if(!r.ok){
+      const t=await r.text();
+      let m=t;
+      try{const j=JSON.parse(t);m=j.message||j.details||j.hint||t;}catch{}
+      throw new Error(m);
+    }
     return {ok:true};
   },
-  async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
+  async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
 };
 
 // ── LOGIN ──
-async async function login(){
+async function login(){
   const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
   if(!u||!p){errLg('Preencha usuário e senha.');return;}
   const btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> ENTRANDO...';
@@ -1023,16 +1016,14 @@ async function loadDash(){
 }
 
 function pCard(p){
-  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}">👤</div>`;
-  const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">🚨 FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
-  const cardStyle = p.faccionado?'border-left:3px solid #ff4444;background:linear-gradient(90deg,rgba(255,30,30,.06) 0%,var(--surface) 60%)':'';
-  return `<div class="pcard" onclick="viewPerson('${p.id}')" style="${cardStyle}">
+  const av=p.foto?`<div class="pavatar"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar">👤</div>`;
+  return `<div class="pcard" onclick="viewPerson('${p.id}')">
     ${av}
     <div class="pinfo">
       <div class="pname">${esc(p.nome)}</div>
       <div class="pnick">${p.apelido?esc(p.apelido):'—'}</div>
       <div class="pmeta"><strong>MÃE:</strong> ${esc(p.mae||'—')}</div>
-      <div>${faccBadge} ${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
+      <div>${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
     </div>
     <div class="parrow">›</div>
   </div>`;
@@ -1081,7 +1072,6 @@ async function savePerson(){
       cpf:gv('fCpf'), endereco:gv('fEnd'), quadra:gv('fQuadra'), bairro:gv('fBairro'),
       telefone:gv('fTelefone'), insta1:gv('fInsta1'), insta2:gv('fInsta2'), facebook:gv('fFacebook'),
       veiculo1:gv('fVeiculo1'), veiculo2:gv('fVeiculo2'), veiculo3:gv('fVeiculo3'),
-      faccionado:_faccionado||false, faccao:_faccionado?(gv('fFaccao')||null):null,
       observacoes:document.getElementById('fObs').value.trim()||null,
       tipo_senha:_ts, senha_celular:_sc,
       foto:faceD||null, tatuagens:JSON.stringify(tatD),
@@ -1113,8 +1103,6 @@ function gv(id){return document.getElementById(id).value.trim()||null;}
 function cadClear(){
   ['fNome','fMae','fApelido','fNasc','fCpf','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fObs').value='';
-  _faccionado=false;updateFaccionadoBanner();
-  document.getElementById('fFaccao').value='';
   clearPattern();setTipoSenha(null);
   faceD=null;tatD=[];
   document.getElementById('facePreviewWrap').style.display='none';
@@ -1195,8 +1183,6 @@ async function editPerson(){
   document.getElementById('fVeiculo2').value=p.veiculo2||'';
   document.getElementById('fVeiculo3').value=p.veiculo3||'';
   document.getElementById('fObs').value=p.observacoes||'';
-  _faccionado=!!(p.faccionado);updateFaccionadoBanner();
-  document.getElementById('fFaccao').value=p.faccao||'';
   if(p.tipo_senha)setTipoSenha(p.tipo_senha);
   if(p.senha_celular){if(p.tipo_senha==='numeros')document.getElementById('fSenhaNum').value=p.senha_celular;else if(p.tipo_senha==='alfanumerico')document.getElementById('fSenhaAlf').value=p.senha_celular;else if(p.tipo_senha==='padrao'){window._pattern=p.senha_celular.split('');renderPattern();}}
   faceD=p.foto||null;tatD=parseTats(p.tatuagens);
@@ -1277,45 +1263,7 @@ function lbClose(){document.getElementById('lb').classList.remove('on');}
 // ── UTILS ──
 // ── SENHA CELULAR ──
 let _pattern = [];
-let _faccionado = false;
 let _tipoSenha = null;
-
-function toggleFaccionado(){
-  _faccionado = !_faccionado;
-  updateFaccionadoBanner();
-}
-function updateFaccionadoBanner(){
-  const banner = document.getElementById('faccionadoBanner');
-  const lbl = document.getElementById('faccionadoSub');
-  const toggle = document.getElementById('faccionadoToggle');
-  const thumb = document.getElementById('faccionadoThumb');
-  const nomeWrap = document.getElementById('faccionadoNomeWrap');
-  const icon = document.getElementById('faccionadoIcon');
-  if(!banner) return;
-  if(_faccionado){
-    banner.style.background='rgba(255,30,30,0.12)';
-    banner.style.borderColor='rgba(255,60,60,0.6)';
-    lbl.textContent='⚠️ ALERTA ATIVO — este indivíduo é faccionado';
-    lbl.style.color='#ff6b6b';
-    toggle.style.background='rgba(255,60,60,0.4)';
-    toggle.style.borderColor='rgba(255,80,80,0.6)';
-    thumb.style.background='#ff4444';
-    thumb.style.left='28px';
-    icon.textContent='🚨';
-    nomeWrap.style.display='block';
-  } else {
-    banner.style.background='var(--surface2)';
-    banner.style.borderColor='var(--border)';
-    lbl.textContent='Clique para ativar o alerta';
-    lbl.style.color='var(--text-dim)';
-    toggle.style.background='var(--surface3,#333)';
-    toggle.style.borderColor='var(--border)';
-    thumb.style.background='#666';
-    thumb.style.left='2px';
-    icon.textContent='⚠️';
-    nomeWrap.style.display='none';
-  }
-}
 
 function setTipoSenha(tipo) {
   _tipoSenha = tipo;
@@ -1442,6 +1390,7 @@ function resize(file,cb){
 }
 function parseTats(v){if(!v)return[];if(Array.isArray(v))return v;try{return JSON.parse(v);}catch{return[];}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function enc(s){return encodeURIComponent(s);}
 function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 let toastT;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
@@ -1672,11 +1621,20 @@ function showForagidoTab(tab) {
   if (tab==='sistema' && !allP.length) loadForagidos();
 }
 
-// DB alertas
+// DB alertas (localStorage ou Supabase)
 const DBA = {
-  async get(){if(window._L)return lsG('alertas');try{return await sbFetch('GET','sicad_alertas',null,'order=criado_em.desc');}catch(e){return lsG('alertas');}},
-  async add(d){if(window._L){const a=lsG('alertas');a.unshift(d);lsS('alertas',a);return d;}const r=await sbFetch('POST','sicad_alertas',d);return Array.isArray(r)?r[0]:r;},
-  async del(id){if(window._L){lsS('alertas',lsG('alertas').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_alertas',null,`id=eq.${id}`);}
+  async get() {
+    if(window._L) return lsG('alertas');
+    try { return await q('GET','sicad_alertas',null,'order=criado_em.desc'); } catch(e) { return lsG('alertas'); }
+  },
+  async add(d) {
+    if(window._L){const a=lsG('alertas');a.unshift(d);lsS('alertas',a);return d;}
+    try { const r=await q('POST','sicad_alertas',d); return Array.isArray(r)?r[0]:r; } catch(e) { const a=lsG('alertas');a.unshift(d);lsS('alertas',a);return d; }
+  },
+  async del(id) {
+    if(window._L){lsS('alertas',lsG('alertas').filter(x=>x.id!==id));return;}
+    try { await q('DELETE','sicad_alertas',null,`id=eq.${id}`); } catch(e) { lsS('alertas',lsG('alertas').filter(x=>x.id!==id)); }
+  }
 };
 
 async function loadAlertas() {
