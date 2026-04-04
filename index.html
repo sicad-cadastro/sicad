@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#0a0c10">
 <title>SICAD — Sistema de Cadastro</title>
-<!-- Google Maps carregado dinamicamente -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -183,9 +182,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
 /* ── PHOTO UPLOAD ── */
 .photo-row{display:flex;gap:12px;margin-bottom:14px}
-.pdrop{flex:1;border:2px dashed var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90px;-webkit-tap-highlight-color:rgba(0,212,255,.1)}
+.pdrop{flex:1;border:2px dashed var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90px}
 .pdrop:active,.pdrop:hover{border-color:var(--accent)}
-.pdrop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0;width:100%;height:100%;z-index:10;-webkit-appearance:none}
+.pdrop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 .pd-ico{font-size:30px;margin-bottom:4px}
 .pd-lbl{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim)}
 .ppreview{width:100%;height:90px;object-fit:cover;border-radius:8px;display:none}
@@ -210,8 +209,6 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 @media(max-width:360px){.d-flds{grid-template-columns:1fr}}
 .d-fld label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px}
 .d-fld span{font-size:14px;color:var(--text);word-break:break-word}
-.d-section-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--accent);padding:14px 0 2px;font-weight:700;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
-.d-obs{grid-column:1/-1}
 .d-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .d-photo{width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
 .d-actions{display:flex;gap:10px;margin-top:18px}
@@ -243,40 +240,6 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .ov-msg{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px}
-.pdot{
-  width:46px;height:46px;border-radius:50%;
-  background:var(--surface);border:2px solid var(--border);
-  cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:transparent;
-  position:relative;
-}
-.pdot:active{transform:scale(.9)}
-.pdot.ativo{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700;font-size:13px}
-.pdot.ativo::after{content:attr(data-order);color:var(--bg);font-weight:700;font-size:13px}
-.link-card:hover{transform:translateY(-2px);filter:brightness(1.1)}.link-card:active{transform:scale(.98)}
-#mapaContainer{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative}
-@media(max-width:600px){#mapaContainer{height:320px}}
-
-.map-popup-name{font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
-.map-popup-nick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px}
-.map-popup-info{font-size:12px;color:var(--text-mid);line-height:1.6}
-.map-popup-btn{display:block;margin-top:10px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center}
-.map-legend{position:absolute;bottom:24px;left:12px;z-index:1000;background:rgba(18,21,28,.92);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;font-family:'IBM Plex Mono',monospace}
-.map-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:var(--text-mid)}
-.map-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.map-stat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.map-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex:1;min-width:100px;text-align:center}
-.map-stat-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1}
-.map-stat-l{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:2px}
-.fcard{background:var(--card);border:2px solid rgba(255,61,61,.4);border-radius:14px;padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-.fcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--danger)}
-.fcard:active{border-color:var(--danger);background:rgba(255,61,61,.08)}
-.fcard:hover{border-color:var(--danger);transform:translateY(-1px)}
-.perig-1{background:rgba(255,200,0,.15);border:1px solid rgba(255,200,0,.4);color:#ffd700}
-.perig-2{background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.4);color:var(--accent2)}
-.perig-3{background:rgba(255,61,61,.15);border:1px solid rgba(255,61,61,.4);color:var(--danger)}
-.perig-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px}
-@keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,61,61,.3)}50%{box-shadow:0 0 0 8px rgba(255,61,61,0)}}
 .ld{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle}
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
 .lightbox.on{display:flex}
@@ -287,10 +250,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 <body>
 
 <!-- OVERLAY CARREGANDO -->
-<div class="overlay" id="ov" style="display:none"><div class="spin"></div><p class="ov-msg" id="ovMsg">CONECTANDO...</p></div>
+<div class="overlay" id="ov"><div class="spin"></div><p class="ov-msg" id="ovMsg">CONECTANDO...</p></div>
 
 <!-- LOGIN -->
-<div id="loginWrap" style="display:flex">
+<div id="loginWrap" style="display:none">
   <div class="login-box">
     <div class="login-logobox">
       <div class="login-logo">SICAD</div>
@@ -311,16 +274,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   <!-- Header -->
   <div class="hdr">
     <div class="hdr-logo">SICAD <small>SISTEMA DE CADASTRO</small></div>
-    <div class="hdr-right" id="hdrRight">
-      <button id="backDashBtn" onclick="go('dashboard')" title="Voltar ao Dashboard" style="display:none;background:transparent;border:1px solid var(--border);color:var(--accent);width:auto;padding:0 12px;height:38px;border-radius:8px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px;cursor:pointer;display:none;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">⬅ DASHBOARD</button>
+    <div class="hdr-right">
       <div class="user-chip" id="userChip"></div>
-      <button class="btn-sair" onclick="logout()" title="Sair" style="width:auto;padding:0 12px;gap:6px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px;display:flex;align-items:center">↩ SAIR</button>
+      <button class="btn-sair" onclick="logout()" title="Sair">↩</button>
     </div>
   </div>
   <!-- Top nav (desktop) -->
   <div class="top-nav" id="topNav">
     <button class="tnav-btn active" onclick="go('dashboard')" data-p="dashboard">DASHBOARD</button>
-    <button class="tnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar">+ CADASTRAR</button>
+    <button class="tnav-btn" onclick="go('cadastrar')" data-p="cadastrar">+ CADASTRAR</button>
     <button class="tnav-btn" onclick="go('consultar')" data-p="consultar">CONSULTAR</button>
     <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios">USUÁRIOS</button>
   </div>
@@ -333,39 +295,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">CARREGANDO</div></div>
       </div>
-
-      <!-- FORAGIDOS CARD -->
-      <div onclick="go('foragidos')" style="cursor:pointer;background:rgba(255,61,61,.1);border:2px solid var(--danger);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s;animation:pulseRed 2s infinite" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-        <div style="width:60px;height:60px;background:rgba(255,61,61,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🚨</div>
-        <div style="flex:1">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 16px rgba(255,61,61,.5)">FORAGIDOS</div>
-          <div style="font-size:12px;color:#ff8080;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">⚠️ ALERTAS E LISTA OFICIAL PPDF</div>
-        </div>
-        <div style="color:var(--danger);font-size:28px;font-weight:700">›</div>
-      </div>
-
-      <!-- MAPA CARD -->
-      <div onclick="go('mapa')" style="cursor:pointer;background:rgba(0,212,255,.06);border:2px solid rgba(0,212,255,.3);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-        <div style="width:60px;height:60px;background:rgba(0,212,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🗺️</div>
-        <div style="flex:1">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent)">MAPA INTERATIVO</div>
-          <div style="font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">MARCADORES POR BAIRRO — BRAZLÂNDIA DF</div>
-        </div>
-        <div style="color:var(--accent);font-size:28px;font-weight:700">›</div>
-      </div>
-
-      <!-- SITES DE PESQUISA CARD -->
-      <div onclick="go('pesquisa')" style="cursor:pointer;background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-        <div style="width:60px;height:60px;background:rgba(255,107,53,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">🔗</div>
-        <div style="flex:1">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
-          <div style="font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;margin-top:2px">BNMP · NEXUS · GENESIS · FORAGIDOS</div>
-        </div>
-        <div style="color:var(--accent2);font-size:28px;font-weight:700">›</div>
-      </div>
-
-      <!-- ÚLTIMOS CADASTRADOS (compacto) -->
-      <div class="sec-title" style="margin-top:8px">ÚLTIMOS CADASTRADOS</div>
+      <div class="sec-title">ÚLTIMOS CADASTRADOS</div>
       <div id="recentList"></div>
     </div>
 
@@ -376,18 +306,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         <!-- Foto rosto -->
         <div class="fg">
           <label>FOTO DO ROSTO</label>
-          <div id="facePreviewWrap" style="display:none;margin-bottom:10px;position:relative">
-            <img id="facePreview" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:2px solid var(--accent);display:block">
-            <button type="button" onclick="faceRem()" style="position:absolute;top:-8px;right:-8px;background:var(--danger);border:none;border-radius:50%;width:26px;height:26px;color:white;font-size:14px;cursor:pointer;font-weight:700">✕</button>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap" id="faceBtnsWrap">
-            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
-              <input type="file" id="faceFileGal" accept="image/*" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+          <div class="photo-row">
+            <div class="pdrop" onclick="document.getElementById('faceFile').click()">
+              <input type="file" id="faceFile" accept="image/*" onchange="onFaceFile(this)">
+              <img class="ppreview" id="facePreview">
+              <div id="faceDrop"><div class="pd-ico">👤</div><div class="pd-lbl">TOQUE PARA FOTO</div></div>
             </div>
-            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
-              <input type="file" id="faceFileCam" accept="image/*" capture="user" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            <div class="pcam-col">
+              <button class="btn btn-outline btn-sm" onclick="camOpen('face')">📷 CÂMERA</button>
+              <button class="btn btn-danger btn-sm" id="faceRemBtn" onclick="faceRem()" style="display:none">🗑 REMOVER</button>
             </div>
           </div>
           <div class="camwrap" id="faceCam"><video id="faceVid" autoplay playsinline muted></video></div>
@@ -397,176 +324,32 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           </div>
         </div>
 
-
-        <!-- Alerta Faccionado -->
-        <div id="faccionadoBanner" onclick="toggleFaccionado()" style="cursor:pointer;border-radius:12px;border:2px solid var(--border);padding:14px 18px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;transition:all .3s;background:var(--surface2)" title="Clique para marcar como faccionado">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span id="faccionadoIcon" style="font-size:22px">⚠️</span>
-            <div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text)" id="faccionadoLabel">FACCIONADO</div>
-              <div style="font-size:11px;color:var(--text-dim);margin-top:1px" id="faccionadoSub">Clique para ativar o alerta</div>
-            </div>
-          </div>
-          <div id="faccionadoToggle" style="width:52px;height:28px;border-radius:14px;background:var(--surface3,#333);border:2px solid var(--border);transition:all .3s;position:relative;flex-shrink:0">
-            <div id="faccionadoThumb" style="width:20px;height:20px;border-radius:50%;background:#666;position:absolute;top:2px;left:2px;transition:all .3s"></div>
-          </div>
-        </div>
-        <!-- Facção nome (aparece só quando ativado) -->
-        <div id="faccionadoNomeWrap" style="display:none;margin-bottom:4px">
-          <input type="text" id="fFaccao" placeholder="Nome da facção / grupo / organização" autocomplete="off" style="width:100%;background:rgba(255,50,50,.08);border:2px solid rgba(255,80,80,.4);border-radius:10px;padding:12px 14px;font-size:14px;color:#ff6b6b;outline:none;font-family:'IBM Plex Sans',sans-serif;box-sizing:border-box">
-        </div>
-
         <div class="fgrid">
           <div class="fg"><label>Nome Completo *</label><input type="text" id="fNome" placeholder="Nome completo" autocomplete="off"></div>
           <div class="fg"><label>Apelido / Alcunha</label><input type="text" id="fApelido" placeholder="Apelido" autocomplete="off"></div>
           <div class="fg"><label>Nome da Mãe</label><input type="text" id="fMae" placeholder="Nome da mãe" autocomplete="off"></div>
           <div class="fg"><label>Data de Nascimento</label><input type="date" id="fNasc"></div>
           <div class="fg"><label>CPF</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off"></div>
-          <div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="fTelefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" autocomplete="off"></div>
           <div class="fg"><label>Endereço</label><input type="text" id="fEnd" placeholder="Rua, Nº" autocomplete="off"></div>
           <div class="fg"><label>Quadra</label><input type="text" id="fQuadra" placeholder="Quadra / Setor" autocomplete="off"></div>
-          <div class="fg"><label>Bairro</label>
-<select id="fBairro">
-  <option value="">Selecione o bairro...</option>
-  <option value="SETOR NORTE">SETOR NORTE</option>
-  <option value="SETOR SUL">SETOR SUL</option>
-  <option value="VILA SAO JOSE">VILA SAO JOSE</option>
-  <option value="VEREDAS">VEREDAS</option>
-  <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
-  <option value="MARANATA">MARANATA</option>
-  <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
-  <option value="VENDINHA">VENDINHA</option>
-  <option value="PADRE BERNARDO">PADRE BERNARDO</option>
-  <option value="AGUAS LINDAS">AGUAS LINDAS</option>
-  <option value="PADRE LUCIO">PADRE LUCIO</option>
-  <option value="OUTROS">OUTROS</option>
-</select></div>
-        </div>
-
-        <!-- Redes Sociais -->
-        <div class="fg" style="margin-top:4px">
-          <label>📱 REDES SOCIAIS</label>
-          <div style="display:flex;flex-direction:column;gap:10px">
-
-            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 1</div>
-                <input type="text" id="fInsta1" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
-              </div>
-            </div>
-
-            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 2</div>
-                <input type="text" id="fInsta2" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
-              </div>
-            </div>
-
-            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">👤</div>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">FACEBOOK</div>
-                <input type="text" id="fFacebook" placeholder="nome.usuario ou link" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Senha do Celular -->
-        <div class="fg" style="margin-top:4px">
-          <label>SENHA DO CELULAR DA PESSOA</label>
-          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">🔢 NÚMEROS</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">🔤 LETRAS+NÚM</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">⬛ PADRÃO</button>
-          </div>
-
-          <!-- Numérica -->
-          <div id="senhaNumeros" style="display:none">
-            <input type="text" id="fSenhaNum" placeholder="Ex: 1234 ou 123456" inputmode="numeric" maxlength="10" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:20px;font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:6px;text-align:center;outline:none">
-          </div>
-
-          <!-- Alfanumérica -->
-          <div id="senhaAlfanumerico" style="display:none">
-            <input type="text" id="fSenhaAlf" placeholder="Ex: abc123 ou Maria@1" maxlength="20" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:3px;text-align:center;outline:none">
-          </div>
-
-          <!-- Padrão desenho 3x3 -->
-          <div id="senhaPadrao" style="display:none">
-            <p style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);margin-bottom:10px;letter-spacing:1px">DESENHE O PADRÃO DE DESBLOQUEIO:</p>
-            <div style="display:flex;justify-content:center">
-              <div id="patternGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:var(--surface2);padding:20px;border-radius:14px;border:1px solid var(--border);width:220px">
-                <div class="pdot" data-n="1" onclick="dotClick(1)"></div>
-                <div class="pdot" data-n="2" onclick="dotClick(2)"></div>
-                <div class="pdot" data-n="3" onclick="dotClick(3)"></div>
-                <div class="pdot" data-n="4" onclick="dotClick(4)"></div>
-                <div class="pdot" data-n="5" onclick="dotClick(5)"></div>
-                <div class="pdot" data-n="6" onclick="dotClick(6)"></div>
-                <div class="pdot" data-n="7" onclick="dotClick(7)"></div>
-                <div class="pdot" data-n="8" onclick="dotClick(8)"></div>
-                <div class="pdot" data-n="9" onclick="dotClick(9)"></div>
-              </div>
-            </div>
-            <div style="text-align:center;margin-top:12px">
-              <span id="padSequencia" style="font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--accent);letter-spacing:6px">—</span>
-            </div>
-            <div style="text-align:center;margin-top:8px">
-              <button type="button" class="btn btn-outline btn-sm" onclick="clearPattern()">↺ LIMPAR PADRÃO</button>
-            </div>
-          </div>
-
-          <div id="senhaVazia" style="padding:14px;text-align:center;font-size:12px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">
-            ↑ SELECIONE O TIPO DE SENHA ACIMA
-          </div>
+          <div class="fg"><label>Bairro</label><input type="text" id="fBairro" placeholder="Bairro" autocomplete="off"></div>
         </div>
 
         <!-- Tatuagens -->
         <div class="fg">
           <label>FOTOS DE TATUAGENS</label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-            <div style="flex:1;min-width:130px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
-              <input type="file" id="tatFileGal" accept="image/*" multiple onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
-            </div>
-            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
-              <input type="file" id="tatFileCam" accept="image/*" capture="environment" onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
-            </div>
+          <div class="pdrop" onclick="document.getElementById('tatFile').click()" style="flex-direction:row;gap:12px;padding:14px;justify-content:flex-start">
+            <input type="file" id="tatFile" accept="image/*" multiple onchange="onTatFiles(this)">
+            <div class="pd-ico" style="font-size:24px">🖼</div>
+            <div style="text-align:left"><div class="pd-lbl">ADICIONAR FOTOS DE TATUAGENS</div><div style="font-size:10px;color:var(--text-dim);opacity:.7;margin-top:2px">Múltiplas fotos permitidas</div></div>
           </div>
+          <button class="btn btn-outline btn-sm btn-full" onclick="camOpen('tat')" style="margin-top:8px">📷 CÂMERA TATUAGEM</button>
           <div class="thumbs" id="tatThumbs"></div>
           <div class="camwrap" id="tatCam"><video id="tatVid" autoplay playsinline muted></video></div>
           <div class="cam-btns" id="tatCamBtns" style="display:none">
             <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">📸 CAPTURAR</button>
             <button class="btn btn-outline btn-sm" onclick="camClose('tat')">✕ CANCELAR</button>
           </div>
-        </div>
-
-        <!-- Veículos -->
-        <div class="fg" style="margin-top:4px">
-          <label>🚗 VEÍCULOS VINCULADOS</label>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;gap:8px;align-items:center">
-              <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">1</span>
-              <input type="text" id="fVeiculo1" placeholder="Ex: Moto Honda CG 160 — Preta — ABC-1234" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">2</span>
-              <input type="text" id="fVeiculo2" placeholder="Ex: Carro VW Gol — Branco — DEF-5678" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">3</span>
-              <input type="text" id="fVeiculo3" placeholder="Ex: Bicicleta — Azul" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
-          </div>
-        </div>
-
-        <!-- Observações -->
-        <div class="fg" style="margin-top:4px">
-          <label>📝 OBSERVAÇÕES</label>
-          <textarea id="fObs" placeholder="Informações adicionais, histórico, comportamento, vínculos, etc..." rows="4" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif;resize:vertical;min-height:100px;line-height:1.5;box-sizing:border-box"></textarea>
         </div>
 
         <div class="row-btns" style="margin-top:8px">
@@ -585,21 +368,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <input type="text" id="sNome" placeholder="Nome, Apelido ou Mãe..." oninput="filterList()" autocomplete="off">
         </div>
         <div class="s-filters">
-          <select id="sBairro" onchange="filterList()" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;appearance:none;flex:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7898' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px">
-  <option value="">Todos os bairros</option>
-  <option value="SETOR NORTE">SETOR NORTE</option>
-  <option value="SETOR SUL">SETOR SUL</option>
-  <option value="VILA SAO JOSE">VILA SAO JOSE</option>
-  <option value="VEREDAS">VEREDAS</option>
-  <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
-  <option value="MARANATA">MARANATA</option>
-  <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
-  <option value="VENDINHA">VENDINHA</option>
-  <option value="PADRE BERNARDO">PADRE BERNARDO</option>
-  <option value="AGUAS LINDAS">AGUAS LINDAS</option>
-  <option value="PADRE LUCIO">PADRE LUCIO</option>
-  <option value="OUTROS">OUTROS</option>
-</select>
+          <input type="text" id="sBairro" placeholder="Bairro" oninput="filterList()" autocomplete="off">
           <input type="text" id="sQuadra" placeholder="Quadra" oninput="filterList()" autocomplete="off" style="max-width:110px">
           <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="min-width:44px;padding:10px">✕</button>
         </div>
@@ -619,155 +388,12 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       </div>
     </div>
 
-
-    <!-- MAPA -->
-    <div class="page" id="page-mapa">
-      <div class="sec-title">🗺️ MAPA — BRAZLÂNDIA DF</div>
-
-      <div class="map-stat-bar" id="mapaStats">
-        <div class="map-stat"><div class="map-stat-n" id="msTot">—</div><div class="map-stat-l">COM ENDEREÇO</div></div>
-        <div class="map-stat"><div class="map-stat-n" id="msBairros">—</div><div class="map-stat-l">BAIRROS</div></div>
-        <div class="map-stat"><div class="map-stat-n" id="msAlrt">—</div><div class="map-stat-l">ALERTAS</div></div>
-      </div>
-
-      <!-- Filtros -->
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-        <select id="mapFiltBairro" onchange="applyMapFilter()" style="flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none">
-          <option value="">Todos os bairros</option>
-          <option value="SETOR NORTE">SETOR NORTE</option>
-          <option value="SETOR SUL">SETOR SUL</option>
-          <option value="VILA SAO JOSE">VILA SAO JOSE</option>
-          <option value="VEREDAS">VEREDAS</option>
-          <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
-          <option value="MARANATA">MARANATA</option>
-          <option value="CAPÃO DA ONÇA">CAPÃO DA ONÇA</option>
-          <option value="VENDINHA">VENDINHA</option>
-          <option value="PADRE BERNARDO">PADRE BERNARDO</option>
-          <option value="AGUAS LINDAS">AGUAS LINDAS</option>
-          <option value="PADRE LUCIO">PADRE LUCIO</option>
-          <option value="OUTROS">OUTROS</option>
-        </select>
-        <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
-        <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px">🎯</button>
-      </div>
-
-      <div style="position:relative">
-        <div id="mapaContainer" style="border-radius:16px;overflow:hidden;border:1px solid var(--border)"></div>
-        <div class="map-legend" id="mapaLegend"></div>
-      </div>
-
-      <div style="margin-top:12px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:center">
-        🗺️ Google Maps · Clique nos marcadores para ver a ficha
-      </div>
-    </div>
-
-    <!-- FORAGIDOS -->
-    <div class="page" id="page-foragidos">
-
-      <!-- Banner alerta -->
-      <div style="background:rgba(255,61,61,.12);border:2px solid var(--danger);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;animation:pulseRed 2s infinite">
-        <div style="font-size:36px;margin-bottom:8px">🚨</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">ATENÇÃO — FORAGIDOS</div>
-        <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">⚠️ VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
-        <a href="https://seape.df.gov.br/foragidos/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--danger);color:white;padding:13px 24px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 20px rgba(255,61,61,.5)">
-          🔴 LISTA OFICIAL DE FORAGIDOS PPDF
-        </a>
-      </div>
-
-      <!-- Tabs internas -->
-      <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">🚨 ALERTAS CADASTRADOS</button>
-        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">👥 NO SISTEMA</button>
-      </div>
-
-      <!-- Tab alertas -->
-      <div id="tabAlertas">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-          <div class="sec-title" style="color:var(--danger);margin-bottom:0">ALERTAS ATIVOS</div>
-          <button class="btn btn-danger btn-sm" onclick="openAlertaModal()">+ NOVO ALERTA</button>
-        </div>
-        <div id="alertasList"></div>
-        <div id="alertasEmpty" class="empty" style="display:none">
-          <div class="ei">🚨</div>
-          <p>Nenhum alerta cadastrado.<br>Clique em <strong>+ NOVO ALERTA</strong> para adicionar.</p>
-        </div>
-      </div>
-
-      <!-- Tab sistema -->
-      <div id="tabSistema" style="display:none">
-        <div class="sec-title" style="color:var(--danger)">CADASTRADOS NO SISTEMA</div>
-        <p style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:14px">Consulte e verifique na lista oficial de foragidos</p>
-        <div class="search-box">
-          <div class="s-main">
-            <span class="s-ico">🔍</span>
-            <input type="text" id="sForagido" placeholder="Buscar nome no sistema..." oninput="filterForagidos()" autocomplete="off">
-          </div>
-        </div>
-        <div class="pgrid" id="foragidoGrid"></div>
-        <div id="foragidoEmpty" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum resultado.</p></div>
-      </div>
-
-    </div>
-
-    <!-- SITES DE PESQUISA -->
-    <div class="page" id="page-pesquisa">
-      <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px">🔗</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
-        <div style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">ACESSO RÁPIDO AOS SISTEMAS</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:14px">
-
-        <a href="https://portalbnmp.cnj.jus.br/#/captcha/" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a6fa8;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(26,111,168,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">⚖️</div>
-          <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4db8ff">BNMP</div>
-            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Banco Nacional de Mandados de Prisão — CNJ</div>
-            <div style="font-size:10px;color:#1a6fa8;font-family:'IBM Plex Mono',monospace;margin-top:4px">portalbnmp.cnj.jus.br</div>
-          </div>
-          <div style="color:var(--text-dim);font-size:20px">›</div>
-        </a>
-
-        <a href="https://auth2.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=nexus-pmdf&redirect_uri=https%3A%2F%2Fnexus.pm.df.gov.br%2F&state=9419fdaa-0d42-4dc0-882b-cf5740f279fa&response_mode=fragment&response_type=code&scope=openid&nonce=c9fe45ab-80e1-4efe-82e3-db128596162f&code_challenge=x7U2mILgus8ex_hk6fCyXzlHNn8BUKNBjNtA4EQgihk&code_challenge_method=S256" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a5c1a;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(26,92,26,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🛡️</div>
-          <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4dff88">NEXUS</div>
-            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema NEXUS — Polícia Militar DF</div>
-            <div style="font-size:10px;color:#1a5c1a;font-family:'IBM Plex Mono',monospace;margin-top:4px">nexus.pm.df.gov.br</div>
-          </div>
-          <div style="color:var(--text-dim);font-size:20px">›</div>
-        </a>
-
-        <a href="https://auth.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=genesis-app&redirect_uri=https%3A%2F%2Fgenesis.pm.df.gov.br%2Fsignin-oidc&response_type=code&scope=openid%20profile&code_challenge=frNtMDKzlAU5o5yTcrUF3aJronRcQmrIRI-RGYMdSQA&code_challenge_method=S256&response_mode=form_post&nonce=639082571488975056.ZmM1YmYwM2MtODY3YS00YmEyLWJhMzktZDYyYTUxMjk5ZTRhMzM3MTk2YTItZjczOC00YmI0LTljNDctYmY2YjliYzg5YmVj&state=CfDJ8BJm6v3R8WRGuMVFriNhiT2LKbhG6holwOrCoDvOrxrbNkgg2mdInbien3dVEEFS4S8HVuQrYw2gG-be5gAM0IDeOomDsaOtvk0D11sZXJ0NEeoiQtT8-NBJ-fj6p0puQcTBl9HUPayzPgUFLYszN16Zk4o9rGnpILD_IpqG-GykS8X2H_WDLMyHFW8gz-1TixlsTOg4YJ5r5TwuYYRWH2S9eYkzWXUf1L13C_42c1RPfn5C590UEKvFvTIdjDU4ey8TlUmeKOMeoK96QAUz9L5K5daT9Cwu9t8j1U4oPBFxiYNZu6bi6CenbDOPDeWNhngVfE-AGfUjsKaJQUyJy9ah5OWIHSZxODKg9CjX5hUWs5u1Yrkb80lTVY-S4UCLkg&x-client-SKU=ID_NET8_0&x-client-ver=7.5.1.0" target="_blank" class="link-card" style="background:var(--card);border:1px solid #4a1a6e;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(74,26,110,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🔮</div>
-          <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#c084fc">GENESIS</div>
-            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema Genesis — Polícia Militar DF</div>
-            <div style="font-size:10px;color:#4a1a6e;font-family:'IBM Plex Mono',monospace;margin-top:4px">genesis.pm.df.gov.br</div>
-          </div>
-          <div style="color:var(--text-dim);font-size:20px">›</div>
-        </a>
-
-        <a href="https://seape.df.gov.br/foragidos/" target="_blank" class="link-card" style="background:var(--card);border:1px solid rgba(255,61,61,.4);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(255,61,61,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🚨</div>
-          <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--danger)">FORAGIDOS PPDF</div>
-            <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Lista oficial de foragidos — SEAPE DF</div>
-            <div style="font-size:10px;color:rgba(255,61,61,.6);font-family:'IBM Plex Mono',monospace;margin-top:4px">seape.df.gov.br/foragidos</div>
-          </div>
-          <div style="color:var(--text-dim);font-size:20px">›</div>
-        </a>
-
-      </div>
-    </div>
-
   </div><!-- /content -->
 
   <!-- Bottom nav (mobile) -->
   <div class="bottom-nav">
     <button class="bnav-btn active" onclick="go('dashboard')" data-p="dashboard"><span class="ni">📊</span>DASHBOARD</button>
-    <button class="bnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar"><span class="ni">➕</span>CADASTRAR</button>
+    <button class="bnav-btn" onclick="go('cadastrar')" data-p="cadastrar"><span class="ni">➕</span>CADASTRAR</button>
     <button class="bnav-btn" onclick="go('consultar')" data-p="consultar"><span class="ni">🔍</span>CONSULTAR</button>
     <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios"><span class="ni">👥</span>USUÁRIOS</button>
   </div>
@@ -783,69 +409,6 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         <div class="mclose" onclick="closePersonModal()">✕</div>
       </div>
       <div id="personBody"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL ALERTA FORAGIDO -->
-<div class="modal-overlay" id="alertaModal">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mi">
-      <div class="mhdr">
-        <div class="mtitle" id="alertaModalTitle">🚨 NOVO ALERTA</div>
-        <div class="mclose" onclick="closeAlertaModal()">✕</div>
-      </div>
-
-      <!-- Tipo de alerta -->
-      <div class="fg">
-        <label>TIPO DE ALERTA</label>
-        <div style="display:flex;gap:8px;margin-bottom:4px">
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">👥 PESSOA DO SISTEMA</button>
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">➕ NOVO FORAGIDO</button>
-        </div>
-      </div>
-
-      <!-- Selecionar pessoa existente -->
-      <div id="aExistente" style="display:none">
-        <div class="fg">
-          <label>BUSCAR PESSOA CADASTRADA</label>
-          <input type="text" id="aBuscaPessoa" placeholder="Digite o nome..." oninput="buscaPessoaAlerta()" autocomplete="off">
-          <div id="aBuscaResultados" style="margin-top:8px;max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;display:none"></div>
-          <div id="aPessoaSelecionada" style="margin-top:8px;display:none"></div>
-        </div>
-      </div>
-
-      <!-- Novo foragido -->
-      <div id="aNovoFora" style="display:none">
-        <div class="fg"><label>NOME COMPLETO *</label><input type="text" id="aNovoNome" placeholder="Nome do foragido" autocomplete="off"></div>
-        <div class="fg">
-          <label>FOTO</label>
-          <div class="pdrop" style="min-height:80px">
-            <input type="file" id="aFotoFile" accept="image/*" onchange="onAlertaFoto(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10">
-            <img class="ppreview" id="aFotoPreview">
-            <div id="aFotoDrop"><div class="pd-ico">📷</div><div class="pd-lbl">ADICIONAR FOTO</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Campos comuns -->
-      <div id="aCamposComuns" style="display:none">
-        <div class="fg">
-          <label>NÍVEL DE PERICULOSIDADE</label>
-          <div style="display:flex;gap:8px">
-            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">⚠️ MÉDIO</button>
-            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">🔶 ALTO</button>
-            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">🔴 EXTREMO</button>
-          </div>
-        </div>
-        <div class="fg"><label>OBSERVAÇÕES</label><input type="text" id="aObs" placeholder="Informações relevantes..." autocomplete="off"></div>
-      </div>
-
-      <div class="row-btns" style="margin-top:8px">
-        <button class="btn btn-outline" onclick="closeAlertaModal()">CANCELAR</button>
-        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">🚨 SALVAR ALERTA</button>
-      </div>
     </div>
   </div>
 </div>
@@ -882,20 +445,20 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-// ── FIREBASE CONFIG ──
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, limit, or } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+<script>
+// ── SUPABASE ──
+const SB = 'https://vkrkirientpljlxstafm.supabase.co';
+const KEY = 'sb_publishable_TwGmCKZpIJyysIWqjI0MQw_gv2A8uvM';
 
-const _fbApp = initializeApp({
-  apiKey: "AIzaSyDPUwEdxkxF45Ce-AYTgKnz0JX6bpl_oTo",
-  authDomain: "sicad-db-62f47.firebaseapp.com",
-  projectId: "sicad-db-62f47",
-  storageBucket: "sicad-db-62f47.firebasestorage.app",
-  messagingSenderId: "714984967969",
-  appId: "1:714984967969:web:d58120da35cbe2b517b860"
-});
-const _db = getFirestore(_fbApp);
+async function q(method, tbl, body, qs) {
+  const r = await fetch(`${SB}/rest/v1/${tbl}${qs?'?'+qs:''}`, {
+    method, headers: {'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':'return=representation'},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const t = await r.text();
+  if (!r.ok) { let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{} throw new Error(m); }
+  try{return JSON.parse(t);}catch{return[];}
+}
 
 // ── STATE ──
 let CU=null, allP=[], faceD=null, tatD=[], camStr=null, editId=null, editMode=false;
@@ -904,120 +467,41 @@ let CU=null, allP=[], faceD=null, tatD=[], camStr=null, editId=null, editMode=fa
 const showOv=m=>{if(m)document.getElementById('ovMsg').textContent=m;document.getElementById('ov').classList.add('on');};
 const hideOv=()=>document.getElementById('ov').classList.remove('on');
 
-// ── LOCAL STORAGE (fallback offline) ──
+// ── LOCAL STORAGE ──
 const lsG=k=>{try{return JSON.parse(localStorage.getItem('sicad_'+k)||'[]');}catch{return[];}};
 const lsS=(k,v)=>localStorage.setItem('sicad_'+k,JSON.stringify(v));
 
 // ── INIT ──
 async function init() {
-  showOv('CONECTANDO...');
+  showOv('CONECTANDO AO BANCO DE DADOS...');
   try {
-    // Testa conexão com Firebase
-    const testRef = collection(_db, 'sicad_users');
-    await getDocs(query(testRef, limit(1)));
-    document.getElementById('modeLbl').textContent='🔥 FIREBASE CONECTADO';
-    window._L = false;
+    await q('GET','sicad_users',null,'limit=1');
+    document.getElementById('modeLbl').textContent='☁️ SUPABASE CONECTADO';
   } catch(e) {
-    console.warn('[SICAD] Firebase offline, modo local:', e.message);
-    window._L = true;
-    if(!lsG('u').length) lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
+    window._L=true;
+    if(!lsG('u').length)lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
     document.getElementById('modeLbl').textContent='📱 MODO LOCAL';
   }
   hideOv();
-}
-
-// ── HELPERS ──
-function _docToObj(snap) {
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-}
-function _snapToArr(snap) {
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  document.getElementById('loginWrap').style.display='flex';
 }
 
 // ── DB ──
-const DB = {
-  // USUÁRIOS
-  async getUsers() {
-    if(window._L) return lsG('u');
-    const snap = await getDocs(query(collection(_db,'sicad_users'), orderBy('criado_em','asc')));
-    return _snapToArr(snap);
+const DB={
+  async getUsers(){if(window._L)return lsG('u');return await q('GET','sicad_users',null,'order=criado_em.asc');},
+  async findUser(u,s){if(window._L)return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;const r=await q('GET','sicad_users',null,`usuario=eq.${enc(u)}&senha=eq.${enc(s)}`);return r[0]||null;},
+  async addUser(d){if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}const r=await q('POST','sicad_users',d);return Array.isArray(r)?r[0]:r;},
+  async updUser(id,d){if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}return await q('PATCH','sicad_users',d,`id=eq.${id}`);},
+  async delUser(id){if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_users',null,`id=eq.${id}`);},
+  async getPersons(f={}){
+    if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
+    let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
+    return await q('GET','sicad_pessoas',null,qs);
   },
-  async findUser(u, s) {
-    if(window._L) return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;
-    const snap = await getDocs(query(collection(_db,'sicad_users'), where('usuario','==',u), where('senha','==',s)));
-    return snap.empty ? null : { id: snap.docs[0].id, ...snap.docs[0].data() };
-  },
-  async addUser(d) {
-    if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}
-    await setDoc(doc(_db,'sicad_users', d.id), d);
-    return d;
-  },
-  async updUser(id, d) {
-    if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}
-    await updateDoc(doc(_db,'sicad_users', id), d);
-    return d;
-  },
-  async delUser(id) {
-    if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}
-    await deleteDoc(doc(_db,'sicad_users', id));
-  },
-
-  // PESSOAS
-  async getPersons(f={}) {
-    if(window._L){
-      let l=lsG('p');
-      if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));
-      if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));
-      if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));
-      return[...l].reverse();
-    }
-    // Firebase: busca geral ordenada por data
-    const snap = await getDocs(query(collection(_db,'sicad_pessoas'), orderBy('criado_em','desc')));
-    let results = _snapToArr(snap);
-    // Filtros client-side (Firestore free não suporta OR queries complexas)
-    if(f.n){const n=f.n.toLowerCase();results=results.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(n)));}
-    if(f.b){const b=f.b.toLowerCase();results=results.filter(p=>(p.bairro||'').toLowerCase().includes(b));}
-    if(f.q){const q2=f.q.toLowerCase();results=results.filter(p=>(p.quadra||'').toLowerCase().includes(q2));}
-    return results;
-  },
-  async getPerson(id) {
-    if(window._L) return lsG('p').find(x=>x.id===id)||null;
-    const snap = await getDoc(doc(_db,'sicad_pessoas', id));
-    return _docToObj(snap);
-  },
-  async addPerson(d) {
-    if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}
-    await setDoc(doc(_db,'sicad_pessoas', d.id), d);
-    return d;
-  },
-  async updPerson(id, d) {
-    if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}
-    // Remove undefined values
-    const clean = {};
-    Object.keys(d).forEach(k=>{ if(d[k]!==undefined) clean[k]=d[k]; });
-    await updateDoc(doc(_db,'sicad_pessoas', id), clean);
-    return {ok:true};
-  },
-  async delPerson(id) {
-    if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}
-    await deleteDoc(doc(_db,'sicad_pessoas', id));
-  },
-
-  // ALERTAS
-  async getAlertas() {
-    if(window._L) return lsG('a');
-    const snap = await getDocs(query(collection(_db,'sicad_alertas'), orderBy('criado_em','desc')));
-    return _snapToArr(snap);
-  },
-  async addAlerta(d) {
-    if(window._L){const a=lsG('a');a.push(d);lsS('a',a);return d;}
-    await setDoc(doc(_db,'sicad_alertas', d.id), d);
-    return d;
-  },
-  async delAlerta(id) {
-    if(window._L){lsS('a',lsG('a').filter(x=>x.id!==id));return;}
-    await deleteDoc(doc(_db,'sicad_alertas', id));
-  }
+  async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await q('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
+  async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await q('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
+  async updPerson(id,d){if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}return await q('PATCH','sicad_pessoas',d,`id=eq.${id}`);},
+  async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await q('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
 };
 
 // ── LOGIN ──
@@ -1052,14 +536,9 @@ function go(n){
   document.getElementById('page-'+n).classList.add('active');
   document.querySelectorAll(`[data-p="${n}"]`).forEach(b=>b.classList.add('active'));
   window.scrollTo&&window.scrollTo(0,0);
-  // Mostrar botão voltar quando não estiver no dashboard
-  const backBtn = document.getElementById('backDashBtn');
-  if(backBtn) backBtn.style.display = n!=='dashboard' ? 'flex' : 'none';
   if(n==='dashboard')loadDash();
   if(n==='consultar')loadPersons();
   if(n==='usuarios')loadUsers();
-  if(n==='foragidos'){loadAlertas();showForagidoTab('alertas');}
-  if(n==='mapa')loadMapa();
 }
 
 // ── DASHBOARD ──
@@ -1083,16 +562,14 @@ async function loadDash(){
 }
 
 function pCard(p){
-  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}">👤</div>`;
-  const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">🚨 FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
-  const cardStyle = p.faccionado?'border-left:3px solid #ff4444;background:linear-gradient(90deg,rgba(255,30,30,.06) 0%,var(--surface) 60%)':'';
-  return `<div class="pcard" onclick="viewPerson('${p.id}')" style="${cardStyle}">
+  const av=p.foto?`<div class="pavatar"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar">👤</div>`;
+  return `<div class="pcard" onclick="viewPerson('${p.id}')">
     ${av}
     <div class="pinfo">
       <div class="pname">${esc(p.nome)}</div>
       <div class="pnick">${p.apelido?esc(p.apelido):'—'}</div>
       <div class="pmeta"><strong>MÃE:</strong> ${esc(p.mae||'—')}</div>
-      <div>${faccBadge} ${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
+      <div>${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
     </div>
     <div class="parrow">›</div>
   </div>`;
@@ -1112,7 +589,7 @@ function renderList(l){
 }
 function filterList(){
   const n=document.getElementById('sNome').value.trim().toLowerCase();
-  const b=document.getElementById('sBairro').value.toLowerCase();
+  const b=document.getElementById('sBairro').value.trim().toLowerCase();
   const qq=document.getElementById('sQuadra').value.trim().toLowerCase();
   let l=allP;
   if(n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(n)));
@@ -1129,62 +606,39 @@ async function savePerson(){
   const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> SALVANDO...';
   try{
     const now=new Date().toISOString();
-    // Coleta senha antes de qualquer outra operação
-    const _ts = _tipoSenha || window._tipoSenha || null;
-    let _sc = null;
-    if (_ts === 'numeros') _sc = document.getElementById('fSenhaNum').value.trim() || null;
-    else if (_ts === 'alfanumerico') _sc = document.getElementById('fSenhaAlf').value.trim() || null;
-    else if (_ts === 'padrao') _sc = _pattern.length ? _pattern.join('') : null;
-
-    const campos={
+    const d={
+      id:editMode?editId:'p'+Date.now(),
       nome, mae:gv('fMae'), apelido:gv('fApelido'), nascimento:gv('fNasc'),
       cpf:gv('fCpf'), endereco:gv('fEnd'), quadra:gv('fQuadra'), bairro:gv('fBairro'),
-      telefone:gv('fTelefone'), insta1:gv('fInsta1'), insta2:gv('fInsta2'), facebook:gv('fFacebook'),
-      veiculo1:gv('fVeiculo1'), veiculo2:gv('fVeiculo2'), veiculo3:gv('fVeiculo3'),
-      faccionado:_faccionado||false, faccao:_faccionado?(gv('fFaccao')||null):null,
-      observacoes:document.getElementById('fObs').value.trim()||null,
-      tipo_senha:_ts, senha_celular:_sc,
       foto:faceD||null, tatuagens:JSON.stringify(tatD),
-      atualizado_em:now
+      criado_por:CU.usuario||'admin', atualizado_em:now
     };
-    console.log('[SICAD] Salvando campos:', JSON.stringify({...campos, foto:'[foto]', tatuagens:'[tats]'}));
-    if(editMode && editId){
-      const idParaEditar = editId;
-      if(!idParaEditar){
-        editMode=false;
-      }
-      console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
-      await DB.updPerson(idParaEditar, campos);
-      allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
-      toast('Atualizado! ✅','success');
-    }
-    if(!editMode){
-      const d={id:'p'+Date.now(), ...campos, criado_por:CU.usuario||'admin', criado_em:now};
-      await DB.addPerson(d);
-      allP.unshift(d);
-      toast('Cadastro salvo! ✅','success');
-    }
-    cadClear();renderList(allP);go('consultar');
+    if(!editMode)d.criado_em=now;
+    if(editMode){await DB.updPerson(editId,d);toast('Atualizado! ✅','success');}
+    else{await DB.addPerson(d);toast('Cadastro salvo! ✅','success');}
+    cadClear();go('consultar');
   }catch(e){toast('Erro: '+e.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='💾 SALVAR CADASTRO';}
 }
 function gv(id){return document.getElementById(id).value.trim()||null;}
 
 function cadClear(){
-  ['fNome','fMae','fApelido','fNasc','fCpf','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fObs').value='';
-  _faccionado=false;updateFaccionadoBanner();
-  document.getElementById('fFaccao').value='';
-  clearPattern();setTipoSenha(null);
+  ['fNome','fMae','fApelido','fNasc','fCpf','fEnd','fQuadra','fBairro'].forEach(id=>document.getElementById(id).value='');
   faceD=null;tatD=[];
-  document.getElementById('facePreviewWrap').style.display='none';
-  document.getElementById('faceBtnsWrap').style.display='flex';
+  document.getElementById('facePreview').classList.remove('on');
+  document.getElementById('faceDrop').style.display='';
+  document.getElementById('faceRemBtn').style.display='none';
   document.getElementById('tatThumbs').innerHTML='';
   editMode=false;editId=null;
-  _tipoSenha=null;window._tipoSenha=null;
   document.getElementById('cadTitle').textContent='NOVO CADASTRO';
 }
-
+document.getElementById('fCpf').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').substring(0,11);
+  if(v.length>9)v=v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  else if(v.length>6)v=v.replace(/(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
+  else if(v.length>3)v=v.replace(/(\d{3})(\d{3})/,'$1.$2');
+  this.value=v;
+});
 
 // ── VIEW PERSON ──
 async function viewPerson(id){
@@ -1196,8 +650,7 @@ async function viewPerson(id){
     const tats=parseTats(p.tatuagens);
     const av=p.foto?`<div class="d-avatar" onclick="lbOpen('${p.foto}')"><img src="${p.foto}"></div>`:`<div class="d-avatar">👤</div>`;
     const tatH=tats.length?`<div style="margin-top:14px"><div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px">TATUAGENS (${tats.length})</div><div class="d-photos">${tats.map(t=>`<img class="d-photo" src="${t}" onclick="lbOpen('${t}')" loading="lazy">`).join('')}</div></div>`:'';
-    const canEdit=true; // todos podem editar
-    const canDelete=CU.role==='admin';
+    const canEdit=CU.role==='admin'||CU.usuario===p.criado_por;
     document.getElementById('personBody').innerHTML=`
       <div class="d-hero">${av}
         <div><div class="d-name">${esc(p.nome)}</div>
@@ -1211,56 +664,25 @@ async function viewPerson(id){
         <div class="d-fld"><label>Endereço</label><span>${esc(p.endereco||'—')}</span></div>
         <div class="d-fld"><label>Quadra</label><span>${esc(p.quadra||'—')}</span></div>
         <div class="d-fld"><label>Bairro</label><span>${esc(p.bairro||'—')}</span></div>
-        <div class="d-fld"><label>Telefone</label><span>${esc(p.telefone||'—')}</span></div>
-        <div class="d-fld"><label>Instagram 1</label><span style="color:#fd1d1d">${p.insta1?'@ '+esc(p.insta1):'—'}</span></div>
-        <div class="d-fld"><label>Instagram 2</label><span style="color:#fd1d1d">${p.insta2?'@ '+esc(p.insta2):'—'}</span></div>
-        <div class="d-fld"><label>Facebook</label><span style="color:#1877f2">${esc(p.facebook||'—')}</span></div>
-        <div class="d-fld"><label>Senha Celular</label><span style="font-family:'IBM Plex Mono',monospace;color:var(--accent);letter-spacing:3px">${p.tipo_senha?'['+p.tipo_senha.toUpperCase()+'] '+esc(p.senha_celular||'—'):'—'}</span></div>
-        ${(p.veiculo1||p.veiculo2||p.veiculo3)?`
-        <div class="d-section-title">🚗 VEÍCULOS</div>
-        ${p.veiculo1?`<div class="d-fld"><label>Veículo 1</label><span>${esc(p.veiculo1)}</span></div>`:''}
-        ${p.veiculo2?`<div class="d-fld"><label>Veículo 2</label><span>${esc(p.veiculo2)}</span></div>`:''}
-        ${p.veiculo3?`<div class="d-fld"><label>Veículo 3</label><span>${esc(p.veiculo3)}</span></div>`:''}
-        `:''}
-        ${p.observacoes?`
-        <div class="d-section-title">📝 OBSERVAÇÕES</div>
-        <div class="d-fld d-obs"><span style="white-space:pre-wrap;line-height:1.6">${esc(p.observacoes)}</span></div>
-        `:''}
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+      ${canEdit?`<div class="d-actions"><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button><button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button></div>`:''}`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
 }
-function closePersonModal(){document.getElementById('personModal').classList.remove('open');if(!editMode)editId=null;}
+function closePersonModal(){document.getElementById('personModal').classList.remove('open');editId=null;}
 async function editPerson(){
-  const idSalvo=editId; // salva ANTES de fechar o modal
-  const p=allP.find(x=>x.id===idSalvo)||await DB.getPerson(idSalvo);if(!p)return;
-  closePersonModal();
-  editId=idSalvo; // restaura após closePersonModal zerá-lo
-  editMode=true;
-  go('cadastrar');
+  const p=allP.find(x=>x.id===editId)||await DB.getPerson(editId);if(!p)return;
+  closePersonModal();go('cadastrar');editMode=true;
   document.getElementById('cadTitle').textContent='EDITAR CADASTRO';
   document.getElementById('fNome').value=p.nome||'';document.getElementById('fMae').value=p.mae||'';
   document.getElementById('fApelido').value=p.apelido||'';document.getElementById('fNasc').value=p.nascimento||'';
   document.getElementById('fCpf').value=p.cpf||'';document.getElementById('fEnd').value=p.endereco||'';
   document.getElementById('fQuadra').value=p.quadra||'';document.getElementById('fBairro').value=p.bairro||'';
-  document.getElementById('fTelefone').value=p.telefone||'';
-  document.getElementById('fInsta1').value=p.insta1||'';
-  document.getElementById('fInsta2').value=p.insta2||'';
-  document.getElementById('fFacebook').value=p.facebook||'';
-  document.getElementById('fVeiculo1').value=p.veiculo1||'';
-  document.getElementById('fVeiculo2').value=p.veiculo2||'';
-  document.getElementById('fVeiculo3').value=p.veiculo3||'';
-  document.getElementById('fObs').value=p.observacoes||'';
-  _faccionado=!!(p.faccionado);updateFaccionadoBanner();
-  document.getElementById('fFaccao').value=p.faccao||'';
-  if(p.tipo_senha)setTipoSenha(p.tipo_senha);
-  if(p.senha_celular){if(p.tipo_senha==='numeros')document.getElementById('fSenhaNum').value=p.senha_celular;else if(p.tipo_senha==='alfanumerico')document.getElementById('fSenhaAlf').value=p.senha_celular;else if(p.tipo_senha==='padrao'){window._pattern=p.senha_celular.split('');renderPattern();}}
   faceD=p.foto||null;tatD=parseTats(p.tatuagens);
-  if(faceD){document.getElementById('facePreview').src=faceD;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';}
+  if(faceD){document.getElementById('facePreview').src=faceD;document.getElementById('facePreview').classList.add('on');document.getElementById('faceDrop').style.display='none';document.getElementById('faceRemBtn').style.display='';}
   renderTats();
 }
 async function deletePerson(){
@@ -1271,9 +693,9 @@ async function deletePerson(){
 }
 
 // ── FOTOS ──
-function onFaceFile(inp){if(!inp.files||!inp.files[0])return;resize(inp.files[0],d=>{faceD=d;const prev=document.getElementById('facePreview');prev.src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';});}
-function faceRem(){faceD=null;document.getElementById('facePreviewWrap').style.display='none';document.getElementById('faceBtnsWrap').style.display='flex';}
-function onTatFiles(inp){if(!inp.files)return;Array.from(inp.files).forEach(f=>resize(f,d=>{tatD.push(d);renderTats();}));}
+function onFaceFile(inp){if(!inp.files[0])return;resize(inp.files[0],d=>{faceD=d;document.getElementById('facePreview').src=d;document.getElementById('facePreview').classList.add('on');document.getElementById('faceDrop').style.display='none';document.getElementById('faceRemBtn').style.display='';});}
+function faceRem(){faceD=null;document.getElementById('facePreview').classList.remove('on');document.getElementById('faceDrop').style.display='';document.getElementById('faceRemBtn').style.display='none';}
+function onTatFiles(inp){Array.from(inp.files).forEach(f=>resize(f,d=>{tatD.push(d);renderTats();}));}
 function renderTats(){document.getElementById('tatThumbs').innerHTML=tatD.map((d,i)=>`<div class="thumb"><img src="${d}" loading="lazy"><div class="thumb-del" onclick="rmTat(${i})">✕</div></div>`).join('');}
 function rmTat(i){tatD.splice(i,1);renderTats();}
 
@@ -1290,7 +712,7 @@ function camCapture(t){
   const v=document.getElementById(t==='face'?'faceVid':'tatVid');
   const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;
   c.getContext('2d').drawImage(v,0,0);const d=c.toDataURL('image/jpeg',.75);
-  if(t==='face'){faceD=d;document.getElementById('facePreview').src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';}
+  if(t==='face'){faceD=d;document.getElementById('facePreview').src=d;document.getElementById('facePreview').classList.add('on');document.getElementById('faceDrop').style.display='none';document.getElementById('faceRemBtn').style.display='';}
   else{tatD.push(d);renderTats();}
   camClose(t);
 }
@@ -1335,171 +757,7 @@ function lbOpen(s){document.getElementById('lbImg').src=s;document.getElementByI
 function lbClose(){document.getElementById('lb').classList.remove('on');}
 
 // ── UTILS ──
-// ── SENHA CELULAR ──
-let _pattern = [];
-let _faccionado = false;
-let _tipoSenha = null;
-
-function toggleFaccionado(){
-  _faccionado = !_faccionado;
-  updateFaccionadoBanner();
-}
-function updateFaccionadoBanner(){
-  const banner = document.getElementById('faccionadoBanner');
-  const lbl = document.getElementById('faccionadoSub');
-  const toggle = document.getElementById('faccionadoToggle');
-  const thumb = document.getElementById('faccionadoThumb');
-  const nomeWrap = document.getElementById('faccionadoNomeWrap');
-  const icon = document.getElementById('faccionadoIcon');
-  if(!banner) return;
-  if(_faccionado){
-    banner.style.background='rgba(255,30,30,0.12)';
-    banner.style.borderColor='rgba(255,60,60,0.6)';
-    lbl.textContent='⚠️ ALERTA ATIVO — este indivíduo é faccionado';
-    lbl.style.color='#ff6b6b';
-    toggle.style.background='rgba(255,60,60,0.4)';
-    toggle.style.borderColor='rgba(255,80,80,0.6)';
-    thumb.style.background='#ff4444';
-    thumb.style.left='28px';
-    icon.textContent='🚨';
-    nomeWrap.style.display='block';
-  } else {
-    banner.style.background='var(--surface2)';
-    banner.style.borderColor='var(--border)';
-    lbl.textContent='Clique para ativar o alerta';
-    lbl.style.color='var(--text-dim)';
-    toggle.style.background='var(--surface3,#333)';
-    toggle.style.borderColor='var(--border)';
-    thumb.style.background='#666';
-    thumb.style.left='2px';
-    icon.textContent='⚠️';
-    nomeWrap.style.display='none';
-  }
-}
-
-function setTipoSenha(tipo) {
-  _tipoSenha = tipo;
-  window._tipoSenha = tipo;
-  ['senhaNumeros','senhaAlfanumerico','senhaPadrao','senhaVazia'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
-  });
-  ['btnTipoNum','btnTipoAlf','btnTipoPad'].forEach(id => {
-    document.getElementById(id).classList.remove('btn-primary');
-    document.getElementById(id).classList.add('btn-outline');
-  });
-  if (tipo === 'numeros') {
-    document.getElementById('senhaNumeros').style.display = 'block';
-    document.getElementById('btnTipoNum').classList.replace('btn-outline','btn-primary');
-  } else if (tipo === 'alfanumerico') {
-    document.getElementById('senhaAlfanumerico').style.display = 'block';
-    document.getElementById('btnTipoAlf').classList.replace('btn-outline','btn-primary');
-  } else if (tipo === 'padrao') {
-    document.getElementById('senhaPadrao').style.display = 'block';
-    document.getElementById('btnTipoPad').classList.replace('btn-outline','btn-primary');
-  } else {
-    document.getElementById('senhaVazia').style.display = 'block';
-  }
-}
-
-function dotClick(n) {
-  const s = String(n);
-  if (_pattern.includes(s)) return; // já clicado, ignora
-  _pattern.push(s);
-  renderPattern();
-}
-
-function renderPattern() {
-  document.querySelectorAll('.pdot').forEach(d => {
-    const n = String(d.getAttribute('data-n'));
-    const idx = _pattern.indexOf(n);
-    if (idx >= 0) {
-      d.classList.add('ativo');
-      d.setAttribute('data-order', idx + 1);
-    } else {
-      d.classList.remove('ativo');
-      d.removeAttribute('data-order');
-    }
-  });
-  const seq = document.getElementById('padSequencia');
-  if (seq) seq.textContent = _pattern.length ? _pattern.join(' → ') : '—';
-}
-
-function clearPattern() {
-  _pattern = [];
-  renderPattern();
-}
-
-function getSenhaCelular() {
-  const ts = _tipoSenha || window._tipoSenha;
-  if (!ts) return null;
-  if (ts === 'numeros') {
-    const el = document.getElementById('fSenhaNum');
-    return el ? el.value.trim() || null : null;
-  }
-  if (ts === 'alfanumerico') {
-    const el = document.getElementById('fSenhaAlf');
-    return el ? el.value.trim() || null : null;
-  }
-  if (ts === 'padrao') return _pattern.length ? _pattern.join('') : null;
-  return null;
-}
-
-// Máscaras de input - usa delegação de evento para funcionar sempre
-document.addEventListener('input', function(e) {
-  // Máscara CPF
-  if (e.target && e.target.id === 'fCpf') {
-    let v = e.target.value.replace(/\D/g,'').substring(0,11);
-    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
-    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
-    else if (v.length > 3) v = v.replace(/(\d{3})(\d{3})/,'$1.$2');
-    e.target.value = v;
-  }
-  // Máscara Telefone
-  if (e.target && e.target.id === 'fTelefone') {
-    let v = e.target.value.replace(/\D/g,'').substring(0,11);
-    if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');
-    else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/,'($1) $2');
-    else if (v.length > 0) v = v.replace(/(\d{0,2})/,'($1');
-    e.target.value = v;
-  }
-});
-
-function resize(file,cb){
-  if(!file){return;}
-  // iOS fix: use blob URL as fallback
-  const r=new FileReader();
-  r.onerror=()=>{
-    // Fallback: use object URL directly
-    const url=URL.createObjectURL(file);
-    const i=new Image();
-    i.onload=()=>{
-      const c=document.createElement('canvas');
-      const M=800;let{width:w,height:h}=i;
-      if(w>M){h=Math.round(h*M/w);w=M;}
-      if(h>M){w=Math.round(w*M/h);h=M;}
-      c.width=w;c.height=h;
-      c.getContext('2d').drawImage(i,0,0,w,h);
-      cb(c.toDataURL('image/jpeg',.72));
-      URL.revokeObjectURL(url);
-    };
-    i.src=url;
-  };
-  r.onload=e=>{
-    const i=new Image();
-    i.onerror=()=>r.onerror();
-    i.onload=()=>{
-      const c=document.createElement('canvas');
-      const M=800;let{width:w,height:h}=i;
-      if(w>M){h=Math.round(h*M/w);w=M;}
-      if(h>M){w=Math.round(w*M/h);h=M;}
-      c.width=w;c.height=h;
-      c.getContext('2d').drawImage(i,0,0,w,h);
-      cb(c.toDataURL('image/jpeg',.72));
-    };
-    i.src=e.target.result;
-  };
-  r.readAsDataURL(file);
-}
+function resize(file,cb){const r=new FileReader();r.onload=e=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');const M=800;let{width:w,height:h}=i;if(w>M){h=Math.round(h*M/w);w=M;}if(h>M){w=Math.round(w*M/h);h=M;}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);cb(c.toDataURL('image/jpeg',.72));};i.src=e.target.result;};r.readAsDataURL(file);}
 function parseTats(v){if(!v)return[];if(Array.isArray(v))return v;try{return JSON.parse(v);}catch{return[];}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function enc(s){return encodeURIComponent(s);}
@@ -1507,427 +765,7 @@ function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m
 let toastT;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
 
-
-// ── MAPA INTERATIVO ──
-let mapaInst = null;
-let mapaMarkers = [];
-let allMapPersons = [];
-let gmapsLoaded = false;
-
-const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#ffd600", "CAPAOZINHO 3": "#e040fb", "MARANATA": "#ff4081", "CAPÃO DA ONÇA": "#69f0ae", "VENDINHA": "#ffab40", "PADRE BERNARDO": "#40c4ff", "AGUAS LINDAS": "#b9f6ca", "PADRE LUCIO": "#ea80fc", "OUTROS": "#b0bec5"};
-
-// Carregar Google Maps dinamicamente
-function loadGoogleMaps(callback) {
-  if (window.google && window.google.maps) { callback(); return; }
-  window._gmapsCallback = callback;
-  const s = document.createElement('script');
-  // Usando Maps Embed API sem chave para visualização básica
-  // ou usando OpenStreetMap como tiles mas com Google geocoding via Nominatim
-  // ⚠️ Para usar Google Maps sem aviso, adicione sua chave gratuita em:
-  // console.developers.google.com → Maps JavaScript API
-  const GMAPS_KEY = ''; // opcional - funciona sem chave com marca d'água
-  s.src = `https://maps.googleapis.com/maps/api/js?callback=_gmapsCallback&loading=async${GMAPS_KEY?'&key='+GMAPS_KEY:''}`;
-  s.async = true;
-  s.defer = true;
-  document.head.appendChild(s);
-}
-
-function initMapa() {
-  if (mapaInst) return;
-  // Centro de Brazlândia DF
-  const center = { lat: -15.6760, lng: -48.1870 };
-  mapaInst = new google.maps.Map(document.getElementById('mapaContainer'), {
-    center,
-    zoom: 14,
-    mapTypeId: 'roadmap',
-    styles: [
-      {elementType:'geometry', stylers:[{color:'#1a1a2e'}]},
-      {elementType:'labels.text.fill', stylers:[{color:'#9e9e9e'}]},
-      {elementType:'labels.text.stroke', stylers:[{color:'#1a1a2e'}]},
-      {featureType:'road', elementType:'geometry', stylers:[{color:'#2d2d44'}]},
-      {featureType:'road', elementType:'geometry.stroke', stylers:[{color:'#111122'}]},
-      {featureType:'road.highway', elementType:'geometry', stylers:[{color:'#3d3d5c'}]},
-      {featureType:'water', elementType:'geometry', stylers:[{color:'#0d1b2a'}]},
-      {featureType:'poi', elementType:'geometry', stylers:[{color:'#1e2030'}]},
-      {featureType:'transit', elementType:'geometry', stylers:[{color:'#1e2030'}]},
-      {featureType:'administrative', elementType:'geometry.stroke', stylers:[{color:'#4a4a6a'}]},
-      {featureType:'landscape', elementType:'geometry', stylers:[{color:'#1a1a2e'}]},
-    ],
-    disableDefaultUI: false,
-    zoomControl: true,
-    mapTypeControl: false,
-    streetViewControl: true,
-    fullscreenControl: true,
-  });
-}
-
-function centerMap() {
-  if (mapaInst) mapaInst.setCenter({ lat: -15.6760, lng: -48.1870 });
-}
-
-function resetMapFilter() {
-  document.getElementById('mapFiltBairro').value = '';
-  applyMapFilter();
-}
-
-async function loadMapa() {
-  showOv('CARREGANDO MAPA...');
-  try {
-    if (!allP.length) allP = await DB.getPersons();
-    allMapPersons = allP;
-    // Carrega Google Maps e depois renderiza marcadores
-    loadGoogleMaps(() => {
-      initMapa();
-      renderMapMarkers(allP);
-      updateMapStats(allP);
-      renderMapLegend();
-      hideOv();
-    });
-  } catch(e) { toast('Erro ao carregar mapa: '+e.message,'error'); hideOv(); }
-}
-
-function applyMapFilter() {
-  const b = document.getElementById('mapFiltBairro').value;
-  const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
-  renderMapMarkers(filtered);
-  updateMapStats(filtered);
-}
-
-// Geocodifica endereço usando Nominatim (gratuito, sem chave)
-async function geocodeAddress(endereco, bairro) {
-  const addr = [endereco, bairro, 'Brazlândia', 'DF', 'Brasil'].filter(Boolean).join(', ');
-  try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, {
-      headers: {'User-Agent': 'SICAD-System/1.0'}
-    });
-    const j = await r.json();
-    if (j[0]) return { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) };
-  } catch {}
-  return null;
-}
-
-// Cache de geocodificação
-const _geocache = {};
-
-async function getCoords(p) {
-  const key = (p.endereco||'')+(p.bairro||'');
-  if (_geocache[key]) return _geocache[key];
-  
-  // Tenta geocodificar endereço real
-  if (p.endereco && p.bairro) {
-    const coords = await geocodeAddress(p.endereco, p.bairro);
-    if (coords) { _geocache[key] = coords; return coords; }
-  }
-  
-  // Fallback: coordenadas por bairro + offset
-  const BAIRRO_COORDS = {
-    "SETOR NORTE":    [-15.6680, -48.1890],
-    "SETOR SUL":      [-15.6830, -48.1860],
-    "VILA SAO JOSE":  [-15.6750, -48.1950],
-    "VEREDAS":        [-15.6710, -48.1820],
-    "CAPAOZINHO 3":   [-15.6790, -48.1920],
-    "MARANATA":       [-15.6650, -48.1840],
-    "CAPÃO DA ONÇA":  [-15.6870, -48.1780],
-    "VENDINHA":       [-15.6720, -48.1760],
-    "PADRE BERNARDO": [-15.6800, -48.1930],
-    "AGUAS LINDAS":   [-15.6740, -48.1810],
-    "PADRE LUCIO":    [-15.6760, -48.1980],
-    "OUTROS":         [-15.6760, -48.1870],
-  };
-  const base = BAIRRO_COORDS[(p.bairro||'').toUpperCase()] || [-15.6760, -48.1870];
-  const coords = {
-    lat: base[0] + (Math.random() - 0.5) * 0.004,
-    lng: base[1] + (Math.random() - 0.5) * 0.004
-  };
-  _geocache[key] = coords;
-  return coords;
-}
-
-async function renderMapMarkers(persons) {
-  // Remove marcadores antigos
-  mapaMarkers.forEach(m => m.setMap(null));
-  mapaMarkers = [];
-  
-  const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
-  const alertNames = new Set(allAlertas.map(a=>(a.nome||'').toLowerCase()));
-  const infoWindow = new google.maps.InfoWindow();
-
-  for (const p of persons) {
-    if (!p.bairro && !p.endereco) continue;
-    const coords = await getCoords(p);
-    const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
-    const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[(p.bairro||'').toUpperCase()] || '#b0bec5');
-    
-    const marker = new google.maps.Marker({
-      position: coords,
-      map: mapaInst,
-      title: p.nome,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: isAlert ? 11 : 8,
-        fillColor: color,
-        fillOpacity: 0.9,
-        strokeColor: isAlert ? '#ff0000' : '#000',
-        strokeWeight: isAlert ? 2 : 1,
-      },
-      animation: isAlert ? google.maps.Animation.BOUNCE : null,
-    });
-
-    const content = `
-      <div style="font-family:'IBM Plex Sans',sans-serif;padding:4px;min-width:180px;background:#1a1a2e;color:#e0e0e0;border-radius:8px">
-        <div style="font-weight:700;font-size:14px;margin-bottom:4px">${isAlert ? '🚨 ' : ''}${esc(p.nome)}</div>
-        ${p.apelido ? `<div style="color:#aaa;font-size:12px;margin-bottom:4px">@ ${esc(p.apelido)}</div>` : ''}
-        ${p.bairro ? `<div style="font-size:12px">📍 ${esc(p.bairro)}</div>` : ''}
-        ${p.endereco ? `<div style="font-size:12px">🏠 ${esc(p.endereco)}</div>` : ''}
-        ${p.quadra ? `<div style="font-size:12px">🔲 ${esc(p.quadra)}</div>` : ''}
-        ${isAlert ? '<div style="color:#ff6666;font-weight:700;margin-top:4px">⚠️ ALERTA DE FORAGIDO</div>' : ''}
-        <button onclick="viewPerson('${p.id}')" style="margin-top:8px;width:100%;padding:8px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">👁 VER FICHA COMPLETA</button>
-      </div>`;
-
-    marker.addListener('click', () => {
-      infoWindow.setContent(content);
-      infoWindow.open(mapaInst, marker);
-    });
-    
-    // Para animação BOUNCE, para após 2s
-    if (isAlert) setTimeout(() => marker.setAnimation(null), 2100);
-    
-    mapaMarkers.push(marker);
-  }
-}
-
-function updateMapStats(persons) {
-  const comEnd = persons.filter(p=>p.bairro||p.endereco).length;
-  const bairros = new Set(persons.map(p=>p.bairro).filter(Boolean)).size;
-  const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
-  const alertas = persons.filter(p=>alertIds.has(p.id)).length;
-  document.getElementById('msTot').textContent = comEnd;
-  document.getElementById('msBairros').textContent = bairros;
-  document.getElementById('msAlrt').textContent = alertas || allAlertas.length;
-}
-
-function renderMapLegend() {
-  const bairrosUsados = [...new Set(allMapPersons.map(p=>p.bairro).filter(Boolean))];
-  const legendEl = document.getElementById('mapaLegend');
-  let html = bairrosUsados.slice(0,8).map(b => {
-    const c = BAIRRO_COLORS[b.toUpperCase()] || '#b0bec5';
-    return `<div class="map-legend-item"><div class="map-legend-dot" style="background:${c}"></div><span>${b}</span></div>`;
-  }).join('');
-  html += `<div class="map-legend-item"><div class="map-legend-dot" style="background:#ff3d3d;box-shadow:0 0 6px rgba(255,61,61,.6)"></div><span style="color:#ff8080">FORAGIDO</span></div>`;
-  legendEl.innerHTML = html;
-}
-
-// ── ALERTAS DE FORAGIDOS ──
-let allAlertas = [];
-let alertaEditId = null;
-let alertaTipo = null;
-let alertaPerig = null;
-let alertaPessoaId = null;
-let alertaFotoD = null;
-
-function showForagidoTab(tab) {
-  document.getElementById('tabAlertas').style.display = tab==='alertas' ? 'block' : 'none';
-  document.getElementById('tabSistema').style.display = tab==='sistema' ? 'block' : 'none';
-  document.getElementById('tabAlertasBtn').className = tab==='alertas' ? 'btn btn-danger' : 'btn btn-outline';
-  document.getElementById('tabSistemaBtn').className = tab==='sistema' ? 'btn btn-danger' : 'btn btn-outline';
-  if (tab==='sistema' && !allP.length) loadForagidos();
-}
-
-// DB alertas -> usa o DB principal agora
-const DBA = {
-  async get() { return await DB.getAlertas(); },
-  async add(d) { return await DB.addAlerta(d); },
-  async del(id) { return await DB.delAlerta(id); }
-};
-
-async function loadAlertas() {
-  showOv('CARREGANDO ALERTAS...');
-  try {
-    allAlertas = await DBA.get();
-    renderAlertas();
-  } catch(e) { toast('Erro ao carregar alertas.','error'); }
-  finally { hideOv(); }
-}
-
-const perigInfo = {
-  1: { label:'MÉDIO', icon:'⚠️', cls:'perig-1' },
-  2: { label:'ALTO', icon:'🔶', cls:'perig-2' },
-  3: { label:'EXTREMO', icon:'🔴', cls:'perig-3' }
-};
-
-function renderAlertas() {
-  const el = document.getElementById('alertasList');
-  const empty = document.getElementById('alertasEmpty');
-  if (!allAlertas.length) { el.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  el.innerHTML = allAlertas.map(a => {
-    const pi = perigInfo[a.periculosidade] || perigInfo[1];
-    const av = a.foto ? `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0"><img src="${a.foto}" style="width:100%;height:100%;object-fit:cover"></div>`
-                      : `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0;font-size:28px">👤</div>`;
-    return `<div class="fcard" style="margin-bottom:12px">
-      ${av}
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-          <span style="font-weight:700;font-size:15px;color:var(--text)">${esc(a.nome)}</span>
-          <span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>
-        </div>
-        ${a.obs?`<div style="font-size:12px;color:var(--text-mid);margin-top:2px">${esc(a.obs)}</div>`:''}
-        <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:6px">
-          ${a.tipo==='existente'?'<span style="color:var(--accent)">📋 DO SISTEMA</span>':'<span style="color:#ff8080">➕ NOVO</span>'}
-          · ${a.criado_em ? new Date(a.criado_em).toLocaleDateString('pt-BR') : ''}
-          · por ${esc(a.criado_por||'—')}
-        </div>
-      </div>
-      ${CU.role==='admin'?`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex-shrink:0;padding:8px 10px">🗑</button>`:''}
-    </div>`;
-  }).join('');
-}
-
-function openAlertaModal(editData) {
-  alertaEditId = editData ? editData.id : null;
-  alertaTipo = null; alertaPerig = null; alertaPessoaId = null; alertaFotoD = null;
-  document.getElementById('alertaModalTitle').textContent = '🚨 NOVO ALERTA DE FORAGIDO';
-  document.getElementById('aTipoExist').className = 'btn btn-outline btn-sm';
-  document.getElementById('aTipoNovo').className = 'btn btn-outline btn-sm';
-  document.getElementById('aExistente').style.display = 'none';
-  document.getElementById('aNovoFora').style.display = 'none';
-  document.getElementById('aCamposComuns').style.display = 'none';
-  document.getElementById('aBuscaPessoa').value = '';
-  document.getElementById('aBuscaResultados').style.display = 'none';
-  document.getElementById('aPessoaSelecionada').style.display = 'none';
-  document.getElementById('aNovoNome').value = '';
-  document.getElementById('aObs').value = '';
-  document.getElementById('aFotoPreview').classList.remove('on');
-  document.getElementById('aFotoDrop').style.display = '';
-  ['aPerig1','aPerig2','aPerig3'].forEach(id => {
-    const b = document.getElementById(id);
-    b.style.opacity = '0.5'; b.style.transform = 'scale(1)';
-  });
-  document.getElementById('alertaModal').classList.add('open');
-}
-
-function closeAlertaModal() {
-  document.getElementById('alertaModal').classList.remove('open');
-}
-
-function setAlertaTipo(tipo) {
-  alertaTipo = tipo;
-  document.getElementById('aExistente').style.display = tipo==='existente' ? 'block' : 'none';
-  document.getElementById('aNovoFora').style.display = tipo==='novo' ? 'block' : 'none';
-  document.getElementById('aCamposComuns').style.display = 'block';
-  document.getElementById('aTipoExist').className = tipo==='existente' ? 'btn btn-danger btn-sm' : 'btn btn-outline btn-sm';
-  document.getElementById('aTipoNovo').className = tipo==='novo' ? 'btn btn-danger btn-sm' : 'btn btn-outline btn-sm';
-}
-
-function setPerig(n) {
-  alertaPerig = n;
-  ['aPerig1','aPerig2','aPerig3'].forEach((id,i) => {
-    const b = document.getElementById(id);
-    b.style.opacity = (i+1===n) ? '1' : '0.4';
-    b.style.transform = (i+1===n) ? 'scale(1.05)' : 'scale(1)';
-  });
-}
-
-function buscaPessoaAlerta() {
-  const v = document.getElementById('aBuscaPessoa').value.trim().toLowerCase();
-  const res = document.getElementById('aBuscaResultados');
-  if (!v) { res.style.display='none'; return; }
-  const found = allP.filter(p => (p.nome||'').toLowerCase().includes(v) || (p.apelido||'').toLowerCase().includes(v));
-  if (!found.length) { res.innerHTML=`<div style="padding:12px;font-size:13px;color:var(--text-dim);text-align:center">Nenhum resultado</div>`; res.style.display='block'; return; }
-  res.style.display = 'block';
-  res.innerHTML = found.slice(0,6).map(p => `
-    <div onclick="selecionarPessoa('${p.id}')" style="padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .15s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
-      ${p.foto?`<img src="${p.foto}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>`}
-      <div><div style="font-size:14px;font-weight:600">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''} ${p.bairro||''}</div></div>
-    </div>`).join('');
-}
-
-function selecionarPessoa(id) {
-  const p = allP.find(x => x.id===id);
-  if (!p) return;
-  alertaPessoaId = id;
-  alertaFotoD = p.foto || null;
-  document.getElementById('aBuscaResultados').style.display = 'none';
-  document.getElementById('aBuscaPessoa').value = p.nome;
-  document.getElementById('aPessoaSelecionada').style.display = 'block';
-  document.getElementById('aPessoaSelecionada').innerHTML = `
-    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px">
-      ${p.foto?`<img src="${p.foto}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:44px;height:44px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px">👤</div>`}
-      <div><div style="font-weight:600;color:var(--accent)">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''}${p.bairro||''}</div></div>
-      <div style="margin-left:auto;color:var(--success);font-size:20px">✅</div>
-    </div>`;
-}
-
-function onAlertaFoto(inp) {
-  if (!inp.files[0]) return;
-  resize(inp.files[0], d => {
-    alertaFotoD = d;
-    document.getElementById('aFotoPreview').src = d;
-    document.getElementById('aFotoPreview').classList.add('on');
-    document.getElementById('aFotoDrop').style.display = 'none';
-  });
-}
-
-async function saveAlerta() {
-  if (!alertaTipo) { toast('Selecione o tipo de alerta.','error'); return; }
-  if (!alertaPerig) { toast('Selecione o nível de periculosidade.','error'); return; }
-  if (alertaTipo==='existente' && !alertaPessoaId) { toast('Selecione uma pessoa do sistema.','error'); return; }
-  const nome = alertaTipo==='existente'
-    ? (allP.find(x=>x.id===alertaPessoaId)||{}).nome||'—'
-    : document.getElementById('aNovoNome').value.trim();
-  if (alertaTipo==='novo' && !nome) { toast('Informe o nome do foragido.','error'); return; }
-
-  const btn = document.getElementById('saveAlertaBtn');
-  btn.disabled=true; btn.innerHTML='<span class="ld"></span> SALVANDO...';
-  try {
-    const d = {
-      id: 'a'+Date.now(),
-      nome, tipo: alertaTipo,
-      pessoa_id: alertaPessoaId||null,
-      foto: alertaFotoD||null,
-      periculosidade: alertaPerig,
-      obs: document.getElementById('aObs').value.trim()||null,
-      criado_por: CU.usuario,
-      criado_em: new Date().toISOString()
-    };
-    await DBA.add(d);
-    allAlertas.unshift(d);
-    renderAlertas();
-    closeAlertaModal();
-    toast('⚠️ Alerta de foragido cadastrado!','error');
-  } catch(e) { toast('Erro: '+e.message,'error'); }
-  finally { btn.disabled=false; btn.innerHTML='🚨 SALVAR ALERTA'; }
-}
-
-async function delAlerta(id) {
-  if (!confirm('Remover este alerta de foragido?')) return;
-  showOv('REMOVENDO...');
-  try {
-    await DBA.del(id);
-    allAlertas = allAlertas.filter(x=>x.id!==id);
-    renderAlertas();
-    toast('Alerta removido.','info');
-  } catch(e) { toast('Erro.','error'); }
-  finally { hideOv(); }
-}
-
-// ── FORAGIDOS ──
-async function loadForagidos() {
-  if (!allP.length) { showOv('CARREGANDO...'); try { allP = await DB.getPersons(); } catch(e){} finally { hideOv(); } }
-  renderForagidos(allP);
-}
-function renderForagidos(l) {
-  document.getElementById('foragidoEmpty').style.display = l.length ? 'none' : 'block';
-  document.getElementById('foragidoGrid').innerHTML = l.map(pCard).join('');
-}
-function filterForagidos() {
-  const n = document.getElementById('sForagido').value.trim().toLowerCase();
-  const l = n ? allP.filter(p => ['nome','apelido','mae'].some(k => (p[k]||'').toLowerCase().includes(n))) : allP;
-  renderForagidos(l);
-}
-
 document.getElementById('personModal').addEventListener('click',e=>{if(e.target===document.getElementById('personModal'))closePersonModal();});
-document.getElementById('alertaModal').addEventListener('click',e=>{if(e.target===document.getElementById('alertaModal'))closeAlertaModal();});
 document.getElementById('userModal').addEventListener('click',e=>{if(e.target===document.getElementById('userModal'))closeUserModal();});
 
 init();
