@@ -282,7 +282,13 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .lightbox.on{display:flex}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:10px}
 .lb-x{position:absolute;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.1);border:none;border-radius:10px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.cpf-info{display:block;font-size:11px;margin-top:3px;font-family:'IBM Plex Mono',monospace;min-height:14px}
+.cpf-ok{color:var(--success)}
+.cpf-err{color:var(--danger)}
+.cpf-warn{color:var(--accent2)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -424,7 +430,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <div class="fg"><label>Apelido / Alcunha</label><input type="text" id="fApelido" placeholder="Apelido" autocomplete="off"></div>
           <div class="fg"><label>Nome da Mãe</label><input type="text" id="fMae" placeholder="Nome da mãe" autocomplete="off"></div>
           <div class="fg"><label>Data de Nascimento</label><input type="date" id="fNasc"></div>
-          <div class="fg"><label>CPF</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off"></div>
+          <div class="fg"><label>CPF</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" oninput="onCpfInput(this)"><span id="cpfInfo" class="cpf-info"></span></div>
           <div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="fTelefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" autocomplete="off"></div>
           <div class="fg"><label>Endereço</label><input type="text" id="fEnd" placeholder="Rua, Nº" autocomplete="off"></div>
           <div class="fg"><label>Quadra</label><input type="text" id="fQuadra" placeholder="Quadra / Setor" autocomplete="off"></div>
@@ -554,15 +560,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">1</span>
               <input type="text" id="fVeiculo1" placeholder="Ex: Moto Honda CG 160 — Preta — ABC-1234" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo1')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">2</span>
               <input type="text" id="fVeiculo2" placeholder="Ex: Carro VW Gol — Branco — DEF-5678" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo2')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">3</span>
               <input type="text" id="fVeiculo3" placeholder="Ex: Bicicleta — Azul" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            </div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo3')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
           </div>
         </div>
 
@@ -1169,7 +1175,7 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
@@ -1870,6 +1876,394 @@ document.getElementById('alertaModal').addEventListener('click',e=>{if(e.target=
 document.getElementById('userModal').addEventListener('click',e=>{if(e.target===document.getElementById('userModal'))closeUserModal();});
 
 init();
+
+// ── EXPORTAR PDF ──
+async function exportPDF(){
+  const id=editId;if(!id)return;
+  const p=allP.find(x=>x.id===id)||await DB.getPerson(id);
+  if(!p){toast('Cadastro não encontrado.','error');return;}
+  toast('Gerando PDF...','info');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210, MAR=12;
+  let y=MAR;
+
+  // ── Paleta de cores ──
+  const C={
+    bg:[15,18,26],        // fundo página
+    hdr:[0,30,50],        // fundo cabeçalho
+    accent:[0,200,255],   // ciano brilhante
+    accent2:[255,120,50], // laranja
+    danger:[255,60,60],   // vermelho
+    success:[0,220,120],  // verde
+    secBg:[25,35,55],     // fundo de seção
+    secTxt:[0,200,255],   // título de seção
+    label:[140,180,220],  // label cinza-azul
+    value:[240,245,255],  // valor branco-azul (bem visível)
+    dim:[100,130,160],    // texto secundário
+    white:[255,255,255],
+  };
+
+  // ── Fundo branco da página (PDF padrão é branco — usaremos fundo claro) ──
+  // Para melhor impressão, usaremos fundo BRANCO com texto ESCURO
+  // mas com seções destacadas em azul escuro
+  const DARK_MODE = false; // false = melhor para impressão
+
+  // ── Helpers ──
+  function newPage(){
+    doc.addPage();
+    y=MAR;
+    rodape();
+  }
+  function check(need=10){if(y+need>282)newPage();}
+
+  function rodape(){
+    doc.setFillColor(20,30,50);
+    doc.rect(0,287,W,10,'F');
+    doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+    doc.setTextColor(140,180,220);
+    doc.text('SICAD — DOCUMENTO SIGILOSO — USO EXCLUSIVO POLICIAL',W/2,292,{align:'center'});
+    doc.setTextColor(100,140,170);
+    doc.text('Operador: '+(CU?CU.nome||CU.login:'—'),MAR,292);
+    doc.text('Pág '+(doc.internal.getCurrentPageInfo().pageNumber),W-MAR,292,{align:'right'});
+  }
+
+  function addImg(data,x,yy,w,h){
+    if(!data||typeof data!=='string')return false;
+    try{
+      let fmt='JPEG';
+      if(data.includes('image/png'))fmt='PNG';
+      else if(data.includes('image/webp'))fmt='WEBP';
+      doc.addImage(data,fmt,x,yy,w,h,undefined,'FAST');
+      return true;
+    }catch(e){
+      try{doc.addImage(data,x,yy,w,h);return true;}catch(e2){return false;}
+    }
+  }
+
+  // ── Linha de campo: label à esquerda, valor à direita ──
+  function campo(label,val,rgb){
+    if(val===null||val===undefined||val==='')return;
+    check(8);
+    // Label
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setTextColor(80,120,160);
+    doc.text(label.toUpperCase()+':',MAR+2,y);
+    // Valor
+    doc.setFont('helvetica','normal');
+    const vc=rgb||[20,20,40];
+    doc.setTextColor(vc[0],vc[1],vc[2]);
+    doc.setFontSize(9);
+    const parts=doc.splitTextToSize(String(val),W-MAR-52);
+    doc.text(parts,MAR+50,y);
+    y+=5.5*parts.length+1;
+  }
+
+  // ── Título de seção ──
+  function secao(titulo){
+    check(14);
+    y+=2;
+    doc.setFillColor(0,60,100);
+    doc.rect(MAR,y,W-MAR*2,7,'F');
+    doc.setFontSize(8.5);doc.setFont('helvetica','bold');
+    doc.setTextColor(0,220,255);
+    doc.text('▌ '+titulo,MAR+3,y+5);
+    y+=10;
+  }
+
+  // ══════════════════════════════════════
+  // CABEÇALHO
+  // ══════════════════════════════════════
+  doc.setFillColor(0,20,45);
+  doc.rect(0,0,W,32,'F');
+  // Linha decorativa ciano
+  doc.setFillColor(0,200,255);
+  doc.rect(0,32,W,1.5,'F');
+
+  doc.setFontSize(26);doc.setFont('helvetica','bold');
+  doc.setTextColor(0,210,255);
+  doc.text('SICAD',MAR,22);
+
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+  doc.setTextColor(160,200,230);
+  doc.text('SISTEMA DE CADASTRO — BRAZLÂNDIA DF',MAR,28);
+
+  doc.setTextColor(100,150,190);
+  doc.text(new Date().toLocaleString('pt-BR'),W-MAR,28,{align:'right'});
+  y=38;
+
+  // ══════════════════════════════════════
+  // FOTO + IDENTIDADE
+  // ══════════════════════════════════════
+  const fW=42,fH=52;
+  const hadFoto=addImg(p.foto,MAR,y,fW,fH);
+  if(!hadFoto){
+    doc.setFillColor(20,35,60);
+    doc.rect(MAR,y,fW,fH,'F');
+    doc.setTextColor(80,120,160);doc.setFontSize(20);
+    doc.text('?',MAR+fW/2,y+fH/2+3,{align:'center'});
+  }
+
+  const tx=MAR+fW+6;
+  const txW=W-tx-MAR;
+  let ty=y+7;
+
+  // Nome
+  doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.setTextColor(0,30,60);
+  const nL=doc.splitTextToSize((p.nome||'').toUpperCase(),txW);
+  doc.text(nL,tx,ty);ty+=7*nL.length;
+
+  // Apelido
+  if(p.apelido){
+    doc.setFontSize(10);doc.setFont('helvetica','italic');
+    doc.setTextColor(0,100,160);
+    doc.text('@ '+p.apelido,tx,ty);ty+=6;
+  }
+
+  // Localização
+  if(p.bairro||p.quadra){
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');
+    doc.setTextColor(40,80,120);
+    doc.text((p.bairro||'')+(p.quadra?' — Quadra '+p.quadra:''),tx,ty);ty+=5.5;
+  }
+
+  // Data nascimento
+  if(p.nascimento){
+    doc.setFontSize(8.5);doc.setTextColor(40,80,120);
+    doc.text('Nascimento: '+new Date(p.nascimento+'T00:00:00').toLocaleDateString('pt-BR'),tx,ty);ty+=5.5;
+  }
+
+  // Badge FACCIONADO
+  if(p.faccionado){
+    doc.setFillColor(180,0,0);
+    doc.roundedRect(tx,ty-3,txW,8,2,2,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text('⚠  FACCIONADO'+(p.faccao?' — '+p.faccao.toUpperCase():''),tx+3,ty+2.5);
+    ty+=11;
+  }
+
+  y=Math.max(y+fH,ty)+6;
+
+  // Linha separadora
+  doc.setDrawColor(0,150,220);doc.setLineWidth(0.5);
+  doc.line(MAR,y,W-MAR,y);y+=6;
+
+  // ══════════════════════════════════════
+  // IDENTIFICAÇÃO
+  // ══════════════════════════════════════
+  secao('IDENTIFICAÇÃO');
+  campo('CPF',p.cpf,[0,30,80]);
+  campo('Nome da Mãe',p.mae,[0,30,80]);
+  campo('Endereço',p.endereco,[0,30,80]);
+  campo('Quadra',p.quadra,[0,30,80]);
+  campo('Bairro',p.bairro,[0,30,80]);
+  campo('Telefone',p.telefone,[0,30,80]);
+
+  // ══════════════════════════════════════
+  // REDES SOCIAIS
+  // ══════════════════════════════════════
+  if(p.insta1||p.insta2||p.facebook){
+    secao('REDES SOCIAIS');
+    campo('Instagram 1',p.insta1?('@'+p.insta1):null,[180,0,0]);
+    campo('Instagram 2',p.insta2?('@'+p.insta2):null,[180,0,0]);
+    campo('Facebook',p.facebook,[0,60,180]);
+  }
+
+  // ══════════════════════════════════════
+  // SENHA DO CELULAR
+  // ══════════════════════════════════════
+  if(p.senha_celular){
+    secao('ACESSO AO CELULAR');
+    campo('Tipo de Senha',p.tipo_senha,[0,30,80]);
+    campo('Senha',p.senha_celular,[0,100,0]);
+  }
+
+  // ══════════════════════════════════════
+  // VEÍCULOS
+  // ══════════════════════════════════════
+  if(p.veiculo1||p.veiculo2||p.veiculo3){
+    secao('VEÍCULOS VINCULADOS');
+    campo('Veículo 1',p.veiculo1,[0,30,80]);
+    campo('Veículo 2',p.veiculo2,[0,30,80]);
+    campo('Veículo 3',p.veiculo3,[0,30,80]);
+  }
+
+  // ══════════════════════════════════════
+  // OBSERVAÇÕES
+  // ══════════════════════════════════════
+  if(p.observacoes){
+    secao('OBSERVAÇÕES');
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(0,30,80);
+    const obsL=doc.splitTextToSize(p.observacoes,W-MAR*2-4);
+    obsL.forEach(l=>{check(6);doc.text(l,MAR+2,y);y+=5.5;});
+    y+=3;
+  }
+
+  // ══════════════════════════════════════
+  // TATUAGENS
+  // ══════════════════════════════════════
+  const tats=parseTats(p.tatuagens);
+  if(tats.length){
+    secao('TATUAGENS ('+tats.length+')');
+    const tW=54,tH=54,gap=4;
+    let col2=0;
+    tats.forEach(t=>{
+      const imgSrc=(typeof t==='string')?t:(t.img||null);
+      const desc=(typeof t==='string')?null:(t.desc||null);
+      const px=MAR+(col2*(tW+gap));
+      if(col2===0)check(tH+16);
+      if(imgSrc){
+        // Borda ao redor da foto
+        doc.setDrawColor(0,150,200);doc.setLineWidth(0.4);
+        doc.rect(px-0.5,y-0.5,tW+1,tH+1);
+        addImg(imgSrc,px,y,tW,tH);
+      } else {
+        doc.setFillColor(220,235,250);doc.rect(px,y,tW,tH,'F');
+        doc.setTextColor(100,140,180);doc.setFontSize(8);
+        doc.text('Sem foto',px+tW/2,y+tH/2,{align:'center'});
+      }
+      if(desc){
+        doc.setFontSize(7);doc.setTextColor(0,60,120);doc.setFont('helvetica','normal');
+        const dl=doc.splitTextToSize(desc,tW);
+        doc.text(dl,px,y+tH+4);
+      }
+      col2++;
+      if(col2>=3){col2=0;y+=tH+(desc?14:7);}
+    });
+    if(col2>0)y+=tH+14;
+    y+=4;
+  }
+
+  // ══════════════════════════════════════
+  // REGISTRO
+  // ══════════════════════════════════════
+  check(16);
+  y+=2;
+  doc.setFillColor(230,240,250);
+  doc.rect(MAR,y,W-MAR*2,14,'F');
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(60,90,130);
+  doc.text('Cadastrado por: '+(p.criado_por||'—'),MAR+3,y+5);
+  if(p.criado_em)doc.text('Data: '+new Date(p.criado_em).toLocaleString('pt-BR'),MAR+3,y+11);
+  y+=17;
+
+  // ══════════════════════════════════════
+  // RODAPÉ FINAL
+  // ══════════════════════════════════════
+  rodape();
+
+  // ══════════════════════════════════════
+  // SALVAR
+  // ══════════════════════════════════════
+  const nomeArq=(p.nome||'pessoa').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+  doc.save('SICAD_'+nomeArq+'_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.pdf');
+  toast('PDF gerado com sucesso!','success');
+}
+
+// ── VALIDAÇÃO CPF ──
+function validarCPF(cpf){
+  cpf=cpf.replace(/[^\d]/g,'');
+  if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;
+  let s=0;for(let i=0;i<9;i++)s+=+cpf[i]*(10-i);
+  let r=11-(s%11);let d1=(r<2?0:r);if(d1!==+cpf[9])return false;
+  s=0;for(let i=0;i<10;i++)s+=+cpf[i]*(11-i);
+  r=11-(s%11);let d2=(r<2?0:r);return d2===+cpf[10];
+}
+function onCpfInput(el){
+  // Máscara CPF
+  let v=el.value.replace(/\D/g,'').substring(0,11);
+  if(v.length>9)v=v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+  else if(v.length>6)v=v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  else if(v.length>3)v=v.slice(0,3)+'.'+v.slice(3);
+  el.value=v;
+  // Validação
+  const raw=v.replace(/\D/g,'');
+  const info=document.getElementById('cpfInfo');
+  if(!info)return;
+  if(raw.length===0){info.textContent='';info.className='cpf-info';}
+  else if(raw.length<11){info.textContent='';info.className='cpf-info';}
+  else if(!validarCPF(raw)){
+    info.textContent='❌ CPF inválido';info.className='cpf-info cpf-err';
+  } else {
+    // Verificar se já cadastrado
+    const dup=allP.find(x=>x.cpf&&x.cpf.replace(/\D/g,'')==raw&&x.id!==editId);
+    if(dup){
+      info.textContent='⚠️ CPF já cadastrado: '+dup.nome;info.className='cpf-info cpf-warn';
+    } else {
+      info.textContent='✅ CPF válido';info.className='cpf-info cpf-ok';
+    }
+  }
+}
+
+// ── SINESP CIDADÃO — CONSULTA DE VEÍCULO ──
+async function consultarSinesp(placa){
+  if(!placa){toast('Digite a placa do veículo.','error');return null;}
+  placa=placa.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(placa.length<7){toast('Placa inválida.','error');return null;}
+  toast('Consultando SINESP...','info');
+  try{
+    // Usar proxy CORS público para acessar a API SINESP
+    const url=`https://corsproxy.io/?https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/api/v1/placas/${placa}`;
+    const r=await fetch(url,{headers:{'Accept':'application/json'}});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    return d;
+  }catch(e){
+    // Fallback: tentar via AllOrigins
+    try{
+      const url2=`https://api.allorigins.win/raw?url=${encodeURIComponent('https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/api/v1/placas/'+placa)}`;
+      const r2=await fetch(url2);
+      if(!r2.ok)throw new Error('HTTP '+r2.status);
+      const d2=await r2.json();
+      return d2;
+    }catch(e2){
+      toast('SINESP indisponível no momento. Tente via app SINESP Cidadão.','error');
+      return null;
+    }
+  }
+}
+
+async function consultarVeiculoModal(campo){
+  // Pegar a placa do campo de veículo
+  const el=document.getElementById(campo);
+  if(!el){return;}
+  const placa=el.value.trim();
+  const dados=await consultarSinesp(placa);
+  if(!dados)return;
+
+  // Montar HTML do resultado
+  const fields=[
+    ['Placa',dados.placa||dados.codigoRetorno],
+    ['Modelo',dados.modelo],
+    ['Marca',dados.marca],
+    ['Cor',dados.cor],
+    ['Ano Fab.',dados.anoFabricacao],
+    ['Ano Mod.',dados.anoModelo],
+    ['Município',dados.municipio+(dados.uf?' — '+dados.uf:'')],
+    ['Situação',dados.situacao],
+    ['Chassi',dados.chassi],
+  ].filter(([,v])=>v).map(([l,v])=>`<div class="d-fld"><label>${l}</label><span>${v}</span></div>`).join('');
+
+  const situCor=dados.situacao&&dados.situacao.toUpperCase().includes('ROUBO')?'var(--danger)':'var(--success)';
+
+  // Mostrar em modal de confirmação (reusar o overlay)
+  const html=`<div style="padding:8px">
+    <div style="font-size:11px;color:var(--accent);font-family:'IBM Plex Mono',monospace;letter-spacing:2px;margin-bottom:12px">RESULTADO SINESP</div>
+    ${fields?`<div class="d-flds">${fields}</div>`:'<p style="color:var(--text-dim)">Nenhum dado retornado.</p>'}
+    ${dados.situacao?`<div style="margin-top:10px;padding:8px;background:${situCor}22;border:1px solid ${situCor};border-radius:8px;color:${situCor};font-weight:700;font-size:12px;text-align:center">SITUAÇÃO: ${dados.situacao.toUpperCase()}</div>`:''}
+    <button class="btn btn-outline" style="width:100%;margin-top:14px" onclick="document.getElementById('sinespModal').classList.remove('open')">FECHAR</button>
+  </div>`;
+
+  let sm=document.getElementById('sinespModal');
+  if(!sm){
+    sm=document.createElement('div');
+    sm.id='sinespModal';sm.className='modal-overlay';
+    sm.innerHTML=`<div class="modal"><div class="mhandle"></div><div class="mi"><div class="mhdr"><div class="mtitle">🚗 SINESP</div><div class="mclose" onclick="this.closest('.modal-overlay').classList.remove('open')">✕</div></div><div id="sinespBody"></div></div></div>`;
+    document.body.appendChild(sm);
+  }
+  document.getElementById('sinespBody').innerHTML=html;
+  sm.classList.add('open');
+}
 </script>
 </body>
 </html>
