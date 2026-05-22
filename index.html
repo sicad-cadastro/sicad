@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0a0c10">
+<meta name="theme-color" content="#ffffff">
 <title>SICAD — Sistema de Cadastro</title>
 <!-- Leaflet (mapa grátis, sem chave de API) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -12,12 +12,14 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0a0c10;--surface:#12151c;--surface2:#1a1f2b;--border:#252c3a;
-  --accent:#00d4ff;--accent2:#ff6b35;--danger:#ff3d3d;--success:#00e676;
-  --text:#e8eaf0;--text-dim:#6b7898;--text-mid:#a0aec0;--card:#151b26;
+  --bg:#ffffff;--surface:#ffffff;--surface2:#f1f5f9;--border:#e2e8f0;
+  --accent:#0099cc;--accent2:#e85d20;--danger:#dc2626;--success:#10b981;
+  --text:#0f172a;--text-dim:#94a3b8;--text-mid:#475569;--card:#ffffff;
+  --shadow:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg:0 10px 25px -5px rgba(15,23,42,.08),0 8px 10px -6px rgba(15,23,42,.04);
 }
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
 
 /* ── LAYOUT PRINCIPAL ── */
 #shell{display:flex;flex-direction:column;min-height:100vh}
@@ -27,9 +29,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   background:var(--surface);border-bottom:1px solid var(--border);
   padding:0 16px;height:56px;display:flex;align-items:center;
   justify-content:space-between;position:sticky;top:0;z-index:200;
-  flex-shrink:0;
+  flex-shrink:0;box-shadow:var(--shadow);
 }
-.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:var(--accent);line-height:1;text-shadow:0 0 16px rgba(0,212,255,.4)}
+.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:var(--accent);line-height:1}
 .hdr-logo small{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-top:-2px}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .user-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -72,15 +74,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 #loginWrap{
   position:fixed;inset:0;z-index:999;
   background:var(--bg);
-  background-image:radial-gradient(ellipse at 20% 40%,rgba(0,212,255,.06) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(255,107,53,.05) 0%,transparent 50%);
+  background-image:radial-gradient(ellipse at 20% 40%,rgba(0,153,204,.08) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(232,93,32,.06) 0%,transparent 50%);
   display:flex;align-items:center;justify-content:center;padding:20px;
 }
 .login-box{width:100%;max-width:380px}
 .login-logobox{text-align:center;margin-bottom:28px}
-.login-logo{font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:10px;color:var(--accent);text-shadow:0 0 40px rgba(0,212,255,.6);line-height:1}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:10px;color:var(--accent);line-height:1}
 .login-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);margin-top:4px}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px}
-.login-err{background:rgba(255,61,61,.1);border:1px solid rgba(255,61,61,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:16px;display:none}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:var(--shadow-lg)}
+.login-err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:16px;display:none}
 .mode-lbl{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:16px;letter-spacing:1px}
 
 /* ── FORMS ── */
@@ -93,7 +95,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   font-family:'IBM Plex Sans',sans-serif;color:var(--text);
   transition:border-color .2s;outline:none;-webkit-appearance:none;appearance:none;
 }
-.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.12)}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,153,204,.15)}
 .fg input::placeholder{color:var(--text-dim)}
 .fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7898' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 .fg select option{background:var(--surface2)}
@@ -110,24 +112,24 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 }
 .btn:active{opacity:.8;transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-primary{background:var(--accent);color:var(--bg)}.btn-primary:hover{background:#1ddeff}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-mid)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-danger{background:rgba(255,61,61,.1);border:1px solid rgba(255,61,61,.3);color:var(--danger)}
-.btn-success{background:var(--success);color:var(--bg)}.btn-success:hover{background:#2fffa0}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#0086b3}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-mid)}.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,153,204,.04)}
+.btn-danger{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.3);color:var(--danger)}.btn-danger:hover{background:rgba(220,38,38,.14)}
+.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#059669}
 .btn-sm{padding:10px 14px;font-size:12px;min-height:40px}
 .btn-full{width:100%}
 .row-btns{display:flex;gap:10px;flex-wrap:wrap}
 .row-btns .btn{flex:1}
 
 /* ── CARDS / SECTION ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
 .sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* ── STATS ── */
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
 @media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;box-shadow:var(--shadow)}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--accent);line-height:1}
 .stat-lbl{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);margin-top:4px;letter-spacing:1px}
 
@@ -137,10 +139,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .pcard{
   background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:14px;cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;gap:12px;
+  display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);
 }
 .pcard:active{background:var(--surface2);border-color:var(--accent)}
-@media(min-width:600px){.pcard:hover{border-color:var(--accent);transform:translateY(-1px)}}
+@media(min-width:600px){.pcard:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-lg)}}
 .pavatar{width:56px;height:56px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
 .pavatar img{width:100%;height:100%;object-fit:cover}
 .pinfo{flex:1;min-width:0}
@@ -151,8 +153,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .parrow{color:var(--text-dim);font-size:20px;flex-shrink:0}
 @media(min-width:600px){.parrow{display:none}}
 .tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-top:5px;margin-right:3px}
-.tag-b{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
-.tag-q{background:rgba(255,107,53,.1);color:var(--accent2);border:1px solid rgba(255,107,53,.2)}
+.tag-b{background:rgba(0,153,204,.1);color:var(--accent);border:1px solid rgba(0,153,204,.25)}
+.tag-q{background:rgba(232,93,32,.1);color:var(--accent2);border:1px solid rgba(232,93,32,.25)}
 
 /* ── SEARCH ── */
 .search-box{margin-bottom:16px}
@@ -168,7 +170,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .rcnt{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);z-index:500;display:none;flex-direction:column;justify-content:flex-end}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);z-index:500;display:none;flex-direction:column;justify-content:flex-end}
 .modal-overlay.open{display:flex}
 @media(min-width:600px){.modal-overlay{align-items:center;justify-content:center;padding:20px}}
 .modal{background:var(--surface);border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:mUp .28s ease;width:100%}
@@ -234,13 +236,13 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .empty{text-align:center;padding:48px 20px;color:var(--text-dim)}
 .empty .ei{font-size:44px;margin-bottom:12px;opacity:.35}
 .empty p{font-size:14px}
-.toast{position:fixed;bottom:76px;right:16px;left:16px;max-width:400px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:13px;font-family:'IBM Plex Mono',monospace;z-index:9999;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+.toast{position:fixed;bottom:76px;right:16px;left:16px;max-width:400px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:13px;font-family:'IBM Plex Mono',monospace;z-index:9999;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:var(--shadow-lg)}
 @media(min-width:768px){.toast{bottom:20px}}
 .toast.on{transform:translateY(0);opacity:1}
-.toast.success{border-color:rgba(0,230,118,.4);color:var(--success)}
-.toast.error{border-color:rgba(255,61,61,.4);color:var(--danger)}
-.toast.info{border-color:rgba(0,212,255,.4);color:var(--accent)}
-.overlay{position:fixed;inset:0;background:rgba(10,12,16,.82);z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.toast.success{border-color:rgba(16,185,129,.4);color:var(--success);background:#ecfdf5}
+.toast.error{border-color:rgba(220,38,38,.4);color:var(--danger);background:#fef2f2}
+.toast.info{border-color:rgba(0,153,204,.4);color:var(--accent);background:#f0f9ff}
+.overlay{position:fixed;inset:0;background:rgba(248,250,252,.92);backdrop-filter:blur(4px);z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .overlay.on{display:flex}
 .spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -253,8 +255,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   position:relative;
 }
 .pdot:active{transform:scale(.9)}
-.pdot.ativo{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700;font-size:13px}
-.pdot.ativo::after{content:attr(data-order);color:var(--bg);font-weight:700;font-size:13px}
+.pdot.ativo{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;font-size:13px}
+.pdot.ativo::after{content:attr(data-order);color:#fff;font-weight:700;font-size:13px}
 .link-card:hover{transform:translateY(-2px);filter:brightness(1.1)}.link-card:active{transform:scale(.98)}
 #mapaContainer{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative;z-index:1}
 @media(max-width:600px){#mapaContainer{height:320px}}
@@ -270,7 +272,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .map-popup-nick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px}
 .map-popup-info{font-size:12px;color:var(--text-mid);line-height:1.6}
 .map-popup-btn{display:block;margin-top:10px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center}
-.map-legend{position:absolute;bottom:24px;left:12px;z-index:1000;background:rgba(18,21,28,.92);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+.map-legend{position:absolute;bottom:24px;left:12px;z-index:1000;background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;font-family:'IBM Plex Mono',monospace;box-shadow:var(--shadow);color:var(--text-mid)}
 .map-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:var(--text-mid)}
 .map-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .map-stat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
@@ -1888,14 +1890,15 @@ async function exportPDF(){
   function check(need=10){if(y+need>282)newPage();}
 
   function rodape(){
-    doc.setFillColor(20,30,50);
-    doc.rect(0,287,W,10,'F');
+    // Linha cinza fina no topo do rodapé
+    doc.setDrawColor(220,225,232);doc.setLineWidth(0.3);
+    doc.line(MAR,286,W-MAR,286);
     doc.setFontSize(6.5);doc.setFont('helvetica','normal');
-    doc.setTextColor(140,180,220);
-    doc.text('SICAD — DOCUMENTO SIGILOSO — USO EXCLUSIVO POLICIAL',W/2,292,{align:'center'});
-    doc.setTextColor(100,140,170);
-    doc.text('Operador: '+(CU?CU.nome||CU.login:'—'),MAR,292);
-    doc.text('Pág '+(doc.internal.getCurrentPageInfo().pageNumber),W-MAR,292,{align:'right'});
+    doc.setTextColor(100,116,139);
+    doc.text('SICAD — DOCUMENTO SIGILOSO — USO EXCLUSIVO POLICIAL',W/2,290,{align:'center'});
+    doc.setTextColor(148,163,184);
+    doc.text('Operador: '+(CU?CU.nome||CU.login:'—'),MAR,290);
+    doc.text('Pág '+(doc.internal.getCurrentPageInfo().pageNumber),W-MAR,290,{align:'right'});
   }
 
   function addImg(data,x,yy,w,h){
@@ -1917,11 +1920,11 @@ async function exportPDF(){
     check(8);
     // Label
     doc.setFontSize(8);doc.setFont('helvetica','bold');
-    doc.setTextColor(80,120,160);
+    doc.setTextColor(100,116,139);
     doc.text(label.toUpperCase()+':',MAR+2,y);
     // Valor
     doc.setFont('helvetica','normal');
-    const vc=rgb||[20,20,40];
+    const vc=rgb||[15,23,42];
     doc.setTextColor(vc[0],vc[1],vc[2]);
     doc.setFontSize(9);
     const parts=doc.splitTextToSize(String(val),W-MAR-52);
@@ -1929,37 +1932,41 @@ async function exportPDF(){
     y+=5.5*parts.length+1;
   }
 
-  // ── Título de seção ──
+  // ── Título de seção (faixa cinza clara com texto azul escuro) ──
   function secao(titulo){
     check(14);
     y+=2;
-    doc.setFillColor(0,60,100);
+    doc.setFillColor(241,245,249);
     doc.rect(MAR,y,W-MAR*2,7,'F');
+    // Barrinha colorida à esquerda
+    doc.setFillColor(0,153,204);
+    doc.rect(MAR,y,1.2,7,'F');
     doc.setFontSize(8.5);doc.setFont('helvetica','bold');
-    doc.setTextColor(0,220,255);
-    doc.text('▌ '+titulo,MAR+3,y+5);
+    doc.setTextColor(15,23,42);
+    doc.text(titulo,MAR+4,y+5);
     y+=10;
   }
 
   // ══════════════════════════════════════
-  // CABEÇALHO
+  // CABEÇALHO (branco com linha de cor)
   // ══════════════════════════════════════
-  doc.setFillColor(0,20,45);
-  doc.rect(0,0,W,32,'F');
-  // Linha decorativa ciano
-  doc.setFillColor(0,200,255);
-  doc.rect(0,32,W,1.5,'F');
+  // Linha decorativa ciano no topo
+  doc.setFillColor(0,153,204);
+  doc.rect(0,0,W,2.5,'F');
 
   doc.setFontSize(26);doc.setFont('helvetica','bold');
-  doc.setTextColor(0,210,255);
-  doc.text('SICAD',MAR,22);
+  doc.setTextColor(0,153,204);
+  doc.text('SICAD',MAR,18);
 
   doc.setFontSize(7.5);doc.setFont('helvetica','normal');
-  doc.setTextColor(160,200,230);
-  doc.text('SISTEMA DE CADASTRO — BRAZLÂNDIA DF',MAR,28);
+  doc.setTextColor(71,85,105);
+  doc.text('SISTEMA DE CADASTRO — BRAZLÂNDIA DF',MAR,24);
 
-  doc.setTextColor(100,150,190);
-  doc.text(new Date().toLocaleString('pt-BR'),W-MAR,28,{align:'right'});
+  doc.setTextColor(148,163,184);
+  doc.text(new Date().toLocaleString('pt-BR'),W-MAR,24,{align:'right'});
+  // Linha cinza divisória
+  doc.setDrawColor(226,232,240);doc.setLineWidth(0.4);
+  doc.line(MAR,30,W-MAR,30);
   y=38;
 
   // ══════════════════════════════════════
@@ -1968,10 +1975,16 @@ async function exportPDF(){
   const fW=42,fH=52;
   const hadFoto=addImg(p.foto,MAR,y,fW,fH);
   if(!hadFoto){
-    doc.setFillColor(20,35,60);
+    doc.setFillColor(241,245,249);
     doc.rect(MAR,y,fW,fH,'F');
-    doc.setTextColor(80,120,160);doc.setFontSize(20);
+    doc.setDrawColor(203,213,225);doc.setLineWidth(0.3);
+    doc.rect(MAR,y,fW,fH);
+    doc.setTextColor(148,163,184);doc.setFontSize(20);
     doc.text('?',MAR+fW/2,y+fH/2+3,{align:'center'});
+  } else {
+    // Borda fina ao redor da foto
+    doc.setDrawColor(203,213,225);doc.setLineWidth(0.3);
+    doc.rect(MAR,y,fW,fH);
   }
 
   const tx=MAR+fW+6;
@@ -1980,33 +1993,33 @@ async function exportPDF(){
 
   // Nome
   doc.setFontSize(16);doc.setFont('helvetica','bold');
-  doc.setTextColor(0,30,60);
+  doc.setTextColor(15,23,42);
   const nL=doc.splitTextToSize((p.nome||'').toUpperCase(),txW);
   doc.text(nL,tx,ty);ty+=7*nL.length;
 
   // Apelido
   if(p.apelido){
     doc.setFontSize(10);doc.setFont('helvetica','italic');
-    doc.setTextColor(0,100,160);
+    doc.setTextColor(0,153,204);
     doc.text('@ '+p.apelido,tx,ty);ty+=6;
   }
 
   // Localização
   if(p.bairro||p.quadra){
     doc.setFontSize(8.5);doc.setFont('helvetica','normal');
-    doc.setTextColor(40,80,120);
+    doc.setTextColor(71,85,105);
     doc.text((p.bairro||'')+(p.quadra?' — Quadra '+p.quadra:''),tx,ty);ty+=5.5;
   }
 
   // Data nascimento
   if(p.nascimento){
-    doc.setFontSize(8.5);doc.setTextColor(40,80,120);
+    doc.setFontSize(8.5);doc.setTextColor(71,85,105);
     doc.text('Nascimento: '+new Date(p.nascimento+'T00:00:00').toLocaleDateString('pt-BR'),tx,ty);ty+=5.5;
   }
 
   // Badge FACCIONADO
   if(p.faccionado){
-    doc.setFillColor(180,0,0);
+    doc.setFillColor(220,38,38);
     doc.roundedRect(tx,ty-3,txW,8,2,2,'F');
     doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
     doc.text('⚠  FACCIONADO'+(p.faccao?' — '+p.faccao.toUpperCase():''),tx+3,ty+2.5);
@@ -2015,29 +2028,29 @@ async function exportPDF(){
 
   y=Math.max(y+fH,ty)+6;
 
-  // Linha separadora
-  doc.setDrawColor(0,150,220);doc.setLineWidth(0.5);
+  // Linha separadora cinza clara
+  doc.setDrawColor(226,232,240);doc.setLineWidth(0.4);
   doc.line(MAR,y,W-MAR,y);y+=6;
 
   // ══════════════════════════════════════
   // IDENTIFICAÇÃO
   // ══════════════════════════════════════
   secao('IDENTIFICAÇÃO');
-  campo('CPF',p.cpf,[0,30,80]);
-  campo('Nome da Mãe',p.mae,[0,30,80]);
-  campo('Endereço',p.endereco,[0,30,80]);
-  campo('Quadra',p.quadra,[0,30,80]);
-  campo('Bairro',p.bairro,[0,30,80]);
-  campo('Telefone',p.telefone,[0,30,80]);
+  campo('CPF',p.cpf,[15,23,42]);
+  campo('Nome da Mãe',p.mae,[15,23,42]);
+  campo('Endereço',p.endereco,[15,23,42]);
+  campo('Quadra',p.quadra,[15,23,42]);
+  campo('Bairro',p.bairro,[15,23,42]);
+  campo('Telefone',p.telefone,[15,23,42]);
 
   // ══════════════════════════════════════
   // REDES SOCIAIS
   // ══════════════════════════════════════
   if(p.insta1||p.insta2||p.facebook){
     secao('REDES SOCIAIS');
-    campo('Instagram 1',p.insta1?('@'+p.insta1):null,[180,0,0]);
-    campo('Instagram 2',p.insta2?('@'+p.insta2):null,[180,0,0]);
-    campo('Facebook',p.facebook,[0,60,180]);
+    campo('Instagram 1',p.insta1?('@'+p.insta1):null,[180,0,80]);
+    campo('Instagram 2',p.insta2?('@'+p.insta2):null,[180,0,80]);
+    campo('Facebook',p.facebook,[0,80,180]);
   }
 
   // ══════════════════════════════════════
@@ -2045,8 +2058,8 @@ async function exportPDF(){
   // ══════════════════════════════════════
   if(p.senha_celular){
     secao('ACESSO AO CELULAR');
-    campo('Tipo de Senha',p.tipo_senha,[0,30,80]);
-    campo('Senha',p.senha_celular,[0,100,0]);
+    campo('Tipo de Senha',p.tipo_senha,[15,23,42]);
+    campo('Senha',p.senha_celular,[16,134,68]);
   }
 
   // ══════════════════════════════════════
@@ -2054,9 +2067,9 @@ async function exportPDF(){
   // ══════════════════════════════════════
   if(p.veiculo1||p.veiculo2||p.veiculo3){
     secao('VEÍCULOS VINCULADOS');
-    campo('Veículo 1',p.veiculo1,[0,30,80]);
-    campo('Veículo 2',p.veiculo2,[0,30,80]);
-    campo('Veículo 3',p.veiculo3,[0,30,80]);
+    campo('Veículo 1',p.veiculo1,[15,23,42]);
+    campo('Veículo 2',p.veiculo2,[15,23,42]);
+    campo('Veículo 3',p.veiculo3,[15,23,42]);
   }
 
   // ══════════════════════════════════════
@@ -2064,7 +2077,7 @@ async function exportPDF(){
   // ══════════════════════════════════════
   if(p.observacoes){
     secao('OBSERVAÇÕES');
-    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(0,30,80);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(15,23,42);
     const obsL=doc.splitTextToSize(p.observacoes,W-MAR*2-4);
     obsL.forEach(l=>{check(6);doc.text(l,MAR+2,y);y+=5.5;});
     y+=3;
@@ -2084,17 +2097,17 @@ async function exportPDF(){
       const px=MAR+(col2*(tW+gap));
       if(col2===0)check(tH+16);
       if(imgSrc){
-        // Borda ao redor da foto
-        doc.setDrawColor(0,150,200);doc.setLineWidth(0.4);
+        // Borda fina ao redor da foto
+        doc.setDrawColor(203,213,225);doc.setLineWidth(0.3);
         doc.rect(px-0.5,y-0.5,tW+1,tH+1);
         addImg(imgSrc,px,y,tW,tH);
       } else {
-        doc.setFillColor(220,235,250);doc.rect(px,y,tW,tH,'F');
-        doc.setTextColor(100,140,180);doc.setFontSize(8);
+        doc.setFillColor(241,245,249);doc.rect(px,y,tW,tH,'F');
+        doc.setTextColor(148,163,184);doc.setFontSize(8);
         doc.text('Sem foto',px+tW/2,y+tH/2,{align:'center'});
       }
       if(desc){
-        doc.setFontSize(7);doc.setTextColor(0,60,120);doc.setFont('helvetica','normal');
+        doc.setFontSize(7);doc.setTextColor(71,85,105);doc.setFont('helvetica','normal');
         const dl=doc.splitTextToSize(desc,tW);
         doc.text(dl,px,y+tH+4);
       }
@@ -2110,9 +2123,9 @@ async function exportPDF(){
   // ══════════════════════════════════════
   check(16);
   y+=2;
-  doc.setFillColor(230,240,250);
+  doc.setFillColor(248,250,252);
   doc.rect(MAR,y,W-MAR*2,14,'F');
-  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(60,90,130);
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(71,85,105);
   doc.text('Cadastrado por: '+(p.criado_por||'—'),MAR+3,y+5);
   if(p.criado_em)doc.text('Data: '+new Date(p.criado_em).toLocaleString('pt-BR'),MAR+3,y+11);
   y+=17;
