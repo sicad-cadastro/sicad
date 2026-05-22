@@ -501,6 +501,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <div class="fg"><label>Data de Nascimento</label><input type="date" id="fNasc"></div>
           <div class="fg"><label>CPF</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" oninput="onCpfInput(this)"><span id="cpfInfo" class="cpf-info"></span></div>
           <div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="fTelefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" autocomplete="off"></div>
+          <div class="fg"><label>CEP</label><input type="text" id="fCep" placeholder="00000-000" maxlength="9" inputmode="numeric" autocomplete="off" oninput="onCepInput(this)" onblur="buscarCep(this.value)"><span id="cepInfo" class="cpf-info"></span></div>
           <div class="fg"><label>Endereço</label><input type="text" id="fEnd" placeholder="Rua, Nº" autocomplete="off"></div>
           <div class="fg"><label>Quadra</label><input type="text" id="fQuadra" placeholder="Quadra / Setor" autocomplete="off"></div>
           <div class="fg"><label>Bairro</label>
@@ -519,6 +520,13 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   <option value="PADRE LUCIO">PADRE LUCIO</option>
   <option value="OUTROS">OUTROS</option>
 </select></div>
+          <div class="fg" style="grid-column:1/-1">
+            <label>📍 LOCALIZAÇÃO NO MAPA</label>
+            <input type="hidden" id="fLat">
+            <input type="hidden" id="fLng">
+            <div id="locStatus" style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.</div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">🎯 AJUSTAR POSIÇÃO NO MAPA</button>
+          </div>
         </div>
 
         <!-- Redes Sociais -->
@@ -961,6 +969,26 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
   <img id="lbImg">
 </div>
 
+<!-- MODAL AJUSTE DE POSIÇÃO NO MAPA -->
+<div class="modal-overlay" id="locModal">
+  <div class="modal" style="max-width:720px">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="mtitle">🎯 AJUSTAR POSIÇÃO</div>
+        <button class="mclose" onclick="fecharMapaAjuste()">✕</button>
+      </div>
+      <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px">Clique no mapa para marcar a localização exata. O endereço será preenchido automaticamente.</div>
+      <div id="locMap" style="height:380px;border-radius:12px;border:1px solid var(--border);overflow:hidden;z-index:1"></div>
+      <div id="locCoords" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mid);margin-top:10px;text-align:center"></div>
+      <div class="row-btns" style="margin-top:14px">
+        <button class="btn btn-outline" onclick="fecharMapaAjuste()">CANCELAR</button>
+        <button class="btn btn-primary" onclick="confirmarPosicaoMapa()">✓ USAR ESTA POSIÇÃO</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1151,9 +1179,11 @@ async function savePerson(){
     else if (_ts === 'alfanumerico') _sc = document.getElementById('fSenhaAlf').value.trim() || null;
     else if (_ts === 'padrao') _sc = _pattern.length ? _pattern.join('') : null;
 
+    const _lat = parseFloat(gv('fLat')); const _lng = parseFloat(gv('fLng'));
     const campos={
       nome, mae:gv('fMae'), apelido:gv('fApelido'), nascimento:gv('fNasc'),
-      cpf:gv('fCpf'), endereco:gv('fEnd'), quadra:gv('fQuadra'), bairro:gv('fBairro'),
+      cpf:gv('fCpf'), cep:gv('fCep'), endereco:gv('fEnd'), quadra:gv('fQuadra'), bairro:gv('fBairro'),
+      lat: !isNaN(_lat) ? _lat : null, lng: !isNaN(_lng) ? _lng : null,
       telefone:gv('fTelefone'), insta1:gv('fInsta1'), insta2:gv('fInsta2'), facebook:gv('fFacebook'),
       veiculo1:gv('fVeiculo1'), veiculo2:gv('fVeiculo2'), veiculo3:gv('fVeiculo3'),
       faccionado:_faccionado||false, faccao:_faccionado?(gv('fFaccao')||null):null,
@@ -1186,7 +1216,9 @@ async function savePerson(){
 function gv(id){return document.getElementById(id).value.trim()||null;}
 
 function cadClear(){
-  ['fNome','fMae','fApelido','fNasc','fCpf','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>document.getElementById(id).value='');
+  ['fNome','fMae','fApelido','fNasc','fCpf','fCep','fLat','fLng','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const cepInfo=document.getElementById('cepInfo');if(cepInfo){cepInfo.textContent='';cepInfo.className='cpf-info';}
+  const locSt=document.getElementById('locStatus');if(locSt){locSt.innerHTML='Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.';locSt.style.color='var(--text-mid)';}
   document.getElementById('fObs').value='';
   _faccionado=false;updateFaccionadoBanner();
   document.getElementById('fFaccao').value='';
@@ -1223,6 +1255,7 @@ async function viewPerson(id){
         <div class="d-fld"><label>Nome da Mãe</label><span>${esc(p.mae||'—')}</span></div>
         <div class="d-fld"><label>Nascimento</label><span>${p.nascimento?fmtD(p.nascimento):'—'}</span></div>
         <div class="d-fld"><label>CPF</label><span>${esc(p.cpf||'—')}</span></div>
+        <div class="d-fld"><label>CEP</label><span>${esc(p.cep||'—')}</span></div>
         <div class="d-fld"><label>Endereço</label><span>${esc(p.endereco||'—')}</span></div>
         <div class="d-fld"><label>Quadra</label><span>${esc(p.quadra||'—')}</span></div>
         <div class="d-fld"><label>Bairro</label><span>${esc(p.bairro||'—')}</span></div>
@@ -1260,8 +1293,17 @@ async function editPerson(){
   document.getElementById('cadTitle').textContent='EDITAR CADASTRO';
   document.getElementById('fNome').value=p.nome||'';document.getElementById('fMae').value=p.mae||'';
   document.getElementById('fApelido').value=p.apelido||'';document.getElementById('fNasc').value=p.nascimento||'';
-  document.getElementById('fCpf').value=p.cpf||'';document.getElementById('fEnd').value=p.endereco||'';
+  document.getElementById('fCpf').value=p.cpf||'';
+  document.getElementById('fCep').value=p.cep||'';
+  document.getElementById('fEnd').value=p.endereco||'';
   document.getElementById('fQuadra').value=p.quadra||'';document.getElementById('fBairro').value=p.bairro||'';
+  document.getElementById('fLat').value=p.lat!=null?p.lat:'';
+  document.getElementById('fLng').value=p.lng!=null?p.lng:'';
+  const locSt2=document.getElementById('locStatus');
+  if(locSt2){
+    if(p.lat!=null && p.lng!=null){locSt2.innerHTML='📍 Coordenada salva: <b>'+Number(p.lat).toFixed(5)+', '+Number(p.lng).toFixed(5)+'</b>';locSt2.style.color='var(--success)';}
+    else{locSt2.innerHTML='Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.';locSt2.style.color='var(--text-mid)';}
+  }
   document.getElementById('fTelefone').value=p.telefone||'';
   document.getElementById('fInsta1').value=p.insta1||'';
   document.getElementById('fInsta2').value=p.insta2||'';
@@ -1522,6 +1564,160 @@ let toastT;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
 
 
+// ── CEP via BrasilAPI/ViaCEP + AJUSTE DE POSIÇÃO NO MAPA ──
+function onCepInput(el){
+  let v = el.value.replace(/\D/g,'').substring(0,8);
+  if (v.length > 5) v = v.slice(0,5)+'-'+v.slice(5);
+  el.value = v;
+}
+
+async function buscarCep(cepRaw){
+  const cep = (cepRaw||'').replace(/\D/g,'');
+  const info = document.getElementById('cepInfo');
+  if (cep.length !== 8) { if(info){info.textContent='';info.className='cpf-info';} return; }
+  if(info){info.textContent='🔍 Buscando CEP...';info.className='cpf-info';info.style.color='var(--text-mid)';}
+  try {
+    // BrasilAPI v2 traz coordenadas; ViaCEP é fallback
+    let lat=null, lng=null, logradouro='', bairro='', cidade='', uf='';
+    try {
+      const r = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+      if (r.ok) {
+        const j = await r.json();
+        logradouro = j.street || '';
+        bairro = j.neighborhood || '';
+        cidade = j.city || '';
+        uf = j.state || '';
+        if (j.location && j.location.coordinates) {
+          lat = parseFloat(j.location.coordinates.latitude);
+          lng = parseFloat(j.location.coordinates.longitude);
+        }
+      }
+    } catch(e){}
+    // Fallback ViaCEP (sem coords mas com endereço)
+    if (!logradouro) {
+      const r2 = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (r2.ok) {
+        const j2 = await r2.json();
+        if (!j2.erro) {
+          logradouro = j2.logradouro || '';
+          bairro = j2.bairro || '';
+          cidade = j2.localidade || '';
+          uf = j2.uf || '';
+        }
+      }
+    }
+    if (!logradouro && !bairro) {
+      if(info){info.textContent='❌ CEP não encontrado';info.className='cpf-info cpf-err';}
+      return;
+    }
+    // Preenche endereço
+    const endEl = document.getElementById('fEnd');
+    if (endEl && !endEl.value.trim() && logradouro) endEl.value = logradouro;
+    // Tenta selecionar bairro existente
+    const bairroEl = document.getElementById('fBairro');
+    if (bairroEl && bairro) {
+      const bUp = bairro.toUpperCase();
+      let matched = false;
+      for (const opt of bairroEl.options) {
+        if (opt.value && bUp.indexOf(opt.value) >= 0) { bairroEl.value = opt.value; matched = true; break; }
+      }
+      if (!matched) bairroEl.value = 'OUTROS';
+    }
+    // Se BrasilAPI não trouxe coordenada, tenta Nominatim com endereço completo
+    if (lat === null || lng === null) {
+      const q = [logradouro, bairro, cidade, uf, 'Brasil'].filter(Boolean).join(', ');
+      try {
+        const r3 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
+        const j3 = await r3.json();
+        if (j3[0]) { lat = parseFloat(j3[0].lat); lng = parseFloat(j3[0].lon); }
+      } catch(e){}
+    }
+    if (lat !== null && lng !== null) {
+      document.getElementById('fLat').value = lat;
+      document.getElementById('fLng').value = lng;
+      const ls = document.getElementById('locStatus');
+      if (ls) { ls.innerHTML = '✅ Coordenada definida pelo CEP: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--success)'; }
+      if(info){info.textContent='✅ CEP encontrado · '+(cidade?cidade+'/'+uf:'');info.className='cpf-info cpf-ok';}
+    } else {
+      if(info){info.textContent='⚠️ Endereço encontrado, mas sem coordenada. Use "Ajustar no mapa".';info.className='cpf-info cpf-warn';}
+    }
+  } catch(e) {
+    if(info){info.textContent='❌ Erro ao consultar CEP';info.className='cpf-info cpf-err';}
+  }
+}
+
+// ── MODAL DE AJUSTE DE POSIÇÃO NO MAPA ──
+let _locMapInst = null;
+let _locMarker = null;
+
+function abrirMapaAjuste(){
+  document.getElementById('locModal').classList.add('open');
+  setTimeout(() => {
+    // Posição inicial: lat/lng já definido OU centro de Brazlândia
+    const latVal = parseFloat(document.getElementById('fLat').value);
+    const lngVal = parseFloat(document.getElementById('fLng').value);
+    const init = (!isNaN(latVal) && !isNaN(lngVal)) ? [latVal, lngVal] : [-15.6760, -48.1870];
+    const zoom = (!isNaN(latVal) && !isNaN(lngVal)) ? 17 : 14;
+    if (!_locMapInst) {
+      _locMapInst = L.map('locMap', { center: init, zoom, scrollWheelZoom: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap · © CARTO', subdomains:'abcd', maxZoom:19
+      }).addTo(_locMapInst);
+      _locMapInst.on('click', (e) => {
+        _setLocMarker(e.latlng.lat, e.latlng.lng, true);
+      });
+    } else {
+      _locMapInst.setView(init, zoom);
+      _locMapInst.invalidateSize();
+    }
+    if (!isNaN(latVal) && !isNaN(lngVal)) _setLocMarker(latVal, lngVal, false);
+    setTimeout(() => _locMapInst.invalidateSize(), 200);
+  }, 150);
+}
+
+function _setLocMarker(lat, lng, reverseGeo){
+  if (_locMarker) _locMapInst.removeLayer(_locMarker);
+  _locMarker = L.marker([lat, lng], { draggable: true }).addTo(_locMapInst);
+  _locMarker.on('dragend', (e) => {
+    const ll = _locMarker.getLatLng();
+    _updateLocCoords(ll.lat, ll.lng);
+  });
+  _updateLocCoords(lat, lng);
+  // Reverse geocoding pra pré-preencher endereço se vazio
+  if (reverseGeo) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+      .then(r => r.json())
+      .then(j => {
+        if (j && j.address) {
+          const rua = [j.address.road, j.address.house_number].filter(Boolean).join(', ');
+          const endEl = document.getElementById('fEnd');
+          if (endEl && !endEl.value.trim() && rua) endEl.value = rua;
+        }
+      }).catch(()=>{});
+  }
+}
+
+function _updateLocCoords(lat, lng){
+  const el = document.getElementById('locCoords');
+  if (el) el.innerHTML = `📍 <b>${lat.toFixed(6)}</b>, <b>${lng.toFixed(6)}</b>`;
+  document.getElementById('fLat').value = lat;
+  document.getElementById('fLng').value = lng;
+}
+
+function fecharMapaAjuste(){
+  document.getElementById('locModal').classList.remove('open');
+}
+
+function confirmarPosicaoMapa(){
+  const lat = parseFloat(document.getElementById('fLat').value);
+  const lng = parseFloat(document.getElementById('fLng').value);
+  if (isNaN(lat) || isNaN(lng)) { toast('Clique no mapa pra marcar uma posição.','warn'); return; }
+  const ls = document.getElementById('locStatus');
+  if (ls) { ls.innerHTML = '🎯 Posição manual: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--accent)'; }
+  fecharMapaAjuste();
+  toast('Posição salva! Será gravada quando confirmar o cadastro.','success');
+}
+
 // ── MAPA INTERATIVO ──
 let mapaInst = null;
 let mapaMarkers = [];
@@ -1594,17 +1790,49 @@ async function geocodeAddress(endereco, bairro) {
 // Cache de geocodificação
 const _geocache = {};
 
+// Hash determinístico simples (mesma string → mesmo offset)
+function _hashCode(str){
+  let h = 0;
+  for (let i = 0; i < (str||'').length; i++) h = ((h<<5) - h + str.charCodeAt(i)) | 0;
+  return h;
+}
+function _hashOffset(seed){
+  const h = Math.abs(_hashCode(seed));
+  // Gera 2 floats determinísticos entre -1 e 1
+  const a = ((h % 1000) / 500) - 1;
+  const b = (((h >> 10) % 1000) / 500) - 1;
+  return [a * 0.0025, b * 0.0025];
+}
+
 async function getCoords(p) {
-  const key = (p.endereco||'')+(p.bairro||'');
+  // 1) Coordenada salva tem prioridade absoluta (CEP / ajuste manual)
+  if (p.lat != null && p.lng != null && !isNaN(p.lat) && !isNaN(p.lng)) {
+    return { lat: parseFloat(p.lat), lng: parseFloat(p.lng) };
+  }
+  const key = (p.endereco||'')+(p.bairro||'')+(p.cep||'');
   if (_geocache[key]) return _geocache[key];
-  
-  // Tenta geocodificar endereço real
+
+  // 2) Tenta geocodificar endereço real via CEP (mais preciso)
+  if (p.cep && p.cep.replace(/\D/g,'').length === 8) {
+    try {
+      const r = await fetch(`https://brasilapi.com.br/api/cep/v2/${p.cep.replace(/\D/g,'')}`);
+      if (r.ok) {
+        const j = await r.json();
+        if (j.location && j.location.coordinates) {
+          const c = { lat: parseFloat(j.location.coordinates.latitude), lng: parseFloat(j.location.coordinates.longitude) };
+          _geocache[key] = c; return c;
+        }
+      }
+    } catch(e){}
+  }
+
+  // 3) Geocodifica endereço textual via Nominatim
   if (p.endereco && p.bairro) {
     const coords = await geocodeAddress(p.endereco, p.bairro);
     if (coords) { _geocache[key] = coords; return coords; }
   }
-  
-  // Fallback: coordenadas por bairro + offset
+
+  // 4) Fallback: coordenada do bairro + offset DETERMINÍSTICO pelo nome (não muda a cada render)
   const BAIRRO_COORDS = {
     "SETOR NORTE":    [-15.6680, -48.1890],
     "SETOR SUL":      [-15.6830, -48.1860],
@@ -1620,10 +1848,8 @@ async function getCoords(p) {
     "OUTROS":         [-15.6760, -48.1870],
   };
   const base = BAIRRO_COORDS[(p.bairro||'').toUpperCase()] || [-15.6760, -48.1870];
-  const coords = {
-    lat: base[0] + (Math.random() - 0.5) * 0.004,
-    lng: base[1] + (Math.random() - 0.5) * 0.004
-  };
+  const off = _hashOffset((p.nome||p.id||key));
+  const coords = { lat: base[0] + off[0], lng: base[1] + off[1] };
   _geocache[key] = coords;
   return coords;
 }
@@ -1637,7 +1863,9 @@ async function renderMapMarkers(persons) {
   const alertNames = new Set(allAlertas.map(a=>(a.nome||'').toLowerCase()));
 
   for (const p of persons) {
-    if (!p.bairro && !p.endereco) continue;
+    // Mostra se tem coordenada salva OU bairro/endereço pra geocodificar
+    const temCoord = (p.lat != null && p.lng != null);
+    if (!temCoord && !p.bairro && !p.endereco) continue;
     const coords = await getCoords(p);
     if (!coords) continue;
     const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
@@ -1661,6 +1889,7 @@ async function renderMapMarkers(persons) {
         ${p.apelido ? `<div style="color:#64748b;font-size:12px;margin-bottom:4px">@ ${esc(p.apelido)}</div>` : ''}
         ${p.bairro ? `<div style="font-size:12px;color:#334155">📍 ${esc(p.bairro)}</div>` : ''}
         ${p.endereco ? `<div style="font-size:12px;color:#334155">🏠 ${esc(p.endereco)}</div>` : ''}
+        ${p.cep ? `<div style="font-size:12px;color:#334155">✉️ CEP ${esc(p.cep)}</div>` : ''}
         ${p.quadra ? `<div style="font-size:12px;color:#334155">🔲 ${esc(p.quadra)}</div>` : ''}
         ${isAlert ? '<div style="color:#dc2626;font-weight:700;margin-top:4px">⚠️ ALERTA DE FORAGIDO</div>' : ''}
         <button onclick="viewPerson('${p.id}')" style="margin-top:8px;width:100%;padding:8px;background:#00a4d0;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">👁 VER FICHA COMPLETA</button>
@@ -2096,6 +2325,7 @@ async function exportPDF(){
   secao('IDENTIFICAÇÃO');
   campo('CPF',p.cpf,[15,23,42]);
   campo('Nome da Mãe',p.mae,[15,23,42]);
+  campo('CEP',p.cep,[15,23,42]);
   campo('Endereço',p.endereco,[15,23,42]);
   campo('Quadra',p.quadra,[15,23,42]);
   campo('Bairro',p.bairro,[15,23,42]);
