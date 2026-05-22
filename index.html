@@ -1697,14 +1697,18 @@ async function buscarCep(cepRaw){
 let _locMapInst = null;
 let _locMarker = null;
 
+let _locCircle = null;
 function abrirMapaAjuste(){
   document.getElementById('locModal').classList.add('open');
+  // Pega lat/lng atual (pode vir do CEP ou ajuste anterior)
+  const latVal = parseFloat(document.getElementById('fLat').value);
+  const lngVal = parseFloat(document.getElementById('fLng').value);
+  const temCoord = !isNaN(latVal) && !isNaN(lngVal);
+  const init = temCoord ? [latVal, lngVal] : [-15.6760, -48.1870];
+  const zoom = temCoord ? 18 : 14;
+
+  // Aguarda o modal aparecer completamente antes de inicializar/redimensionar
   setTimeout(() => {
-    // Posição inicial: lat/lng já definido OU centro de Brazlândia
-    const latVal = parseFloat(document.getElementById('fLat').value);
-    const lngVal = parseFloat(document.getElementById('fLng').value);
-    const init = (!isNaN(latVal) && !isNaN(lngVal)) ? [latVal, lngVal] : [-15.6760, -48.1870];
-    const zoom = (!isNaN(latVal) && !isNaN(lngVal)) ? 17 : 14;
     if (!_locMapInst) {
       _locMapInst = L.map('locMap', { center: init, zoom, scrollWheelZoom: true });
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -1713,19 +1717,35 @@ function abrirMapaAjuste(){
       _locMapInst.on('click', (e) => {
         _setLocMarker(e.latlng.lat, e.latlng.lng, true);
       });
-    } else {
-      _locMapInst.setView(init, zoom);
-      _locMapInst.invalidateSize();
     }
-    if (!isNaN(latVal) && !isNaN(lngVal)) _setLocMarker(latVal, lngVal, false);
-    setTimeout(() => _locMapInst.invalidateSize(), 200);
-  }, 150);
+    // Sempre redimensiona (o modal estava com 0 antes de abrir)
+    _locMapInst.invalidateSize();
+    _locMapInst.setView(init, zoom);
+
+    // Remove marker e círculo antigos
+    if (_locMarker) { _locMapInst.removeLayer(_locMarker); _locMarker = null; }
+    if (_locCircle) { _locMapInst.removeLayer(_locCircle); _locCircle = null; }
+
+    // Se já tem coordenada (vinda do CEP), mostra direto com pino + círculo de área
+    if (temCoord) {
+      _setLocMarker(latVal, lngVal, false);
+      // Círculo de 80m destacando a posição (precisão típica de CEP)
+      _locCircle = L.circle([latVal, lngVal], {
+        radius: 80, color: '#0099cc', fillColor: '#0099cc',
+        fillOpacity: 0.12, weight: 1.5, dashArray: '4,4'
+      }).addTo(_locMapInst);
+    }
+    // Re-redimensiona depois da animação do modal terminar (~280ms)
+    setTimeout(() => _locMapInst.invalidateSize(), 300);
+  }, 100);
 }
 
 function _setLocMarker(lat, lng, reverseGeo){
   if (_locMarker) _locMapInst.removeLayer(_locMarker);
-  _locMarker = L.marker([lat, lng], { draggable: true }).addTo(_locMapInst);
-  _locMarker.on('dragend', (e) => {
+  if (_locCircle) { _locMapInst.removeLayer(_locCircle); _locCircle = null; }
+  _locMarker = L.marker([lat, lng], { draggable: true, autoPan: true }).addTo(_locMapInst);
+  _locMarker.bindTooltip('📍 Arraste pra ajustar', { permanent: false, direction: 'top', offset: [0,-30] });
+  _locMarker.on('dragend', () => {
     const ll = _locMarker.getLatLng();
     _updateLocCoords(ll.lat, ll.lng);
   });
