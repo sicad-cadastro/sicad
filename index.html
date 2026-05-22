@@ -2331,6 +2331,31 @@ async function exportPDF(){
   campo('Bairro',p.bairro,[15,23,42]);
   campo('Telefone',p.telefone,[15,23,42]);
 
+  // ── Link clicável de navegação (Google Maps) ──
+  let mapsUrl = null;
+  if (p.lat != null && p.lng != null) {
+    mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + p.lat + ',' + p.lng;
+  } else if (p.endereco || p.bairro || p.cep) {
+    const q = [p.endereco, p.bairro, p.cep, 'Brazlândia', 'DF', 'Brasil'].filter(Boolean).join(', ');
+    mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  }
+  if (mapsUrl) {
+    check(8);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setTextColor(100,116,139);
+    doc.text('ABRIR NO MAPA:',MAR+2,y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(0,153,204);
+    const linkTxt = '🧭 Navegar até o endereço';
+    doc.textWithLink(linkTxt, MAR+50, y, { url: mapsUrl });
+    // Sublinha visual
+    const tw = doc.getTextWidth(linkTxt);
+    doc.setDrawColor(0,153,204);doc.setLineWidth(0.2);
+    doc.line(MAR+50, y+0.7, MAR+50+tw, y+0.7);
+    y += 6.5;
+  }
+
   // ══════════════════════════════════════
   // REDES SOCIAIS
   // ══════════════════════════════════════
