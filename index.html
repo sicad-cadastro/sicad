@@ -1571,78 +1571,125 @@ function onCepInput(el){
   el.value = v;
 }
 
+function _validLatLng(la, ln){
+  return typeof la === 'number' && typeof ln === 'number'
+    && !isNaN(la) && !isNaN(ln)
+    && la >= -90 && la <= 90 && ln >= -180 && ln <= 180;
+}
+
 async function buscarCep(cepRaw){
   const cep = (cepRaw||'').replace(/\D/g,'');
   const info = document.getElementById('cepInfo');
   if (cep.length !== 8) { if(info){info.textContent='';info.className='cpf-info';} return; }
-  if(info){info.textContent='🔍 Buscando CEP...';info.className='cpf-info';info.style.color='var(--text-mid)';}
+  if(info){info.textContent='🔍 Buscando CEP em múltiplas bases...';info.className='cpf-info';info.style.color='var(--text-mid)';}
+  let lat=null, lng=null, logradouro='', bairro='', cidade='', uf='';
+
+  // ── Backend 1: BrasilAPI v2 (geralmente tem coords) ──
   try {
-    // BrasilAPI v2 traz coordenadas; ViaCEP é fallback
-    let lat=null, lng=null, logradouro='', bairro='', cidade='', uf='';
+    const r = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+    if (r.ok) {
+      const j = await r.json();
+      logradouro = logradouro || j.street || '';
+      bairro = bairro || j.neighborhood || '';
+      cidade = cidade || j.city || '';
+      uf = uf || j.state || '';
+      if (j.location && j.location.coordinates) {
+        const la = parseFloat(j.location.coordinates.latitude);
+        const ln = parseFloat(j.location.coordinates.longitude);
+        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
+      }
+    }
+  } catch(e){}
+
+  // ── Backend 2: AwesomeAPI (alternativa rápida) ──
+  if (!logradouro || lat === null) {
     try {
-      const r = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+      const r = await fetch(`https://cep.awesomeapi.com.br/json/${cep}`);
       if (r.ok) {
         const j = await r.json();
-        logradouro = j.street || '';
-        bairro = j.neighborhood || '';
-        cidade = j.city || '';
-        uf = j.state || '';
-        if (j.location && j.location.coordinates) {
-          lat = parseFloat(j.location.coordinates.latitude);
-          lng = parseFloat(j.location.coordinates.longitude);
+        logradouro = logradouro || j.address || '';
+        bairro = bairro || j.district || '';
+        cidade = cidade || j.city || '';
+        uf = uf || j.state || '';
+        const la = parseFloat(j.lat); const ln = parseFloat(j.lng);
+        if (lat === null && _validLatLng(la, ln)) { lat = la; lng = ln; }
+      }
+    } catch(e){}
+  }
+
+  // ── Backend 3: ViaCEP (sem coords, mas tem cobertura ampla) ──
+  if (!logradouro) {
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (r.ok) {
+        const j = await r.json();
+        if (!j.erro) {
+          logradouro = logradouro || j.logradouro || '';
+          bairro = bairro || j.bairro || '';
+          cidade = cidade || j.localidade || '';
+          uf = uf || j.uf || '';
         }
       }
     } catch(e){}
-    // Fallback ViaCEP (sem coords mas com endereço)
-    if (!logradouro) {
-      const r2 = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      if (r2.ok) {
-        const j2 = await r2.json();
-        if (!j2.erro) {
-          logradouro = j2.logradouro || '';
-          bairro = j2.bairro || '';
-          cidade = j2.localidade || '';
-          uf = j2.uf || '';
+  }
+
+  // ── Backend 4: Nominatim direto pelo CEP (último recurso) ──
+  if (lat === null) {
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cep+', Brasil')}&limit=1`);
+      const j = await r.json();
+      if (j[0]) {
+        const la = parseFloat(j[0].lat); const ln = parseFloat(j[0].lon);
+        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
+        if (j[0].display_name && !logradouro) {
+          // tenta tirar bairro/cidade do display_name
+          const parts = j[0].display_name.split(',').map(s=>s.trim());
+          if (!cidade) cidade = parts[parts.length-3] || cidade;
+          if (!uf) uf = parts[parts.length-2] || uf;
         }
       }
+    } catch(e){}
+  }
+
+  // ── Preenche endereço/bairro se encontrou ──
+  const endEl = document.getElementById('fEnd');
+  if (endEl && !endEl.value.trim() && logradouro) endEl.value = logradouro;
+  const bairroEl = document.getElementById('fBairro');
+  if (bairroEl && bairro) {
+    const bUp = bairro.toUpperCase();
+    let matched = false;
+    for (const opt of bairroEl.options) {
+      if (opt.value && bUp.indexOf(opt.value) >= 0) { bairroEl.value = opt.value; matched = true; break; }
     }
-    if (!logradouro && !bairro) {
-      if(info){info.textContent='❌ CEP não encontrado';info.className='cpf-info cpf-err';}
-      return;
-    }
-    // Preenche endereço
-    const endEl = document.getElementById('fEnd');
-    if (endEl && !endEl.value.trim() && logradouro) endEl.value = logradouro;
-    // Tenta selecionar bairro existente
-    const bairroEl = document.getElementById('fBairro');
-    if (bairroEl && bairro) {
-      const bUp = bairro.toUpperCase();
-      let matched = false;
-      for (const opt of bairroEl.options) {
-        if (opt.value && bUp.indexOf(opt.value) >= 0) { bairroEl.value = opt.value; matched = true; break; }
+    if (!matched && !bairroEl.value) bairroEl.value = 'OUTROS';
+  }
+
+  // ── Backend 5: se ainda não tem coord, geocodifica endereço textual via Nominatim ──
+  if (lat === null && (logradouro || bairro)) {
+    const q = [logradouro, bairro, cidade, uf, 'Brasil'].filter(Boolean).join(', ');
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
+      const j = await r.json();
+      if (j[0]) {
+        const la = parseFloat(j[0].lat); const ln = parseFloat(j[0].lon);
+        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
       }
-      if (!matched) bairroEl.value = 'OUTROS';
-    }
-    // Se BrasilAPI não trouxe coordenada, tenta Nominatim com endereço completo
-    if (lat === null || lng === null) {
-      const q = [logradouro, bairro, cidade, uf, 'Brasil'].filter(Boolean).join(', ');
-      try {
-        const r3 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
-        const j3 = await r3.json();
-        if (j3[0]) { lat = parseFloat(j3[0].lat); lng = parseFloat(j3[0].lon); }
-      } catch(e){}
-    }
-    if (lat !== null && lng !== null) {
-      document.getElementById('fLat').value = lat;
-      document.getElementById('fLng').value = lng;
-      const ls = document.getElementById('locStatus');
-      if (ls) { ls.innerHTML = '✅ Coordenada definida pelo CEP: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--success)'; }
-      if(info){info.textContent='✅ CEP encontrado · '+(cidade?cidade+'/'+uf:'');info.className='cpf-info cpf-ok';}
-    } else {
-      if(info){info.textContent='⚠️ Endereço encontrado, mas sem coordenada. Use "Ajustar no mapa".';info.className='cpf-info cpf-warn';}
-    }
-  } catch(e) {
-    if(info){info.textContent='❌ Erro ao consultar CEP';info.className='cpf-info cpf-err';}
+    } catch(e){}
+  }
+
+  // ── Salva resultado ──
+  const ls = document.getElementById('locStatus');
+  if (lat !== null && lng !== null) {
+    document.getElementById('fLat').value = lat;
+    document.getElementById('fLng').value = lng;
+    if (ls) { ls.innerHTML = '✅ Coordenada localizada: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--success)'; }
+    if(info){info.textContent='✅ CEP localizado · '+(cidade?cidade+'/'+uf:'');info.className='cpf-info cpf-ok';}
+  } else if (logradouro || bairro) {
+    if(info){info.textContent='⚠️ Endereço encontrado, mas sem coordenada precisa. Use "🎯 AJUSTAR POSIÇÃO NO MAPA".';info.className='cpf-info cpf-warn';}
+    if (ls) { ls.innerHTML='⚠️ Endereço preenchido, <b>ajuste a posição no mapa abaixo</b>.'; ls.style.color='var(--accent2)'; }
+  } else {
+    if(info){info.textContent='❌ CEP não encontrado em nenhuma base. Preencha o endereço e use "Ajustar no mapa".';info.className='cpf-info cpf-err';}
+    if (ls) { ls.innerHTML='❌ CEP não localizado. <b>Use o botão "🎯 AJUSTAR POSIÇÃO NO MAPA"</b> para marcar.'; ls.style.color='var(--danger)'; }
   }
 }
 
