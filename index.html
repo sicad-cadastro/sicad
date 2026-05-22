@@ -1804,13 +1804,20 @@ function _hashOffset(seed){
   return [a * 0.0025, b * 0.0025];
 }
 
+function _validCoord(c){
+  return c && typeof c.lat === 'number' && typeof c.lng === 'number'
+    && !isNaN(c.lat) && !isNaN(c.lng)
+    && c.lat >= -90 && c.lat <= 90 && c.lng >= -180 && c.lng <= 180;
+}
+
 async function getCoords(p) {
   // 1) Coordenada salva tem prioridade absoluta (CEP / ajuste manual)
-  if (p.lat != null && p.lng != null && !isNaN(p.lat) && !isNaN(p.lng)) {
-    return { lat: parseFloat(p.lat), lng: parseFloat(p.lng) };
+  if (p.lat != null && p.lng != null) {
+    const c = { lat: parseFloat(p.lat), lng: parseFloat(p.lng) };
+    if (_validCoord(c)) return c;
   }
   const key = (p.endereco||'')+(p.bairro||'')+(p.cep||'');
-  if (_geocache[key]) return _geocache[key];
+  if (_geocache[key] && _validCoord(_geocache[key])) return _geocache[key];
 
   // 2) Tenta geocodificar endereço real via CEP (mais preciso)
   if (p.cep && p.cep.replace(/\D/g,'').length === 8) {
@@ -1820,7 +1827,7 @@ async function getCoords(p) {
         const j = await r.json();
         if (j.location && j.location.coordinates) {
           const c = { lat: parseFloat(j.location.coordinates.latitude), lng: parseFloat(j.location.coordinates.longitude) };
-          _geocache[key] = c; return c;
+          if (_validCoord(c)) { _geocache[key] = c; return c; }
         }
       }
     } catch(e){}
@@ -1829,7 +1836,7 @@ async function getCoords(p) {
   // 3) Geocodifica endereço textual via Nominatim
   if (p.endereco && p.bairro) {
     const coords = await geocodeAddress(p.endereco, p.bairro);
-    if (coords) { _geocache[key] = coords; return coords; }
+    if (_validCoord(coords)) { _geocache[key] = coords; return coords; }
   }
 
   // 4) Fallback: coordenada do bairro + offset DETERMINÍSTICO pelo nome (não muda a cada render)
@@ -1867,7 +1874,7 @@ async function renderMapMarkers(persons) {
     const temCoord = (p.lat != null && p.lng != null);
     if (!temCoord && !p.bairro && !p.endereco) continue;
     const coords = await getCoords(p);
-    if (!coords) continue;
+    if (!_validCoord(coords)) { console.warn('[mapa] coord inválida pra', p.nome); continue; }
     const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
     const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[(p.bairro||'').toUpperCase()] || '#b0bec5');
     const size = isAlert ? 24 : 18;
