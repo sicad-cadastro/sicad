@@ -13,6 +13,8 @@
 <!-- Leaflet (mapa grátis, sem chave de API) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Plugin Leaflet.heat — heatmap de calor -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 <!-- face-api.js — reconhecimento facial 100% client-side, sem API key, sem servidor -->
 <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
 <!-- Supabase JS SDK — auth + cliente do banco -->
@@ -454,9 +456,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         </div>
       </div>
       <div id="signupFields" style="display:none">
-        <div class="fg"><label>Nome Completo *</label><input type="text" id="suNome" placeholder="Como aparece no documento" autocomplete="name"></div>
-        <div class="fg"><label>Matrícula / RG Funcional *</label><input type="text" id="suMatricula" placeholder="Ex: 12345-X" autocomplete="off"></div>
-        <div class="fg"><label>E-mail Institucional *</label><input type="email" id="suEmail" placeholder="nome@policia.df.gov.br" autocomplete="email"></div>
+        <div class="fg"><label>Nome *</label><input type="text" id="suNome" placeholder="Seu nome" autocomplete="name"></div>
+        <div class="fg"><label>E-mail *</label><input type="email" id="suEmail" placeholder="seu@email.com" autocomplete="email"></div>
         <div class="fg"><label>Senha *</label><input type="password" id="suSenha" placeholder="Mínimo 6 caracteres"></div>
         <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">📨 ENVIAR SOLICITAÇÃO</button>
         <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">← Voltar ao login</button>
@@ -1550,10 +1551,9 @@ function toggleSignup(show){
 // Auto-cadastro — cria conta como inativa (pendente de aprovação)
 async function signup(){
   const nome = document.getElementById('suNome').value.trim();
-  const matricula = document.getElementById('suMatricula').value.trim();
   const email = document.getElementById('suEmail').value.trim();
   const senha = document.getElementById('suSenha').value;
-  if (!nome || !matricula || !email || !senha) { errLg('Preencha todos os campos.'); return; }
+  if (!nome || !email || !senha) { errLg('Preencha nome, e-mail e senha.'); return; }
   if (senha.length < 6) { errLg('Senha mínima de 6 caracteres.'); return; }
   if (!email.includes('@')) { errLg('E-mail inválido.'); return; }
 
@@ -1562,11 +1562,10 @@ async function signup(){
   try {
     const { data, error } = await supabase.auth.signUp({
       email, password: senha,
-      options: { data: { nome, matricula } }
+      options: { data: { nome } }
     });
     if (error) throw new Error(error.message);
     // Trigger no banco já criou o perfil com ativo=false e role=operator
-    // Sai imediatamente — usuário não pode usar antes de aprovação
     await supabase.auth.signOut();
     okLg('✅ Solicitação enviada! Aguarde um administrador aprovar sua conta. Você poderá fazer login depois disso.');
     setTimeout(() => toggleSignup(false), 4000);
