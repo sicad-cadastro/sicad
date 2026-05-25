@@ -12,6 +12,8 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
 <!-- Supabase JS SDK — auth + cliente do banco -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<!-- Tesseract.js — OCR client-side (lê texto de fotos de documentos) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -538,6 +540,25 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <!-- CADASTRAR -->
     <div class="page" id="page-cadastrar">
       <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
+      <!-- OCR de documento (RG/CPF/CNH) -->
+      <div class="card" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:1px solid rgba(124,58,237,.35);margin-bottom:16px;padding:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="font-size:28px;flex-shrink:0">📄</div>
+          <div style="flex:1;min-width:180px">
+            <div style="font-weight:700;font-size:13px;color:#000;margin-bottom:2px">LEITURA AUTOMÁTICA DE DOCUMENTO</div>
+            <div style="font-size:11px;color:var(--text-mid)">Tire foto do RG/CPF/CNH — o sistema lê e preenche os campos.</div>
+          </div>
+          <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700;flex-shrink:0">
+            📷 ESCANEAR
+            <input type="file" accept="image/*" capture="environment" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          </label>
+        </div>
+        <div id="ocrProgress" style="display:none;margin-top:10px">
+          <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);margin-bottom:4px"><span id="ocrMsg">Processando...</span> <span id="ocrPct" style="float:right">0%</span></div>
+          <div style="height:6px;background:rgba(255,255,255,.5);border-radius:99px;overflow:hidden"><div id="ocrBar" style="height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);width:0%;transition:width .3s"></div></div>
+        </div>
+        <div id="ocrResultado" style="display:none;margin-top:10px;background:rgba(255,255,255,.7);border-radius:8px;padding:10px;font-size:12px"></div>
+      </div>
       <div class="card">
         <!-- Foto rosto -->
         <div class="fg">
@@ -2209,6 +2230,151 @@ function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m
 let toastT;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
 
+
+// ══════════════════════════════════════════════════════════════
+// ── OCR DE DOCUMENTOS (Tesseract.js) ── lê RG/CPF/CNH e preenche
+// ══════════════════════════════════════════════════════════════
+async function ocrDocumento(file){
+  if (!file) return;
+  if (typeof Tesseract === 'undefined') { toast('OCR não carregado. Recarregue a página.','error'); return; }
+  const prog = document.getElementById('ocrProgress');
+  const res = document.getElementById('ocrResultado');
+  const msg = document.getElementById('ocrMsg');
+  const pct = document.getElementById('ocrPct');
+  const bar = document.getElementById('ocrBar');
+  prog.style.display = 'block';
+  res.style.display = 'none';
+  res.innerHTML = '';
+
+  try {
+    msg.textContent = 'Lendo texto da imagem...';
+    const { data } = await Tesseract.recognize(file, 'por', {
+      logger: m => {
+        if (m.status === 'recognizing text' && m.progress != null) {
+          const p = Math.round(m.progress * 100);
+          bar.style.width = p + '%';
+          pct.textContent = p + '%';
+        } else if (m.status) {
+          msg.textContent = m.status.toUpperCase();
+        }
+      }
+    });
+    const texto = (data?.text || '').trim();
+    if (!texto) { toast('Não conseguiu ler texto na imagem. Use foto bem iluminada e plana.','warn'); prog.style.display='none'; return; }
+
+    const extraido = parsearDocumentoBR(texto);
+    await logAudit('ocr_documento', 'sicad_pessoas', null, { campos_extraidos: Object.keys(extraido).filter(k => extraido[k]) });
+    renderResultadoOCR(extraido, texto);
+  } catch(e) {
+    console.error('[ocr]', e);
+    toast('Erro no OCR: '+e.message, 'error');
+  } finally {
+    prog.style.display = 'none';
+  }
+}
+
+// Parser heurístico de documentos brasileiros (RG, CPF, CNH)
+function parsearDocumentoBR(texto){
+  const linhas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const tudo = texto.toUpperCase();
+  const out = { nome: null, mae: null, cpf: null, nascimento: null, rg: null };
+
+  // CPF
+  const mCpf = tudo.match(/(\d{3}[.\s]?\d{3}[.\s]?\d{3}[.\-\s]?\d{2})/);
+  if (mCpf) {
+    const num = mCpf[1].replace(/\D/g,'');
+    if (num.length === 11) out.cpf = num.slice(0,3)+'.'+num.slice(3,6)+'.'+num.slice(6,9)+'-'+num.slice(9);
+  }
+
+  // Data de nascimento — primeira data plausível encontrada
+  const datas = tudo.match(/(\d{2})[\/.\-](\d{2})[\/.\-](\d{4})/g);
+  if (datas && datas.length) {
+    for (const d of datas) {
+      const m = d.match(/(\d{2})[\/.\-](\d{2})[\/.\-](\d{4})/);
+      const dia = +m[1], mes = +m[2], ano = +m[3];
+      if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && ano >= 1900 && ano <= new Date().getFullYear()) {
+        out.nascimento = `${ano}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+        break;
+      }
+    }
+  }
+
+  // RG / Registro Geral
+  const mRg = tudo.match(/(?:RG|REGISTRO\s*GERAL|IDENTIDADE|REG[\.\s]+GERAL)[:\s]*([\d.\-X]{6,})/i)
+            || tudo.match(/\b(\d{1,3}\.\d{3}\.\d{3}[\-\s]?[\dX])\b/i);
+  if (mRg) out.rg = mRg[1].trim();
+
+  // Nome — depois das palavras "NOME" ou similar
+  const idxNome = linhas.findIndex(l => /^(NOME|NAME)\b/i.test(l));
+  if (idxNome >= 0) {
+    // Se a label está sozinha, próxima linha tem o nome
+    const linha = linhas[idxNome];
+    const aposLabel = linha.replace(/^(NOME|NAME)[:\s]*/i, '').trim();
+    let candidato = aposLabel || (linhas[idxNome+1] || '');
+    candidato = candidato.replace(/^[:\s]+/, '').trim();
+    if (candidato && candidato.length > 3 && /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s'-]+$/i.test(candidato)) {
+      out.nome = candidato.toUpperCase();
+    }
+  }
+
+  // Nome da mãe — após "FILIAÇÃO", "MÃE", "MAE"
+  const idxMae = linhas.findIndex(l => /^(FILIA[ÇC][ÃA]O|M[ÃA]E|MOTHER)\b/i.test(l));
+  if (idxMae >= 0) {
+    // Filiação geralmente tem 2 linhas (mãe + pai). A mãe costuma ser a primeira ou a que tem palavras como "DA SILVA" etc.
+    // Pega a próxima linha não vazia
+    for (let k = idxMae; k < Math.min(idxMae + 4, linhas.length); k++) {
+      const linha = linhas[k];
+      const candidato = linha.replace(/^(FILIA[ÇC][ÃA]O|M[ÃA]E|MOTHER)[:\s]*/i, '').trim();
+      if (candidato && candidato.length > 5 && /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s'-]+$/i.test(candidato)) {
+        out.mae = candidato.toUpperCase();
+        break;
+      }
+    }
+  }
+
+  return out;
+}
+
+function renderResultadoOCR(d, textoRaw){
+  const res = document.getElementById('ocrResultado');
+  const campos = [
+    { k:'nome', l:'Nome', icon:'👤' },
+    { k:'mae', l:'Nome da Mãe', icon:'👩' },
+    { k:'cpf', l:'CPF', icon:'🆔' },
+    { k:'nascimento', l:'Nascimento', icon:'🎂' },
+    { k:'rg', l:'RG', icon:'📋' },
+  ];
+  const achados = campos.filter(c => d[c.k]);
+  if (!achados.length) {
+    res.innerHTML = `<div style="text-align:center;color:var(--accent2)">⚠️ Não identificou campos automaticamente.</div>
+      <details style="margin-top:8px"><summary style="cursor:pointer;font-size:11px;color:var(--text-mid)">Ver texto bruto</summary><pre style="font-size:10px;background:#fff;padding:8px;border-radius:4px;margin-top:6px;max-height:140px;overflow:auto;white-space:pre-wrap">${esc(textoRaw)}</pre></details>`;
+    res.style.display = 'block';
+    return;
+  }
+  let html = `<div style="font-weight:700;color:#000;margin-bottom:8px;font-size:12px">✅ ${achados.length} campo${achados.length>1?'s':''} identificado${achados.length>1?'s':''}:</div>`;
+  achados.forEach(c => {
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(0,0,0,.08)">
+      <span>${c.icon}</span>
+      <span style="font-size:10px;color:var(--text-dim);min-width:80px">${c.l}:</span>
+      <strong style="flex:1;font-size:12px;color:#000;word-break:break-all">${esc(d[c.k])}</strong>
+    </div>`;
+  });
+  html += `<div class="row-btns" style="margin-top:10px">
+    <button class="btn btn-outline btn-sm" onclick="document.getElementById('ocrResultado').style.display='none'" style="flex:1">DESCARTAR</button>
+    <button class="btn btn-primary btn-sm" onclick='aplicarOCR(${JSON.stringify(d).replace(/'/g,"&#39;")})' style="flex:2">✓ APLICAR AO FORMULÁRIO</button>
+  </div>`;
+  res.innerHTML = html;
+  res.style.display = 'block';
+}
+
+function aplicarOCR(d){
+  if (d.nome) { const el = document.getElementById('fNome'); if (!el.value.trim()) el.value = d.nome; }
+  if (d.mae) { const el = document.getElementById('fMae'); if (!el.value.trim()) el.value = d.mae; }
+  if (d.cpf) { const el = document.getElementById('fCpf'); if (!el.value.trim()) { el.value = d.cpf; onCpfInput(el); } }
+  if (d.nascimento) { const el = document.getElementById('fNasc'); if (!el.value) el.value = d.nascimento; }
+  document.getElementById('ocrResultado').style.display = 'none';
+  toast('Campos preenchidos automaticamente!', 'success');
+}
 
 // ── CEP via BrasilAPI/ViaCEP + AJUSTE DE POSIÇÃO NO MAPA ──
 function onCepInput(el){
