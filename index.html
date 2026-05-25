@@ -1467,8 +1467,7 @@ const DB = {
   async updPerson(id,d){
     if(window._L){lsS('p',lsG('p').map(x=>x.id===id?{...x,...d}:x));return d;}
     const clean={};Object.keys(d).forEach(k=>{if(d[k]!==undefined)clean[k]=d[k];});
-    const r=await fetch(`${SB}/rest/v1/sicad_pessoas?id=eq.${enc(id)}`,{method:'PATCH',headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json'},body:JSON.stringify(clean)});
-    if(!r.ok){const t=await r.text();let m=t;try{const j=JSON.parse(t);m=j.message||j.details||j.hint||t;}catch{}throw new Error(m);}
+    await sbFetch('PATCH','sicad_pessoas',clean,`id=eq.${enc(id)}`);
     return {ok:true};
   },
   async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
