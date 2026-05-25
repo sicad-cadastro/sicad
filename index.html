@@ -8,6 +8,8 @@
 <!-- Leaflet (mapa grátis, sem chave de API) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- face-api.js — reconhecimento facial 100% client-side, sem API key, sem servidor -->
+<script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -356,6 +358,40 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .cpf-ok{color:var(--success)}
 .cpf-err{color:var(--danger)}
 .cpf-warn{color:var(--accent2)}
+
+/* ── RECONHECIMENTO FACIAL ── */
+.face-slot{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:var(--shadow);transition:all .2s}
+.face-slot.has-face{border-color:#7c3aed;box-shadow:0 6px 20px rgba(124,58,237,.18)}
+.face-slot-label{font-size:11px;font-family:'IBM Plex Mono',monospace;letter-spacing:2px;color:var(--text-dim);font-weight:700;margin-bottom:8px;text-align:center}
+.face-slot-frame{position:relative;aspect-ratio:1/1;background:var(--surface2);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.face-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+.face-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.face-img.on{display:block}
+.face-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.face-status{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);border-radius:6px;padding:5px 8px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);text-align:center;display:none}
+.face-status.on{display:block}
+.face-status.ok{color:var(--success)}.face-status.warn{color:var(--accent2)}.face-status.err{color:var(--danger)}
+.face-slot-btns{display:flex;gap:6px}
+@media(max-width:480px){.face-slots{grid-template-columns:1fr 1fr !important;gap:8px !important}.face-slot{padding:8px}.face-slot-btns .btn-sm{font-size:11px;padding:8px 4px}}
+
+.face-result{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;display:none;animation:faceReveal .45s ease}
+.face-result.on{display:block}
+@keyframes faceReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.face-verdict{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;line-height:1.1;margin-bottom:8px}
+.face-verdict.match{color:var(--success)}
+.face-verdict.maybe{color:var(--accent2)}
+.face-verdict.no{color:var(--danger)}
+.face-score{font-size:13px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-bottom:16px}
+.face-bar-wrap{background:var(--border);border-radius:99px;height:14px;overflow:hidden;margin:14px 0;position:relative}
+.face-bar{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.2,.85,.4,1)}
+.face-bar.match{background:linear-gradient(90deg,#10b981,#34d399)}
+.face-bar.maybe{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.face-bar.no{background:linear-gradient(90deg,#dc2626,#ef4444)}
+.face-bar-labels{display:flex;justify-content:space-between;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:4px}
+.face-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.face-metric{background:var(--surface2);border-radius:8px;padding:10px 6px}
+.face-metric-n{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:#000}
+.face-metric-l{font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:3px}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -399,6 +435,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <button class="tnav-btn" onclick="go('consultar')" data-p="consultar">CONSULTAR</button>
     <button class="tnav-btn" onclick="go('foragidos')" data-p="foragidos">🚨 FORAGIDOS</button>
     <button class="tnav-btn" onclick="go('mapa')" data-p="mapa">🗺️ MAPA</button>
+    <button class="tnav-btn" onclick="go('face')" data-p="face">🧬 FACE</button>
     <button class="tnav-btn" onclick="go('pesquisa')" data-p="pesquisa">📋 PESQUISA</button>
     <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios">USUÁRIOS</button>
   </div>
@@ -430,6 +467,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <div class="hi-sub">MARCADORES POR BAIRRO — BRAZLÂNDIA DF</div>
         </div>
         <div class="hi-arrow">›</div>
+      </div>
+
+      <!-- RECONHECIMENTO FACIAL CARD -->
+      <div class="hi-card hi-accent" onclick="go('face')" style="border-color:rgba(139,92,246,.3);box-shadow:0 4px 16px rgba(139,92,246,.15)">
+        <div class="hi-icon" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);color:#7c3aed">🧬</div>
+        <div class="hi-body">
+          <div class="hi-title">RECONHECIMENTO FACIAL</div>
+          <div class="hi-sub">COMPARAR 2 FOTOS — IA 100% OFFLINE</div>
+        </div>
+        <div class="hi-arrow" style="color:#7c3aed">›</div>
       </div>
 
       <!-- SITES DE PESQUISA CARD -->
@@ -795,6 +842,93 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
     </div>
 
+    <!-- RECONHECIMENTO FACIAL -->
+    <div class="page" id="page-face">
+      <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:2px solid rgba(139,92,246,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:6px">🧬</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">RECONHECIMENTO FACIAL</div>
+        <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">COMPARAR 2 FOTOS — IA 100% OFFLINE — DADO NÃO SAI DO DISPOSITIVO</div>
+      </div>
+
+      <!-- Status dos modelos -->
+      <div id="faceLoadStatus" style="background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);display:flex;align-items:center;gap:10px">
+        <span class="ld" style="display:none" id="faceLoadSpin"></span>
+        <span id="faceLoadMsg">Modelos serão carregados quando comparar (primeira vez: ~10s).</span>
+      </div>
+
+      <!-- Slots das 2 fotos -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px" class="face-slots">
+        <!-- FOTO A -->
+        <div class="face-slot" id="faceSlotA">
+          <div class="face-slot-label">FOTO A</div>
+          <div class="face-slot-frame" id="faceFrameA">
+            <div class="face-empty">
+              <div style="font-size:48px;opacity:.3">👤</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">SEM IMAGEM</div>
+            </div>
+            <img id="faceImgA" class="face-img" alt="">
+            <canvas id="faceCanvasA" class="face-canvas"></canvas>
+            <div class="face-status" id="faceStatusA"></div>
+          </div>
+          <div class="face-slot-btns">
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📁 GALERIA
+              <input type="file" accept="image/*" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📷 CÂMERA
+              <input type="file" accept="image/*" capture="environment" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+          </div>
+        </div>
+
+        <!-- FOTO B -->
+        <div class="face-slot" id="faceSlotB">
+          <div class="face-slot-label">FOTO B</div>
+          <div class="face-slot-frame" id="faceFrameB">
+            <div class="face-empty">
+              <div style="font-size:48px;opacity:.3">👤</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">SEM IMAGEM</div>
+            </div>
+            <img id="faceImgB" class="face-img" alt="">
+            <canvas id="faceCanvasB" class="face-canvas"></canvas>
+            <div class="face-status" id="faceStatusB"></div>
+          </div>
+          <div class="face-slot-btns">
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📁 GALERIA
+              <input type="file" accept="image/*" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📷 CÂMERA
+              <input type="file" accept="image/*" capture="environment" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="row-btns" style="margin-bottom:16px">
+        <button class="btn btn-outline" onclick="resetFaceCompare()">🗑️ LIMPAR</button>
+        <button class="btn btn-primary" id="btnCompareFaces" onclick="compareFaces()" disabled>🧬 COMPARAR ROSTOS</button>
+      </div>
+
+      <!-- Resultado -->
+      <div id="faceResult" class="face-result"></div>
+
+      <!-- Como funciona -->
+      <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
+        <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Como funciona</div>
+        Cada rosto é convertido num vetor de 128 números (descritor facial). A distância euclidiana entre os vetores indica similaridade:
+        <ul style="margin:8px 0 0 18px;padding:0">
+          <li><b>&lt; 0,40</b> → muito provavelmente a mesma pessoa</li>
+          <li><b>0,40 a 0,55</b> → possível match (verificar)</li>
+          <li><b>&gt; 0,55</b> → pessoas diferentes</li>
+        </ul>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-dim)">⚠️ Use como triagem. Não é prova judicial.</div>
+      </div>
+    </div>
+
     <!-- SITES DE PESQUISA -->
     <div class="page" id="page-pesquisa">
       <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
@@ -857,6 +991,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <button class="bnav-btn" onclick="go('consultar')" data-p="consultar" style="min-width:62px"><span class="ni">🔍</span>CONSULTAR</button>
     <button class="bnav-btn" onclick="go('foragidos')" data-p="foragidos" style="min-width:64px"><span class="ni">🚨</span>FORAGIDOS</button>
     <button class="bnav-btn" onclick="go('mapa')" data-p="mapa" style="min-width:48px"><span class="ni">🗺️</span>MAPA</button>
+    <button class="bnav-btn" onclick="go('face')" data-p="face" style="min-width:48px"><span class="ni">🧬</span>FACE</button>
     <button class="bnav-btn" onclick="go('pesquisa')" data-p="pesquisa" style="min-width:56px"><span class="ni">📋</span>PESQUISA</button>
     <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios" style="min-width:62px"><span class="ni">👥</span>USUÁRIOS</button>
   </div>
@@ -1103,6 +1238,7 @@ function go(n){
   if(n==='usuarios')loadUsers();
   if(n==='foragidos'){loadAlertas();showForagidoTab('alertas');}
   if(n==='mapa')loadMapa();
+  if(n==='face') loadFaceModels(); // pré-carrega modelos ao abrir a aba
 }
 
 // ── DASHBOARD ──
@@ -2644,6 +2780,216 @@ async function consultarVeiculoModal(campo){
   }
   document.getElementById('sinespBody').innerHTML=html;
   sm.classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── RECONHECIMENTO FACIAL (face-api.js) — 100% client-side ──
+// ══════════════════════════════════════════════════════════════
+const FACE_MODELS_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
+let _faceModelsReady = false;
+let _faceModelsLoading = false;
+const _faceData = { A: null, B: null };  // {file, image, descriptor, box}
+
+async function loadFaceModels(){
+  if (_faceModelsReady) return true;
+  if (_faceModelsLoading) {
+    // aguarda quem já está carregando
+    while (_faceModelsLoading) await new Promise(r => setTimeout(r, 200));
+    return _faceModelsReady;
+  }
+  if (typeof faceapi === 'undefined') {
+    setFaceLoad('❌ Biblioteca face-api.js não carregou. Verifique sua conexão.', false);
+    return false;
+  }
+  _faceModelsLoading = true;
+  setFaceLoad('⚙️ Carregando modelos de IA (~13MB)... aguarde.', true);
+  try {
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODELS_URL),
+      faceapi.nets.faceLandmark68Net.loadFromUri(FACE_MODELS_URL),
+      faceapi.nets.faceRecognitionNet.loadFromUri(FACE_MODELS_URL),
+    ]);
+    _faceModelsReady = true;
+    setFaceLoad('✅ Modelos prontos. Carregue 2 fotos e clique em comparar.', false);
+    return true;
+  } catch(e) {
+    console.error('[face] load error', e);
+    setFaceLoad('❌ Falha ao carregar modelos: '+e.message, false);
+    return false;
+  } finally { _faceModelsLoading = false; }
+}
+
+function setFaceLoad(msg, spin){
+  const m = document.getElementById('faceLoadMsg');
+  const s = document.getElementById('faceLoadSpin');
+  if (m) m.textContent = msg;
+  if (s) s.style.display = spin ? 'inline-block' : 'none';
+}
+
+function setSlotStatus(slot, msg, type){
+  const el = document.getElementById('faceStatus'+slot);
+  if (!el) return;
+  if (!msg) { el.classList.remove('on','ok','warn','err'); el.textContent=''; return; }
+  el.textContent = msg;
+  el.classList.add('on');
+  el.classList.toggle('ok', type==='ok');
+  el.classList.toggle('warn', type==='warn');
+  el.classList.toggle('err', type==='err');
+}
+
+async function onFacePick(slot, file){
+  if (!file) return;
+  const dataUrl = await new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(fr.result);
+    fr.onerror = rej;
+    fr.readAsDataURL(file);
+  });
+  const imgEl = document.getElementById('faceImg'+slot);
+  imgEl.src = dataUrl;
+  imgEl.classList.add('on');
+  document.getElementById('faceSlot'+slot).classList.add('has-face');
+  setSlotStatus(slot, '⏳ Detectando rosto...', 'warn');
+
+  // Garante modelos carregados (lazy)
+  const ok = await loadFaceModels();
+  if (!ok) { setSlotStatus(slot, '❌ Modelos não carregaram', 'err'); return; }
+
+  // Espera imagem decodificar antes de processar
+  await new Promise(r => { if (imgEl.complete) r(); else imgEl.onload = r; });
+
+  try {
+    const detection = await faceapi
+      .detectSingleFace(imgEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 }))
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+
+    if (!detection) {
+      _faceData[slot] = null;
+      setSlotStatus(slot, '⚠️ Nenhum rosto detectado', 'err');
+      drawFaceBox(slot, null);
+      updateCompareBtn();
+      return;
+    }
+
+    _faceData[slot] = {
+      descriptor: detection.descriptor,
+      box: detection.detection.box,
+      score: detection.detection.score,
+      imgW: imgEl.naturalWidth,
+      imgH: imgEl.naturalHeight,
+    };
+    drawFaceBox(slot, detection.detection.box, imgEl);
+    setSlotStatus(slot, '✅ Rosto detectado ('+Math.round(detection.detection.score*100)+'% conf.)', 'ok');
+    updateCompareBtn();
+  } catch(e) {
+    console.error('[face] detect error', e);
+    setSlotStatus(slot, '❌ Erro ao processar', 'err');
+  }
+}
+
+function drawFaceBox(slot, box, imgEl){
+  const canvas = document.getElementById('faceCanvas'+slot);
+  const frame = document.getElementById('faceFrame'+slot);
+  if (!canvas || !frame) return;
+  // canvas mesma dimensão do frame renderizado
+  const w = frame.clientWidth, h = frame.clientHeight;
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  if (!box || !imgEl) return;
+
+  // calcula proporção (cover) entre imagem original e frame
+  const imgW = imgEl.naturalWidth, imgH = imgEl.naturalHeight;
+  const scale = Math.max(w/imgW, h/imgH);
+  const dw = imgW*scale, dh = imgH*scale;
+  const offX = (w - dw)/2, offY = (h - dh)/2;
+  const bx = offX + box.x*scale;
+  const by = offY + box.y*scale;
+  const bw = box.width*scale;
+  const bh = box.height*scale;
+  ctx.strokeStyle = '#7c3aed';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = 'rgba(124,58,237,.6)';
+  ctx.shadowBlur = 8;
+  ctx.strokeRect(bx, by, bw, bh);
+  // 4 cantinhos brancos
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  const c = 10;
+  [[bx,by,c,0,0,c],[bx+bw,by,-c,0,0,c],[bx,by+bh,c,0,0,-c],[bx+bw,by+bh,-c,0,0,-c]].forEach(([x,y,dx1,dy1,dx2,dy2])=>{
+    ctx.beginPath();ctx.moveTo(x+dx1,y+dy1);ctx.lineTo(x,y);ctx.lineTo(x+dx2,y+dy2);ctx.stroke();
+  });
+}
+
+function updateCompareBtn(){
+  const btn = document.getElementById('btnCompareFaces');
+  if (!btn) return;
+  btn.disabled = !(_faceData.A && _faceData.B);
+}
+
+async function compareFaces(){
+  if (!_faceData.A || !_faceData.B) { toast('Carregue as 2 fotos com rosto detectado.','warn'); return; }
+  const btn = document.getElementById('btnCompareFaces');
+  btn.disabled = true; btn.innerHTML = '<span class="ld"></span> COMPARANDO...';
+
+  // Pequeno delay pra UX (mostrar o spinner)
+  await new Promise(r => setTimeout(r, 250));
+
+  const distance = faceapi.euclideanDistance(_faceData.A.descriptor, _faceData.B.descriptor);
+  // Similaridade: 0 (idênticos) → 1 (totalmente diferentes); inverto pra mostrar %
+  const sim = Math.max(0, 1 - distance);  // 0 a 1
+  const simPct = Math.round(sim * 100);
+
+  let verdict, verCls, barCls, recom;
+  if (distance < 0.40) {
+    verdict = '✅ MESMA PESSOA'; verCls = 'match'; barCls = 'match';
+    recom = 'Match com alta confiança. Distância biométrica abaixo do limiar de 0,40 — 99% de chance de ser a mesma pessoa.';
+  } else if (distance < 0.55) {
+    verdict = '⚠️ POSSÍVEL MATCH'; verCls = 'maybe'; barCls = 'maybe';
+    recom = 'Resultado ambíguo (zona cinzenta entre 0,40 e 0,55). Verifique manualmente. Idade, ângulo ou iluminação podem afetar o resultado.';
+  } else {
+    verdict = '❌ PESSOAS DIFERENTES'; verCls = 'no'; barCls = 'no';
+    recom = 'Distância biométrica acima de 0,55. As fotos provavelmente não são da mesma pessoa.';
+  }
+
+  const el = document.getElementById('faceResult');
+  el.innerHTML = `
+    <div class="face-verdict ${verCls}">${verdict}</div>
+    <div class="face-score">SIMILARIDADE BIOMÉTRICA</div>
+    <div class="face-bar-wrap"><div class="face-bar ${barCls}" style="width:0%"></div></div>
+    <div class="face-bar-labels"><span>0% DIFERENTE</span><span>50%</span><span>100% IDÊNTICO</span></div>
+    <div class="face-metrics">
+      <div class="face-metric"><div class="face-metric-n">${simPct}%</div><div class="face-metric-l">SIMILARIDADE</div></div>
+      <div class="face-metric"><div class="face-metric-n">${distance.toFixed(3)}</div><div class="face-metric-l">DIST. EUCLIDIANA</div></div>
+      <div class="face-metric"><div class="face-metric-n">${Math.round(_faceData.A.score*100)}/${Math.round(_faceData.B.score*100)}</div><div class="face-metric-l">CONFIANÇA A/B</div></div>
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:var(--text-mid);line-height:1.55;text-align:left;background:var(--surface2);padding:12px 14px;border-radius:8px">${recom}</div>
+  `;
+  el.classList.add('on');
+  // anima a barra
+  requestAnimationFrame(() => {
+    const bar = el.querySelector('.face-bar');
+    if (bar) bar.style.width = simPct + '%';
+  });
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+
+  btn.disabled = false; btn.innerHTML = '🧬 COMPARAR ROSTOS';
+}
+
+function resetFaceCompare(){
+  _faceData.A = null; _faceData.B = null;
+  ['A','B'].forEach(s => {
+    const img = document.getElementById('faceImg'+s);
+    img.src=''; img.classList.remove('on');
+    document.getElementById('faceSlot'+s).classList.remove('has-face');
+    drawFaceBox(s, null);
+    setSlotStatus(s, '', null);
+  });
+  const el = document.getElementById('faceResult');
+  el.classList.remove('on'); el.innerHTML = '';
+  updateCompareBtn();
 }
 </script>
 </body>
