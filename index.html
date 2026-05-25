@@ -350,6 +350,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .perig-3{background:rgba(255,61,61,.15);border:1px solid rgba(255,61,61,.4);color:var(--danger)}
 .perig-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:1px}
 @keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,61,61,.3)}50%{box-shadow:0 0 0 8px rgba(255,61,61,0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 .ld{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle}
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
 .lightbox.on{display:flex}
@@ -433,10 +434,25 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     </div>
     <div class="login-card">
       <div class="login-err" id="loginErr"></div>
-      <div class="fg"><label>E-mail</label><input type="email" id="lu" placeholder="seu@email.gov.br" autocomplete="username"></div>
-      <div class="fg"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">ENTRAR</button>
-      <button class="btn btn-outline btn-full btn-sm" onclick="resetPwd()" style="margin-top:8px;font-size:11px">Esqueci minha senha</button>
+      <div id="loginFields">
+        <div class="fg"><label>E-mail</label><input type="email" id="lu" placeholder="seu@email.gov.br" autocomplete="username"></div>
+        <div class="fg"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
+        <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">ENTRAR</button>
+        <button class="btn btn-outline btn-full btn-sm" onclick="resetPwd()" style="margin-top:8px;font-size:11px">Esqueci minha senha</button>
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">NÃO TEM CADASTRO?</div>
+          <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(true)">📝 SOLICITAR CADASTRO</button>
+        </div>
+      </div>
+      <div id="signupFields" style="display:none">
+        <div class="fg"><label>Nome Completo *</label><input type="text" id="suNome" placeholder="Como aparece no documento" autocomplete="name"></div>
+        <div class="fg"><label>Matrícula / RG Funcional *</label><input type="text" id="suMatricula" placeholder="Ex: 12345-X" autocomplete="off"></div>
+        <div class="fg"><label>E-mail Institucional *</label><input type="email" id="suEmail" placeholder="nome@policia.df.gov.br" autocomplete="email"></div>
+        <div class="fg"><label>Senha *</label><input type="password" id="suSenha" placeholder="Mínimo 6 caracteres"></div>
+        <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">📨 ENVIAR SOLICITAÇÃO</button>
+        <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">← Voltar ao login</button>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.5;text-align:center">⚠️ Após o cadastro, um administrador precisa <b>aprovar</b> sua conta antes do primeiro acesso.</div>
+      </div>
     </div>
     <div class="mode-lbl" id="modeLbl"></div>
   </div>
@@ -1431,7 +1447,44 @@ function aplicarUIporRole(){
   });
 }
 
-function errLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';}
+function errLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';e.style.color='';e.style.background='';e.style.borderColor='';}
+function okLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';e.style.color='var(--success)';e.style.background='rgba(16,185,129,.08)';e.style.borderColor='rgba(16,185,129,.4)';}
+
+function toggleSignup(show){
+  document.getElementById('loginFields').style.display = show ? 'none' : 'block';
+  document.getElementById('signupFields').style.display = show ? 'block' : 'none';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+// Auto-cadastro — cria conta como inativa (pendente de aprovação)
+async function signup(){
+  const nome = document.getElementById('suNome').value.trim();
+  const matricula = document.getElementById('suMatricula').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const senha = document.getElementById('suSenha').value;
+  if (!nome || !matricula || !email || !senha) { errLg('Preencha todos os campos.'); return; }
+  if (senha.length < 6) { errLg('Senha mínima de 6 caracteres.'); return; }
+  if (!email.includes('@')) { errLg('E-mail inválido.'); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="ld"></span> ENVIANDO...';
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email, password: senha,
+      options: { data: { nome, matricula } }
+    });
+    if (error) throw new Error(error.message);
+    // Trigger no banco já criou o perfil com ativo=false e role=operator
+    // Sai imediatamente — usuário não pode usar antes de aprovação
+    await supabase.auth.signOut();
+    okLg('✅ Solicitação enviada! Aguarde um administrador aprovar sua conta. Você poderá fazer login depois disso.');
+    setTimeout(() => toggleSignup(false), 4000);
+  } catch(e) {
+    errLg('Erro: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '📨 ENVIAR SOLICITAÇÃO';
+  }
+}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginWrap').style.display!=='none')login();});
 
 async function logout(){
@@ -1767,14 +1820,21 @@ async function loadUsers(){
 
 function renderUsersStats(){
   const ativos = _allUsers.filter(u => u.ativo).length;
-  const inativos = _allUsers.length - ativos;
+  const pendentes = _allUsers.filter(u => !u.ativo).length;
   const admins = _allUsers.filter(u => u.role === 'admin' && u.ativo).length;
+  const pendStyle = pendentes > 0 ? 'cursor:pointer;border-color:var(--accent2);box-shadow:0 0 0 2px rgba(232,93,32,.2)' : '';
   document.getElementById('userStats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${_allUsers.length}</div><div class="stat-lbl">TOTAL</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--success)">${ativos}</div><div class="stat-lbl">ATIVOS</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--danger)">${inativos}</div><div class="stat-lbl">DESATIVADOS</div></div>
+    <div class="stat-card" style="${pendStyle}" onclick="${pendentes>0?'filtrarPendentes()':''}"><div class="stat-num" style="color:${pendentes>0?'var(--accent2)':'var(--text-dim)'}">${pendentes}</div><div class="stat-lbl">${pendentes>0?'⏳ AGUARDANDO':'PENDENTES'}</div></div>
     <div class="stat-card"><div class="stat-num">${admins}</div><div class="stat-lbl">ADMINS</div></div>
   `;
+}
+function filtrarPendentes(){
+  document.getElementById('uFilterStatus').value = '0';
+  document.getElementById('uFilterRole').value = '';
+  document.getElementById('uFilterSearch').value = '';
+  renderUsersList();
 }
 
 function renderUsersList(){
@@ -1800,23 +1860,41 @@ function renderUsersList(){
 
   document.getElementById('ulist').innerHTML = filtered.length ? filtered.map(u => {
     const isMe = u.id === CU.id;
+    const pendente = !u.ativo;
+    const cardStyle = pendente
+      ? 'opacity:1;border:2px solid var(--accent2);background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);box-shadow:0 4px 12px rgba(232,93,32,.15)'
+      : '';
     return `
-      <div class="uitem" style="opacity:${u.ativo?1:.55}">
+      <div class="uitem" style="${cardStyle}">
         <div class="uitem-info">
           <div class="ulogin" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span>${esc(u.nome)}</span>
             <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
-            ${!u.ativo?'<span class="badge" style="background:#fee2e2;color:#dc2626;font-size:9px;padding:3px 7px;border:1px solid #fecaca">DESATIVADO</span>':''}
+            ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">⏳ AGUARDANDO APROVAÇÃO</span>':''}
             ${isMe?'<span style="font-size:9px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace">VOCÊ</span>':''}
           </div>
-          <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
+          <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?'Solicitou em '+new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
         </div>
         <div class="uactions">
+          ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
           <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar">✏️</button>
           ${!isMe ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
         </div>
       </div>`;
   }).join('') : '<div class="empty"><div class="ei">🔍</div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
+}
+
+// Aprovar usuário pendente
+async function aprovarUsuario(id, nome){
+  if (!confirm(`Aprovar acesso do(a) ${nome}?\n\nO usuário poderá logar imediatamente como Operador. Pra mudar o nível de acesso, use o botão "Editar" depois.`)) return;
+  showOv('APROVANDO...');
+  try {
+    await DB.updUser(id, { ativo: true });
+    await logAudit('approve_user', 'sicad_perfis', id, { nome });
+    await loadUsers();
+    toast(`✅ ${nome} aprovado(a)! Já pode logar.`, 'success');
+  } catch(e) { toast('Erro: '+e.message, 'error'); }
+  finally { hideOv(); }
 }
 
 let euId=null;
@@ -1861,22 +1939,21 @@ async function saveUser(){
       await logAudit('update_user', 'sicad_perfis', euId, { nome, role, ativo });
       toast('Usuário atualizado.','success');
     } else {
-      // CRIAR novo: signUp + perfil
+      // CRIAR novo: signUp (trigger cria perfil auto com ativo=false) + PATCH pra ajustar role/ativo
       if (!senha || senha.length < 6) { toast('Senha mínima de 6 caracteres.','error'); btn.disabled=false; btn.innerHTML='SALVAR'; return; }
-      // signUp via Supabase Auth (já está com mailer_autoconfirm)
       const { data, error } = await supabase.auth.signUp({
         email, password: senha,
-        options: { data: { nome } }
+        options: { data: { nome, matricula } }
       });
       if (error) { throw new Error(error.message); }
-      // Cria/atualiza perfil
       const uid = data.user?.id;
       if (!uid) throw new Error('Não retornou UUID do usuário');
-      await sbFetch('POST', 'sicad_perfis', {
-        id: uid, nome, role, matricula, ativo: true
-      });
+      // Aguarda 300ms o trigger inserir o perfil
+      await new Promise(r => setTimeout(r, 400));
+      // PATCH com os valores do admin (criado já como ativo)
+      await sbFetch('PATCH', 'sicad_perfis', { nome, role, matricula, ativo: true }, `id=eq.${uid}`);
       await logAudit('create_user', 'sicad_perfis', uid, { email, nome, role });
-      toast('Usuário criado! Pode logar com a senha provisória.','success');
+      toast('Usuário criado e ativado! Pode logar com a senha provisória.','success');
     }
     closeUserModal();
     await loadUsers();
@@ -1940,12 +2017,13 @@ async function importUsersCSV(file){
     try {
       const { data, error } = await supabase.auth.signUp({
         email: u.email, password: 'SICAD2026!',
-        options: { data: { nome: u.nome } }
+        options: { data: { nome: u.nome, matricula: u.matricula } }
       });
       if (error) { fail++; console.warn('[import]', u.email, error.message); continue; }
       const uid = data.user?.id;
       if (!uid) { fail++; continue; }
-      await sbFetch('POST', 'sicad_perfis', { id: uid, nome: u.nome, role: u.role, matricula: u.matricula, ativo: true });
+      await new Promise(r => setTimeout(r, 300));
+      await sbFetch('PATCH', 'sicad_perfis', { nome: u.nome, role: u.role, matricula: u.matricula, ativo: true }, `id=eq.${uid}`);
       ok++;
     } catch(e) { fail++; console.warn('[import]', u.email, e.message); }
   }
