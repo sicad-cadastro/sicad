@@ -887,6 +887,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         </select>
         <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
         <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px">🎯</button>
+        <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">🔥 CALOR</button>
       </div>
 
       <div style="position:relative">
@@ -2900,6 +2901,60 @@ function applyMapFilter() {
   const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
   renderMapMarkers(filtered);
   updateMapStats(filtered);
+  if (_heatmapAtivo) atualizarHeatmap(filtered);
+}
+
+// ── HEATMAP DE CALOR (Leaflet.heat) ──
+let _heatLayer = null;
+let _heatmapAtivo = false;
+
+async function toggleHeatmap(){
+  _heatmapAtivo = !_heatmapAtivo;
+  const btn = document.getElementById('btnHeatmap');
+  if (_heatmapAtivo) {
+    btn.style.background = 'linear-gradient(135deg,#dc2626,#f97316)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = '#dc2626';
+    btn.innerHTML = '🔥 CALOR ON';
+    const b = document.getElementById('mapFiltBairro').value;
+    const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
+    await atualizarHeatmap(filtered);
+    toast('Mapa de calor ativado','info');
+  } else {
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+    btn.innerHTML = '🔥 CALOR';
+    if (_heatLayer && mapaInst) { mapaInst.removeLayer(_heatLayer); _heatLayer = null; }
+    toast('Mapa de calor desativado','info');
+  }
+}
+
+async function atualizarHeatmap(persons){
+  if (!mapaInst || typeof L.heatLayer !== 'function') return;
+  if (_heatLayer) { mapaInst.removeLayer(_heatLayer); _heatLayer = null; }
+
+  // Constrói pontos [lat, lng, intensity]
+  const alertIds = new Set((allAlertas||[]).filter(a => a.pessoa_id).map(a => a.pessoa_id));
+  const points = [];
+  for (const p of persons) {
+    if (!p.bairro && !p.endereco) continue;
+    const coords = await getCoords(p);
+    if (!_validCoord(coords)) continue;
+    // Intensidade maior pra alertas/foragidos
+    const intensity = alertIds.has(p.id) ? 1.0 : 0.5;
+    points.push([coords.lat, coords.lng, intensity]);
+  }
+
+  if (!points.length) { toast('Sem pontos pra gerar mapa de calor','warn'); return; }
+
+  _heatLayer = L.heatLayer(points, {
+    radius: 30,
+    blur: 22,
+    maxZoom: 17,
+    minOpacity: 0.4,
+    gradient: { 0.2:'#3b82f6', 0.4:'#10b981', 0.6:'#facc15', 0.8:'#f97316', 1.0:'#dc2626' }
+  }).addTo(mapaInst);
 }
 
 // Geocodifica endereço usando Nominatim (gratuito, sem chave)
