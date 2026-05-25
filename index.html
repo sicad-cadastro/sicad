@@ -900,15 +900,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <canvas id="faceCanvasA" class="face-canvas"></canvas>
             <div class="face-status" id="faceStatusA"></div>
           </div>
-          <div class="face-slot-btns">
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+          <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
               📁 GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
-              📷 CÂMERA
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
+              📷 FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('A')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
           </div>
         </div>
 
@@ -924,15 +925,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <canvas id="faceCanvasB" class="face-canvas"></canvas>
             <div class="face-status" id="faceStatusB"></div>
           </div>
-          <div class="face-slot-btns">
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+          <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
               📁 GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
-              📷 CÂMERA
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
+              📷 FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('B')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
           </div>
         </div>
       </div>
@@ -960,15 +962,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <canvas id="faceCanvasQ" class="face-canvas"></canvas>
             <div class="face-status" id="faceStatusQ"></div>
           </div>
-          <div class="face-slot-btns" style="max-width:420px;margin:0 auto">
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+          <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
               📁 GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
-              📷 CÂMERA
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
+              📷 FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('Q')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
           </div>
         </div>
 
@@ -1194,6 +1197,34 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         <button class="btn btn-outline" onclick="fecharMapaAjuste()">CANCELAR</button>
         <button class="btn btn-primary" onclick="confirmarPosicaoMapa()">✓ USAR ESTA POSIÇÃO</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CÂMERA AO VIVO (reconhecimento facial em tempo real) -->
+<div class="modal-overlay" id="liveCamModal">
+  <div class="modal" style="max-width:560px;background:#0f172a;color:#fff">
+    <div class="mhandle" style="background:#475569"></div>
+    <div class="mi" style="padding:16px">
+      <div class="mhdr" style="margin-bottom:10px">
+        <div class="mtitle" style="color:#fff">📡 CÂMERA AO VIVO</div>
+        <button class="mclose" onclick="stopLiveCam()" style="background:#334155;color:#fff;border-color:#475569">✕</button>
+      </div>
+      <div style="position:relative;aspect-ratio:3/4;background:#000;border-radius:12px;overflow:hidden;margin-bottom:10px">
+        <video id="liveCamVideo" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
+        <canvas id="liveCamCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
+        <div id="liveCamHUD" style="position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none">
+          <div id="liveCamConf" style="background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;padding:6px 12px;border-radius:99px;font-size:11px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">Procurando rosto...</div>
+          <div id="liveCamCountdown" style="background:rgba(124,58,237,.9);color:#fff;padding:6px 12px;border-radius:99px;font-size:13px;font-weight:700;font-family:'IBM Plex Mono',monospace;display:none">3</div>
+        </div>
+        <div id="liveCamFlash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .12s"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button class="btn btn-outline btn-sm" id="liveCamSwitchBtn" onclick="switchLiveCam()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">🔄 TROCAR CÂMERA</button>
+        <button class="btn btn-outline btn-sm" id="liveCamAutoBtn" onclick="toggleLiveCamAuto()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">⏱️ AUTO: ON</button>
+      </div>
+      <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>📸 CAPTURAR AGORA</button>
+      <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">Auto-captura ativada · estabilize o rosto na câmera</div>
     </div>
   </div>
 </div>
@@ -3164,6 +3195,192 @@ async function compareFaces(){
   el.scrollIntoView({ behavior:'smooth', block:'center' });
 
   btn.disabled = false; btn.innerHTML = '🧬 COMPARAR ROSTOS';
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── CÂMERA AO VIVO ── detecção contínua + auto-captura
+// ══════════════════════════════════════════════════════════════
+let _liveCamStream = null;
+let _liveCamSlot = null;
+let _liveCamLoop = null;
+let _liveCamFacingMode = 'environment'; // 'user' (frontal) ou 'environment' (traseira)
+let _liveCamAuto = true;
+let _liveCamStableCount = 0; // frames seguidos com rosto bom
+let _liveCamCountdownN = 0;
+let _liveCamLastDetection = null;
+let _liveCamBusy = false;
+
+async function startLiveCam(slot){
+  _liveCamSlot = slot;
+  _liveCamStableCount = 0;
+  _liveCamCountdownN = 0;
+  _liveCamLastDetection = null;
+  document.getElementById('liveCamModal').classList.add('open');
+  // Garante que modelos carregam (sem bloquear UI)
+  loadFaceModels();
+  await openLiveCamStream();
+  startLiveCamLoop();
+}
+
+async function openLiveCamStream(){
+  try {
+    if (_liveCamStream) { _liveCamStream.getTracks().forEach(t => t.stop()); _liveCamStream = null; }
+    const constraints = {
+      audio: false,
+      video: { facingMode: _liveCamFacingMode, width: { ideal: 1280 }, height: { ideal: 960 } }
+    };
+    _liveCamStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const v = document.getElementById('liveCamVideo');
+    v.srcObject = _liveCamStream;
+    await new Promise(r => { v.onloadedmetadata = r; });
+    v.play();
+  } catch(e) {
+    console.error('[livecam]', e);
+    toast('Não foi possível acessar a câmera: '+e.message, 'error');
+    stopLiveCam();
+  }
+}
+
+async function switchLiveCam(){
+  _liveCamFacingMode = _liveCamFacingMode === 'environment' ? 'user' : 'environment';
+  await openLiveCamStream();
+}
+
+function toggleLiveCamAuto(){
+  _liveCamAuto = !_liveCamAuto;
+  document.getElementById('liveCamAutoBtn').innerHTML = '⏱️ AUTO: ' + (_liveCamAuto ? 'ON' : 'OFF');
+  _liveCamStableCount = 0;
+  _liveCamCountdownN = 0;
+  document.getElementById('liveCamCountdown').style.display = 'none';
+}
+
+function startLiveCamLoop(){
+  if (_liveCamLoop) cancelAnimationFrame(_liveCamLoop);
+  const v = document.getElementById('liveCamVideo');
+  const canvas = document.getElementById('liveCamCanvas');
+  const conf = document.getElementById('liveCamConf');
+  const cdEl = document.getElementById('liveCamCountdown');
+  let lastDetectMs = 0;
+
+  async function tick(){
+    if (!_liveCamStream) return;
+    if (!v.videoWidth) { _liveCamLoop = requestAnimationFrame(tick); return; }
+    // Ajusta canvas ao tamanho do vídeo renderizado
+    if (canvas.width !== v.clientWidth) canvas.width = v.clientWidth;
+    if (canvas.height !== v.clientHeight) canvas.height = v.clientHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Throttle: detecta a cada ~200ms (5 fps) — UX fluida sem travar
+    const now = performance.now();
+    if (_faceModelsReady && !_liveCamBusy && now - lastDetectMs > 200) {
+      lastDetectMs = now;
+      _liveCamBusy = true;
+      try {
+        // Detecção rápida (TinyFace) só pra HUD em tempo real
+        const det = await faceapi.detectSingleFace(v, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }));
+        _liveCamLastDetection = det || null;
+      } catch(e){ _liveCamLastDetection = null; }
+      finally { _liveCamBusy = false; }
+    }
+
+    // Desenha box em tempo real
+    const det = _liveCamLastDetection;
+    if (det && det.box) {
+      const scaleX = canvas.width / v.videoWidth;
+      const scaleY = canvas.height / v.videoHeight;
+      const bx = det.box.x * scaleX;
+      const by = det.box.y * scaleY;
+      const bw = det.box.width * scaleX;
+      const bh = det.box.height * scaleY;
+      ctx.strokeStyle = '#7c3aed';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = 'rgba(124,58,237,.7)'; ctx.shadowBlur = 10;
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.shadowBlur = 0;
+      // Cantinhos brancos
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+      const c = 14;
+      [[bx,by,c,0,0,c],[bx+bw,by,-c,0,0,c],[bx,by+bh,c,0,0,-c],[bx+bw,by+bh,-c,0,0,-c]].forEach(([x,y,dx1,dy1,dx2,dy2])=>{
+        ctx.beginPath();ctx.moveTo(x+dx1,y+dy1);ctx.lineTo(x,y);ctx.lineTo(x+dx2,y+dy2);ctx.stroke();
+      });
+      conf.textContent = '✅ Rosto detectado · ' + Math.round(det.score*100) + '% conf.';
+      conf.style.background = 'rgba(16,185,129,.85)';
+      document.getElementById('liveCamCaptureBtn').disabled = false;
+      // Critério de estabilidade: tamanho ok (rosto >= 25% do frame) + score >= 0.7
+      const faceFrac = (det.box.width * det.box.height) / (v.videoWidth * v.videoHeight);
+      const stable = det.score >= 0.7 && faceFrac >= 0.06;
+      if (_liveCamAuto && stable) {
+        _liveCamStableCount++;
+        if (_liveCamStableCount >= 5 && _liveCamCountdownN === 0) {
+          _liveCamCountdownN = 3;
+          _runLiveCountdown();
+        }
+      } else {
+        _liveCamStableCount = 0;
+      }
+    } else {
+      conf.textContent = '🔍 Procurando rosto...';
+      conf.style.background = 'rgba(0,0,0,.55)';
+      _liveCamStableCount = 0;
+      if (_liveCamCountdownN > 0) {
+        _liveCamCountdownN = 0;
+        cdEl.style.display = 'none';
+      }
+      document.getElementById('liveCamCaptureBtn').disabled = true;
+    }
+
+    _liveCamLoop = requestAnimationFrame(tick);
+  }
+  _liveCamLoop = requestAnimationFrame(tick);
+}
+
+function _runLiveCountdown(){
+  const cdEl = document.getElementById('liveCamCountdown');
+  cdEl.style.display = 'block';
+  cdEl.textContent = _liveCamCountdownN;
+  if (_liveCamCountdownN <= 0) {
+    cdEl.style.display = 'none';
+    captureLiveCam();
+    return;
+  }
+  setTimeout(() => {
+    if (_liveCamCountdownN > 0) { _liveCamCountdownN--; _runLiveCountdown(); }
+  }, 700);
+}
+
+async function captureLiveCam(){
+  const v = document.getElementById('liveCamVideo');
+  if (!v.videoWidth) return;
+  // Flash
+  const fl = document.getElementById('liveCamFlash');
+  fl.style.opacity = '1';
+  setTimeout(() => fl.style.opacity = '0', 120);
+  // Captura frame atual em canvas
+  const c = document.createElement('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  const ctx = c.getContext('2d');
+  // Se for câmera frontal, espelha pra ficar como o usuário vê
+  if (_liveCamFacingMode === 'user') {
+    ctx.translate(c.width, 0); ctx.scale(-1, 1);
+  }
+  ctx.drawImage(v, 0, 0);
+  const dataUrl = c.toDataURL('image/jpeg', 0.9);
+  // Cria um "file" virtual e manda pro onFacePick do slot
+  const blob = await (await fetch(dataUrl)).blob();
+  const file = new File([blob], 'livecam.jpg', { type: 'image/jpeg' });
+  const slot = _liveCamSlot;
+  stopLiveCam();
+  await onFacePick(slot, file);
+}
+
+function stopLiveCam(){
+  if (_liveCamLoop) { cancelAnimationFrame(_liveCamLoop); _liveCamLoop = null; }
+  if (_liveCamStream) { _liveCamStream.getTracks().forEach(t => t.stop()); _liveCamStream = null; }
+  document.getElementById('liveCamModal').classList.remove('open');
+  _liveCamStableCount = 0;
+  _liveCamCountdownN = 0;
+  document.getElementById('liveCamCountdown').style.display = 'none';
 }
 
 function resetFaceCompare(){
