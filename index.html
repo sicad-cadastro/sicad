@@ -2934,24 +2934,14 @@ function _flipHorizontal(imgOrCanvas) {
   return canvas;
 }
 
-// Detecta UM rosto (o maior) — TinyFace rápido primeiro, SSD como fallback de segurança.
-// A precisão do descritor de 128-D vem da MESMA rede neural final, então não perde acurácia.
+// Detecta UM rosto (o maior) — SSD MobileNet v1 PRIMÁRIO (mais preciso + scores realistas),
+// TinyFace como fallback rápido. O resize pra 1024px deixa o SSD aceitável (~1-2s).
+// A precisão do descritor de 128-D vem da MESMA rede neural final em ambos os caminhos.
 async function _detectOne(input) {
-  // 1ª tentativa: TinyFace inputSize=512 (rápido e robusto pra a maioria dos casos)
+  // 1ª tentativa: SSD (preciso, bbox ajustado, confiança realista 90%+)
   try {
     const a = await faceapi
-      .detectAllFaces(input, new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.4 }))
-      .withFaceLandmarks()
-      .withFaceDescriptors();
-    if (a && a.length) {
-      a.sort((x,y) => (y.detection.box.width*y.detection.box.height) - (x.detection.box.width*x.detection.box.height));
-      return a[0];
-    }
-  } catch(e) { console.warn('[face] Tiny falhou:', e.message); }
-  // 2ª tentativa: SSD (lento, mais preciso) — só se TinyFace falhou
-  try {
-    const a = await faceapi
-      .detectAllFaces(input, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.4, maxResults: 5 }))
+      .detectAllFaces(input, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.45, maxResults: 5 }))
       .withFaceLandmarks()
       .withFaceDescriptors();
     if (a && a.length) {
@@ -2959,6 +2949,17 @@ async function _detectOne(input) {
       return a[0];
     }
   } catch(e) { console.warn('[face] SSD falhou:', e.message); }
+  // 2ª tentativa: TinyFace com input grande (robusto pra rostos pequenos/laterais)
+  try {
+    const a = await faceapi
+      .detectAllFaces(input, new faceapi.TinyFaceDetectorOptions({ inputSize: 608, scoreThreshold: 0.3 }))
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    if (a && a.length) {
+      a.sort((x,y) => (y.detection.box.width*y.detection.box.height) - (x.detection.box.width*x.detection.box.height));
+      return a[0];
+    }
+  } catch(e) { console.warn('[face] Tiny falhou:', e.message); }
   return null;
 }
 
