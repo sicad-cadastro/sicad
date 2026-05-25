@@ -949,7 +949,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
       <!-- ─── MODO BUSCAR NO BANCO ─── -->
       <div id="faceModeBanco" style="display:none">
-        <div class="face-slot" style="margin-bottom:16px">
+        <div class="face-slot" id="faceSlotQ" style="margin-bottom:16px">
           <div class="face-slot-label">FOTO PARA BUSCAR</div>
           <div class="face-slot-frame" id="faceFrameQ" style="aspect-ratio:16/10;max-width:420px;margin:0 auto 10px">
             <div class="face-empty">
@@ -2927,9 +2927,11 @@ async function onFacePick(slot, file){
     fr.readAsDataURL(file);
   });
   const imgEl = document.getElementById('faceImg'+slot);
+  if (!imgEl) { console.warn('[face] slot inexistente', slot); return; }
   imgEl.src = dataUrl;
   imgEl.classList.add('on');
-  document.getElementById('faceSlot'+slot).classList.add('has-face');
+  const slotEl = document.getElementById('faceSlot'+slot);
+  if (slotEl) slotEl.classList.add('has-face');
   setSlotStatus(slot, '⏳ Detectando rosto...', 'warn');
 
   // Garante modelos carregados (lazy)
