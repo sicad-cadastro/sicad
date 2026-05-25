@@ -769,10 +769,34 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
     <!-- USUÁRIOS -->
     <div class="page" id="page-usuarios">
-      <div class="sec-title">USUÁRIOS</div>
+      <div class="sec-title">GESTÃO DE USUÁRIOS</div>
       <div id="noAdmin" class="card" style="display:none"><p style="color:var(--text-dim);text-align:center;padding:8px">⚠️ Apenas administradores podem gerenciar usuários.</p></div>
       <div id="adminPanel">
-        <button class="btn btn-primary btn-full" onclick="openUserModal()" style="margin-bottom:16px">+ NOVO USUÁRIO</button>
+        <!-- Stats -->
+        <div class="stats-grid" id="userStats"></div>
+        <!-- Filtros -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <input id="uFilterSearch" placeholder="🔍 Buscar nome ou e-mail" oninput="renderUsersList()" style="flex:2;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text)">
+          <select id="uFilterRole" onchange="renderUsersList()" style="flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
+            <option value="">Todas as funções</option>
+            <option value="admin">Administrador</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="operator">Operador</option>
+            <option value="auditor">Auditor</option>
+          </select>
+          <select id="uFilterStatus" onchange="renderUsersList()" style="flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
+            <option value="">Todos status</option>
+            <option value="1">✅ Ativos</option>
+            <option value="0">⛔ Desativados</option>
+          </select>
+        </div>
+        <!-- Ações em lote -->
+        <div class="row-btns" style="margin-bottom:14px">
+          <button class="btn btn-primary" onclick="openUserModal()" style="flex:2">➕ NOVO USUÁRIO</button>
+          <button class="btn btn-outline" onclick="document.getElementById('csvUsersInput').click()" style="flex:1">📥 IMPORTAR CSV</button>
+          <input type="file" id="csvUsersInput" accept=".csv,text/csv" style="display:none" onchange="importUsersCSV(this.files[0])">
+        </div>
+        <div id="uListCount" style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:10px;letter-spacing:1px"></div>
         <div class="ulist" id="ulist"></div>
       </div>
     </div>
@@ -1163,15 +1187,27 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         <div class="mtitle" id="userModalTitle">NOVO USUÁRIO</div>
         <div class="mclose" onclick="closeUserModal()">✕</div>
       </div>
-      <div class="fg"><label>Login *</label><input type="text" id="uLogin" placeholder="nome.usuario" autocomplete="off"></div>
+      <div class="fg"><label>E-mail *</label><input type="email" id="uLogin" placeholder="nome@policia.df.gov.br" autocomplete="off"></div>
       <div class="fg"><label>Nome Completo *</label><input type="text" id="uNome" placeholder="Nome completo" autocomplete="off"></div>
-      <div class="fg"><label>Senha *</label><input type="password" id="uSenha" placeholder="Mínimo 6 caracteres"></div>
-      <div class="fg"><label>Confirmar Senha</label><input type="password" id="uSenha2" placeholder="Repita a senha"></div>
+      <div class="fg"><label>Matrícula / RG funcional</label><input type="text" id="uMatricula" placeholder="Ex: 12345-X" autocomplete="off"></div>
+      <div class="fg" id="uSenhaWrap"><label>Senha provisória *</label><input type="password" id="uSenha" placeholder="Mínimo 6 caracteres — o usuário poderá trocar depois"></div>
       <div class="fg"><label>Função</label>
-        <select id="uRole"><option value="editor">Editor</option><option value="admin">Administrador</option></select>
+        <select id="uRole">
+          <option value="operator">Operador (cadastra/consulta)</option>
+          <option value="supervisor">Supervisor (edita/aprova)</option>
+          <option value="admin">Administrador (acesso total)</option>
+          <option value="auditor">Auditor (só leitura + logs)</option>
+        </select>
+      </div>
+      <div class="fg" id="uAtivoWrap" style="display:none">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="uAtivo" checked style="width:auto;margin:0">
+          <span>Conta ativa (desmarcar bloqueia acesso)</span>
+        </label>
       </div>
       <div class="row-btns" style="margin-top:4px">
         <button class="btn btn-outline" onclick="closeUserModal()">CANCELAR</button>
+        <button class="btn btn-outline" id="uResetPwdBtn" onclick="resetUserPassword()" style="display:none">📧 ENVIAR RESET</button>
         <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">SALVAR</button>
       </div>
     </div>
@@ -1593,6 +1629,7 @@ async function viewPerson(id){
   try{
     const p=await DB.getPerson(id)||allP.find(x=>x.id===id);if(!p)return;
     editId=id;
+    logAudit('view_person','sicad_pessoas',id,{ nome: p.nome });
     document.getElementById('personTitle').textContent=p.nome.toUpperCase().substring(0,22);
     const tats=parseTats(p.tatuagens);
     const av=p.foto?`<div class="d-avatar" onclick="lbOpen('${p.foto}')"><img src="${p.foto}"></div>`:`<div class="d-avatar">👤</div>`;
@@ -1676,9 +1713,14 @@ async function editPerson(){
 }
 async function deletePerson(){
   if(!confirm('Excluir este cadastro?'))return;
+  const _id = editId;
+  const _nome = (allP.find(x => x.id === _id)||{}).nome;
   showOv('EXCLUINDO...');
-  try{await DB.delPerson(editId);allP=allP.filter(x=>x.id!==editId);closePersonModal();renderList(allP);toast('Excluído.','info');}
-  catch(e){toast('Erro: '+e.message,'error');}finally{hideOv();}
+  try{
+    await DB.delPerson(_id);
+    await logAudit('delete_person','sicad_pessoas',_id,{ nome: _nome });
+    allP=allP.filter(x=>x.id!==_id);closePersonModal();renderList(allP);toast('Excluído.','info');
+  }catch(e){toast('Erro: '+e.message,'error');}finally{hideOv();}
 }
 
 // ── FOTOS ──
@@ -1707,39 +1749,211 @@ function camCapture(t){
 }
 function camClose(t){if(camStr){camStr.getTracks().forEach(x=>x.stop());camStr=null;}document.getElementById(t==='face'?'faceCam':'tatCam').classList.remove('on');document.getElementById(t==='face'?'faceCamBtns':'tatCamBtns').style.display='none';}
 
-// ── USUÁRIOS ──
+// ════════════════════════════════════════════════════════════════════════
+// ── USUÁRIOS — painel admin pra 50+ operadores ──
+// ════════════════════════════════════════════════════════════════════════
+let _allUsers = [];
+
 async function loadUsers(){
   if(CU.role!=='admin'){document.getElementById('noAdmin').style.display='block';document.getElementById('adminPanel').style.display='none';return;}
   document.getElementById('noAdmin').style.display='none';document.getElementById('adminPanel').style.display='block';
-  showOv('CARREGANDO...');
+  showOv('CARREGANDO USUÁRIOS...');
   try{
-    const us=await DB.getUsers();
-    document.getElementById('ulist').innerHTML=us.map(u=>`
-      <div class="uitem">
-        <div class="uitem-info">
-          <div class="ulogin">${esc(u.usuario||'')} <span class="badge badge-${u.role||'editor'}">${(u.role||'editor').toUpperCase()}</span></div>
-          <div class="unome">${esc(u.nome)} · ${u.criado_em?new Date(u.criado_em).toLocaleDateString('pt-BR'):'—'}</div>
-        </div>
-        <div class="uactions">${u.id!=='u1'?`<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u)})'>✏️</button><button class="btn btn-danger btn-sm" onclick="delUser('${u.id}')">🗑</button>`:''}</div>
-      </div>`).join('');
+    _allUsers = await DB.getUsers();
+    renderUsersList();
+    renderUsersStats();
   }catch(e){toast('Erro: '+e.message,'error');}finally{hideOv();}
 }
-let euId=null;
-function openUserModal(u){euId=u?u.id:null;document.getElementById('userModalTitle').textContent=u?'EDITAR USUÁRIO':'NOVO USUÁRIO';document.getElementById('uLogin').value=u?(u.usuario||''):'';document.getElementById('uNome').value=u?u.nome:'';document.getElementById('uSenha').value='';document.getElementById('uSenha2').value='';document.getElementById('uRole').value=u?(u.role||'editor'):'editor';document.getElementById('userModal').classList.add('open');}
-function closeUserModal(){document.getElementById('userModal').classList.remove('open');euId=null;}
-async function saveUser(){
-  const login=document.getElementById('uLogin').value.trim(),nome=document.getElementById('uNome').value.trim(),senha=document.getElementById('uSenha').value,senha2=document.getElementById('uSenha2').value,role=document.getElementById('uRole').value;
-  if(!login||!nome){toast('Login e nome obrigatórios.','error');return;}
-  if(!euId&&(!senha||senha.length<6)){toast('Senha mínima 6 caracteres.','error');return;}
-  if(senha&&senha!==senha2){toast('Senhas não conferem.','error');return;}
-  const btn=document.getElementById('saveUserBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span>';
-  try{
-    if(euId){const upd={usuario:login,nome,role};if(senha)upd.senha=senha;await DB.updUser(euId,upd);}
-    else{await DB.addUser({id:'u'+Date.now(),usuario:login,nome,senha,role,criado_em:new Date().toISOString()});}
-    closeUserModal();loadUsers();toast('Usuário salvo!','success');
-  }catch(e){toast('Erro: '+e.message,'error');}finally{btn.disabled=false;btn.textContent='SALVAR';}
+
+function renderUsersStats(){
+  const ativos = _allUsers.filter(u => u.ativo).length;
+  const inativos = _allUsers.length - ativos;
+  const admins = _allUsers.filter(u => u.role === 'admin' && u.ativo).length;
+  document.getElementById('userStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${_allUsers.length}</div><div class="stat-lbl">TOTAL</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--success)">${ativos}</div><div class="stat-lbl">ATIVOS</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--danger)">${inativos}</div><div class="stat-lbl">DESATIVADOS</div></div>
+    <div class="stat-card"><div class="stat-num">${admins}</div><div class="stat-lbl">ADMINS</div></div>
+  `;
 }
-async function delUser(id){if(!confirm('Excluir usuário?'))return;showOv('...');try{await DB.delUser(id);loadUsers();toast('Removido.','info');}catch(e){toast('Erro.','error');}finally{hideOv();}}
+
+function renderUsersList(){
+  const search = (document.getElementById('uFilterSearch')?.value || '').toLowerCase().trim();
+  const roleFilter = document.getElementById('uFilterRole')?.value || '';
+  const statusFilter = document.getElementById('uFilterStatus')?.value;
+
+  let filtered = _allUsers;
+  if (search) filtered = filtered.filter(u => (u.nome||'').toLowerCase().includes(search) || (u.matricula||'').toLowerCase().includes(search));
+  if (roleFilter) filtered = filtered.filter(u => u.role === roleFilter);
+  if (statusFilter === '1') filtered = filtered.filter(u => u.ativo);
+  else if (statusFilter === '0') filtered = filtered.filter(u => !u.ativo);
+
+  document.getElementById('uListCount').textContent = `${filtered.length} de ${_allUsers.length} usuários`;
+
+  const roleLabels = { admin:'ADMIN', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
+  const roleBadgeStyle = {
+    admin:'background:#fee2e2;color:#991b1b;border:1px solid #fecaca',
+    supervisor:'background:#fef3c7;color:#92400e;border:1px solid #fde68a',
+    operator:'background:#e0f2fe;color:#075985;border:1px solid #bae6fd',
+    auditor:'background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff',
+  };
+
+  document.getElementById('ulist').innerHTML = filtered.length ? filtered.map(u => {
+    const isMe = u.id === CU.id;
+    return `
+      <div class="uitem" style="opacity:${u.ativo?1:.55}">
+        <div class="uitem-info">
+          <div class="ulogin" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span>${esc(u.nome)}</span>
+            <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
+            ${!u.ativo?'<span class="badge" style="background:#fee2e2;color:#dc2626;font-size:9px;padding:3px 7px;border:1px solid #fecaca">DESATIVADO</span>':''}
+            ${isMe?'<span style="font-size:9px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace">VOCÊ</span>':''}
+          </div>
+          <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
+        </div>
+        <div class="uactions">
+          <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar">✏️</button>
+          ${!isMe ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
+        </div>
+      </div>`;
+  }).join('') : '<div class="empty"><div class="ei">🔍</div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
+}
+
+let euId=null;
+function openUserModal(u){
+  euId = u ? u.id : null;
+  const isEdit = !!u;
+  document.getElementById('userModalTitle').textContent = isEdit ? 'EDITAR USUÁRIO' : 'NOVO USUÁRIO';
+  document.getElementById('uLogin').value = u?.email || '';
+  document.getElementById('uLogin').disabled = isEdit; // e-mail não muda em edição
+  document.getElementById('uNome').value = u?.nome || '';
+  document.getElementById('uMatricula').value = u?.matricula || '';
+  document.getElementById('uSenha').value = '';
+  document.getElementById('uRole').value = u?.role || 'operator';
+  document.getElementById('uAtivo').checked = isEdit ? !!u.ativo : true;
+  document.getElementById('uAtivoWrap').style.display = isEdit ? 'block' : 'none';
+  document.getElementById('uSenhaWrap').style.display = isEdit ? 'none' : 'block';
+  document.getElementById('uResetPwdBtn').style.display = isEdit ? 'inline-flex' : 'none';
+  document.getElementById('userModal').classList.add('open');
+}
+
+function closeUserModal(){
+  document.getElementById('userModal').classList.remove('open');
+  euId = null;
+}
+
+async function saveUser(){
+  const email = document.getElementById('uLogin').value.trim();
+  const nome = document.getElementById('uNome').value.trim();
+  const matricula = document.getElementById('uMatricula').value.trim() || null;
+  const senha = document.getElementById('uSenha').value;
+  const role = document.getElementById('uRole').value;
+  const ativo = document.getElementById('uAtivo').checked;
+  if (!email || !nome) { toast('E-mail e nome são obrigatórios.','error'); return; }
+
+  const btn = document.getElementById('saveUserBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="ld"></span>';
+  try {
+    if (euId) {
+      // EDITAR perfil
+      const upd = { nome, role, matricula, ativo, updated_at: new Date().toISOString() };
+      await DB.updUser(euId, upd);
+      await logAudit('update_user', 'sicad_perfis', euId, { nome, role, ativo });
+      toast('Usuário atualizado.','success');
+    } else {
+      // CRIAR novo: signUp + perfil
+      if (!senha || senha.length < 6) { toast('Senha mínima de 6 caracteres.','error'); btn.disabled=false; btn.innerHTML='SALVAR'; return; }
+      // signUp via Supabase Auth (já está com mailer_autoconfirm)
+      const { data, error } = await supabase.auth.signUp({
+        email, password: senha,
+        options: { data: { nome } }
+      });
+      if (error) { throw new Error(error.message); }
+      // Cria/atualiza perfil
+      const uid = data.user?.id;
+      if (!uid) throw new Error('Não retornou UUID do usuário');
+      await sbFetch('POST', 'sicad_perfis', {
+        id: uid, nome, role, matricula, ativo: true
+      });
+      await logAudit('create_user', 'sicad_perfis', uid, { email, nome, role });
+      toast('Usuário criado! Pode logar com a senha provisória.','success');
+    }
+    closeUserModal();
+    await loadUsers();
+  } catch(e) {
+    toast('Erro: '+e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'SALVAR';
+  }
+}
+
+async function delUser(id, nome){
+  if (id === CU.id) { toast('Não pode excluir a si próprio.','warn'); return; }
+  if (!confirm('Excluir o usuário "' + nome + '"?\n\nIsso também remove a conta de autenticação. Ação irreversível.')) return;
+  showOv('REMOVENDO...');
+  try {
+    // Delete perfil (auth.users tem cascade deletando o perfil; aqui só removemos perfil e desativamos)
+    await DB.delUser(id);
+    await logAudit('delete_user', 'sicad_perfis', id);
+    await loadUsers();
+    toast('Usuário removido.','info');
+  } catch(e) { toast('Erro: '+e.message,'error'); }
+  finally { hideOv(); }
+}
+
+async function resetUserPassword(){
+  if (!euId) return;
+  const email = document.getElementById('uLogin').value.trim();
+  if (!confirm('Enviar e-mail de redefinição de senha para '+email+'?')) return;
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+    await logAudit('reset_password', 'auth', euId);
+    toast('E-mail enviado!','success');
+  } catch(e) { toast('Erro: '+e.message,'error'); }
+}
+
+// ── IMPORTAR CSV em lote ──
+// CSV esperado: nome,email,role[,matricula]  (1 usuário por linha)
+async function importUsersCSV(file){
+  if (!file) return;
+  const text = await file.text();
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 1) { toast('CSV vazio.','warn'); return; }
+  // Detecta cabeçalho
+  const hasHeader = /nome|email|matricula|role/i.test(lines[0]);
+  const rows = hasHeader ? lines.slice(1) : lines;
+  const toCreate = [];
+  for (const line of rows) {
+    const cols = line.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, ''));
+    if (cols.length < 3) continue;
+    const [nome, email, role, matricula] = cols;
+    if (!nome || !email || !email.includes('@')) continue;
+    toCreate.push({ nome, email, role: ['admin','supervisor','operator','auditor'].includes((role||'').toLowerCase()) ? role.toLowerCase() : 'operator', matricula: matricula || null });
+  }
+  if (!toCreate.length) { toast('Nenhuma linha válida no CSV.','warn'); return; }
+  if (!confirm(`Importar ${toCreate.length} usuários?\n\nCada um receberá senha temporária "SICAD2026!" (devem trocar no 1º login).`)) return;
+
+  showOv('IMPORTANDO USUÁRIOS...');
+  let ok = 0, fail = 0;
+  for (const u of toCreate) {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: u.email, password: 'SICAD2026!',
+        options: { data: { nome: u.nome } }
+      });
+      if (error) { fail++; console.warn('[import]', u.email, error.message); continue; }
+      const uid = data.user?.id;
+      if (!uid) { fail++; continue; }
+      await sbFetch('POST', 'sicad_perfis', { id: uid, nome: u.nome, role: u.role, matricula: u.matricula, ativo: true });
+      ok++;
+    } catch(e) { fail++; console.warn('[import]', u.email, e.message); }
+  }
+  await logAudit('bulk_import_users', 'sicad_perfis', null, { ok, fail });
+  hideOv();
+  toast(`Import: ${ok} OK, ${fail} falharam. Senha padrão: SICAD2026!`, ok ? 'success' : 'warn');
+  await loadUsers();
+}
 
 // ── LIGHTBOX ──
 function lbOpen(s){document.getElementById('lbImg').src=s;document.getElementById('lb').classList.add('on');}
@@ -2580,6 +2794,7 @@ async function exportPDF(){
   const id=editId;if(!id)return;
   const p=allP.find(x=>x.id===id)||await DB.getPerson(id);
   if(!p){toast('Cadastro não encontrado.','error');return;}
+  logAudit('export_pdf','sicad_pessoas',id,{ nome: p.nome });
   toast('Gerando PDF...','info');
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
