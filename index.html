@@ -359,6 +359,28 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .cpf-err{color:var(--danger)}
 .cpf-warn{color:var(--accent2)}
 
+/* ── RECONHECIMENTO FACIAL — TABS ── */
+.face-tabs{display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;padding:5px;border-radius:12px}
+.face-tab{flex:1;padding:11px 12px;border:none;background:transparent;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--text-mid);cursor:pointer;transition:all .2s}
+.face-tab:hover{color:#000}
+.face-tab.active{background:#fff;color:#000;box-shadow:var(--shadow)}
+
+/* ── RECONHECIMENTO FACIAL — RESULTADOS DA BUSCA ── */
+.face-match-card{display:flex;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);align-items:center}
+.face-match-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#7c3aed}
+.face-match-card.top1{border-color:#10b981;background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)}
+.face-match-card.top1 .face-match-rank{background:#10b981}
+.face-match-rank{width:34px;height:34px;border-radius:50%;background:#94a3b8;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;flex-shrink:0}
+.face-match-thumb{width:60px;height:60px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--surface2);border:1px solid var(--border)}
+.face-match-thumb img{width:100%;height:100%;object-fit:cover}
+.face-match-info{flex:1;min-width:0}
+.face-match-name{font-weight:700;font-size:14px;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.face-match-meta{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.face-match-score{text-align:right;flex-shrink:0}
+.face-match-pct{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;color:#000}
+.face-match-pct.match{color:#10b981}.face-match-pct.maybe{color:#f59e0b}.face-match-pct.no{color:var(--text-dim)}
+.face-match-lbl{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:2px}
+
 /* ── RECONHECIMENTO FACIAL ── */
 .face-slot{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:var(--shadow);transition:all .2s}
 .face-slot.has-face{border-color:#7c3aed;box-shadow:0 6px 20px rgba(124,58,237,.18)}
@@ -850,12 +872,20 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">COMPARAR 2 FOTOS — IA 100% OFFLINE — DADO NÃO SAI DO DISPOSITIVO</div>
       </div>
 
+      <!-- TABS de modo -->
+      <div class="face-tabs">
+        <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">🆚 COMPARAR 1 vs 1</button>
+        <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">🔍 BUSCAR NO BANCO</button>
+      </div>
+
       <!-- Status dos modelos -->
       <div id="faceLoadStatus" style="background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);display:flex;align-items:center;gap:10px">
         <span class="ld" style="display:none" id="faceLoadSpin"></span>
         <span id="faceLoadMsg">Modelos serão carregados quando comparar (primeira vez: ~10s).</span>
       </div>
 
+      <!-- ─── MODO 1 vs 1 ─── -->
+      <div id="faceMode1v1">
       <!-- Slots das 2 fotos -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px" class="face-slots">
         <!-- FOTO A -->
@@ -915,6 +945,47 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
       <!-- Resultado -->
       <div id="faceResult" class="face-result"></div>
+      </div><!-- /faceMode1v1 -->
+
+      <!-- ─── MODO BUSCAR NO BANCO ─── -->
+      <div id="faceModeBanco" style="display:none">
+        <div class="face-slot" style="margin-bottom:16px">
+          <div class="face-slot-label">FOTO PARA BUSCAR</div>
+          <div class="face-slot-frame" id="faceFrameQ" style="aspect-ratio:16/10;max-width:420px;margin:0 auto 10px">
+            <div class="face-empty">
+              <div style="font-size:48px;opacity:.3">🔍</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">CARREGUE UMA FOTO PARA BUSCAR NO BANCO</div>
+            </div>
+            <img id="faceImgQ" class="face-img" alt="">
+            <canvas id="faceCanvasQ" class="face-canvas"></canvas>
+            <div class="face-status" id="faceStatusQ"></div>
+          </div>
+          <div class="face-slot-btns" style="max-width:420px;margin:0 auto">
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📁 GALERIA
+              <input type="file" accept="image/*" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <label class="btn btn-outline btn-sm" style="flex:1;position:relative;cursor:pointer">
+              📷 CÂMERA
+              <input type="file" accept="image/*" capture="environment" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+          </div>
+        </div>
+
+        <div class="row-btns" style="margin-bottom:16px">
+          <button class="btn btn-outline" onclick="resetFaceCompare()">🗑️ LIMPAR</button>
+          <button class="btn btn-primary" id="btnSearchFace" onclick="searchFaceInDB()" disabled>🔍 BUSCAR CORRESPONDÊNCIAS</button>
+        </div>
+
+        <!-- Progresso da busca -->
+        <div id="faceSearchProgress" style="display:none;background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);margin-bottom:6px"><span id="fspMsg">Processando...</span><span id="fspCount">0/0</span></div>
+          <div style="height:8px;background:var(--border);border-radius:99px;overflow:hidden"><div id="fspBar" style="height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);width:0%;transition:width .3s"></div></div>
+        </div>
+
+        <!-- Lista de resultados -->
+        <div id="faceSearchResults"></div>
+      </div>
 
       <!-- Como funciona -->
       <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
@@ -2788,7 +2859,17 @@ async function consultarVeiculoModal(campo){
 const FACE_MODELS_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
 let _faceModelsReady = false;
 let _faceModelsLoading = false;
-const _faceData = { A: null, B: null };  // {file, image, descriptor, box}
+const _faceData = { A: null, B: null, Q: null };  // {file, image, descriptor, box}
+const _faceDbCache = new Map();  // id -> descriptor (cache em memória)
+let _faceMode = '1v1';
+
+function setFaceMode(mode){
+  _faceMode = mode;
+  document.getElementById('faceTab1v1').classList.toggle('active', mode === '1v1');
+  document.getElementById('faceTabBanco').classList.toggle('active', mode === 'banco');
+  document.getElementById('faceMode1v1').style.display = mode === '1v1' ? 'block' : 'none';
+  document.getElementById('faceModeBanco').style.display = mode === 'banco' ? 'block' : 'none';
+}
 
 async function loadFaceModels(){
   if (_faceModelsReady) return true;
@@ -2925,8 +3006,9 @@ function drawFaceBox(slot, box, imgEl){
 
 function updateCompareBtn(){
   const btn = document.getElementById('btnCompareFaces');
-  if (!btn) return;
-  btn.disabled = !(_faceData.A && _faceData.B);
+  if (btn) btn.disabled = !(_faceData.A && _faceData.B);
+  const btn2 = document.getElementById('btnSearchFace');
+  if (btn2) btn2.disabled = !_faceData.Q;
 }
 
 async function compareFaces(){
@@ -2979,17 +3061,142 @@ async function compareFaces(){
 }
 
 function resetFaceCompare(){
-  _faceData.A = null; _faceData.B = null;
-  ['A','B'].forEach(s => {
+  _faceData.A = null; _faceData.B = null; _faceData.Q = null;
+  ['A','B','Q'].forEach(s => {
     const img = document.getElementById('faceImg'+s);
-    img.src=''; img.classList.remove('on');
-    document.getElementById('faceSlot'+s).classList.remove('has-face');
+    if (img) { img.src=''; img.classList.remove('on'); }
+    const slot = document.getElementById('faceSlot'+s);
+    if (slot) slot.classList.remove('has-face');
     drawFaceBox(s, null);
     setSlotStatus(s, '', null);
   });
   const el = document.getElementById('faceResult');
-  el.classList.remove('on'); el.innerHTML = '';
+  if (el) { el.classList.remove('on'); el.innerHTML = ''; }
+  const sr = document.getElementById('faceSearchResults');
+  if (sr) sr.innerHTML = '';
+  const fsp = document.getElementById('faceSearchProgress');
+  if (fsp) fsp.style.display = 'none';
   updateCompareBtn();
+}
+
+// ── Pré-computa descritor de cada cadastrado (cache em memória) ──
+async function computePersonDescriptor(p){
+  if (_faceDbCache.has(p.id)) return _faceDbCache.get(p.id);
+  if (!p.foto || typeof p.foto !== 'string' || p.foto.length < 100) {
+    _faceDbCache.set(p.id, null); return null;
+  }
+  try {
+    const img = await new Promise((res, rej) => {
+      const im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = () => res(im);
+      im.onerror = rej;
+      im.src = p.foto;
+    });
+    const det = await faceapi
+      .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+    const desc = det ? det.descriptor : null;
+    _faceDbCache.set(p.id, desc);
+    return desc;
+  } catch(e) {
+    console.warn('[face] erro processando', p.nome, e);
+    _faceDbCache.set(p.id, null);
+    return null;
+  }
+}
+
+// ── Busca a foto Q em todos os cadastrados, ranqueia e mostra top 5 ──
+async function searchFaceInDB(){
+  if (!_faceData.Q) { toast('Carregue uma foto antes.','warn'); return; }
+  if (!allP || !allP.length) { allP = await DB.getPersons(); }
+  const comFoto = allP.filter(p => p.foto && p.foto.length > 100);
+  if (!comFoto.length) { toast('Nenhum cadastro com foto no banco.','warn'); return; }
+
+  const btn = document.getElementById('btnSearchFace');
+  btn.disabled = true; btn.innerHTML = '<span class="ld"></span> BUSCANDO...';
+  const fsp = document.getElementById('faceSearchProgress');
+  const bar = document.getElementById('fspBar');
+  const cnt = document.getElementById('fspCount');
+  const msg = document.getElementById('fspMsg');
+  fsp.style.display = 'block';
+  document.getElementById('faceSearchResults').innerHTML = '';
+
+  const matches = [];
+  let processed = 0;
+  for (const p of comFoto) {
+    processed++;
+    cnt.textContent = processed + '/' + comFoto.length;
+    msg.textContent = 'Processando: ' + (p.nome||'').substring(0,30);
+    bar.style.width = Math.round((processed/comFoto.length)*100) + '%';
+    // descritor (com cache)
+    const desc = await computePersonDescriptor(p);
+    if (!desc) continue;
+    const distance = faceapi.euclideanDistance(_faceData.Q.descriptor, desc);
+    matches.push({ p, distance });
+    // yield pro browser pintar a barra
+    await new Promise(r => setTimeout(r, 0));
+  }
+
+  fsp.style.display = 'none';
+  btn.disabled = false; btn.innerHTML = '🔍 BUSCAR CORRESPONDÊNCIAS';
+
+  if (!matches.length) {
+    document.getElementById('faceSearchResults').innerHTML = '<div class="empty"><div class="ei">😶</div><p>Nenhum rosto pôde ser processado nos cadastros (fotos sem rosto detectável ou inválidas).</p></div>';
+    return;
+  }
+  matches.sort((a,b) => a.distance - b.distance);
+  renderFaceMatches(matches);
+}
+
+function renderFaceMatches(matches){
+  const wrap = document.getElementById('faceSearchResults');
+  const top = matches.slice(0, 5);
+  const alertIds = new Set((allAlertas||[]).filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
+
+  // Resumo no topo
+  const best = top[0];
+  const bestPct = Math.round(Math.max(0, 1 - best.distance) * 100);
+  let bestCls, bestVerdict;
+  if (best.distance < 0.40) { bestCls='match'; bestVerdict='✅ MATCH FORTE'; }
+  else if (best.distance < 0.55) { bestCls='maybe'; bestVerdict='⚠️ POSSÍVEL MATCH'; }
+  else { bestCls='no'; bestVerdict='❌ SEM CORRESPONDÊNCIA FORTE'; }
+
+  let html = `
+    <div class="face-result on" style="margin-bottom:16px">
+      <div class="face-verdict ${bestCls}">${bestVerdict}</div>
+      <div class="face-score">Melhor resultado: <b style="color:#000">${esc(best.p.nome)}</b> · ${bestPct}% de similaridade</div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px">TOP ${top.length} CANDIDATOS</div>
+  `;
+
+  top.forEach((m, idx) => {
+    const pct = Math.round(Math.max(0, 1 - m.distance) * 100);
+    let cls, lbl;
+    if (m.distance < 0.40) { cls='match'; lbl='MATCH'; }
+    else if (m.distance < 0.55) { cls='maybe'; lbl='POSSÍVEL'; }
+    else { cls='no'; lbl='DIFERENTE'; }
+    const isAlert = alertIds.has(m.p.id);
+    const cardCls = 'face-match-card' + (idx===0 ? ' top1' : '');
+    const thumb = m.p.foto || '';
+    html += `
+      <div class="${cardCls}" onclick="viewPerson('${m.p.id}')">
+        <div class="face-match-rank">${idx+1}</div>
+        <div class="face-match-thumb">${thumb ? `<img src="${thumb}" alt="">` : '👤'}</div>
+        <div class="face-match-info">
+          <div class="face-match-name">${isAlert?'🚨 ':''}${esc(m.p.nome)}</div>
+          <div class="face-match-meta">${esc(m.p.bairro||'—')} · dist ${m.distance.toFixed(3)}</div>
+        </div>
+        <div class="face-match-score">
+          <div class="face-match-pct ${cls}">${pct}%</div>
+          <div class="face-match-lbl">${lbl}</div>
+        </div>
+      </div>
+    `;
+  });
+  wrap.innerHTML = html;
+  wrap.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 </script>
 </body>
