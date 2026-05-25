@@ -359,6 +359,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 .lightbox img{max-width:100%;max-height:90vh;border-radius:10px}
 .lb-x{position:absolute;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.1);border:none;border-radius:10px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
+.tag-sug{background:#fff;border:1px solid var(--border);border-radius:99px;padding:4px 10px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);cursor:pointer;transition:all .2s}
+.tag-sug:hover{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .cpf-info{display:block;font-size:11px;margin-top:3px;font-family:'IBM Plex Mono',monospace;min-height:14px}
 .cpf-ok{color:var(--success)}
 .cpf-err{color:var(--danger)}
@@ -479,6 +481,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <button class="tnav-btn" onclick="go('foragidos')" data-p="foragidos">🚨 FORAGIDOS</button>
     <button class="tnav-btn" onclick="go('mapa')" data-p="mapa">🗺️ MAPA</button>
     <button class="tnav-btn" onclick="go('face')" data-p="face">🧬 FACE</button>
+    <button class="tnav-btn" onclick="go('tatuagens')" data-p="tatuagens">🎨 TATUAGENS</button>
     <button class="tnav-btn" onclick="go('pesquisa')" data-p="pesquisa">📋 PESQUISA</button>
     <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios">USUÁRIOS</button>
   </div>
@@ -510,6 +513,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <div class="hi-sub">MARCADORES POR BAIRRO — BRAZLÂNDIA DF</div>
         </div>
         <div class="hi-arrow">›</div>
+      </div>
+
+      <!-- TATUAGENS CARD -->
+      <div class="hi-card" onclick="go('tatuagens')" style="border-color:rgba(168,85,247,.3);box-shadow:0 4px 16px rgba(168,85,247,.15);background:#fff">
+        <div class="hi-icon" style="background:linear-gradient(135deg,#fae8ff 0%,#f5d0fe 100%);color:#a855f7">🎨</div>
+        <div class="hi-body">
+          <div class="hi-title">TATUAGENS</div>
+          <div class="hi-sub">BUSCA REVERSA POR TAGS E LOCAL</div>
+        </div>
+        <div class="hi-arrow" style="color:#a855f7">›</div>
       </div>
 
       <!-- RECONHECIMENTO FACIAL CARD -->
@@ -1070,6 +1083,26 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       </div>
     </div>
 
+    <!-- BUSCA REVERSA DE TATUAGENS -->
+    <div class="page" id="page-tatuagens">
+      <div style="background:linear-gradient(135deg,#fdf4ff 0%,#fae8ff 100%);border:2px solid rgba(168,85,247,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:6px">🎨</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">BUSCA REVERSA DE TATUAGENS</div>
+        <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">DIGITE TAGS OU PALAVRAS-CHAVE — ACHA QUEM TEM</div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <input id="tatBuscaInput" placeholder="🔍 Ex: anjo, peito, cv, religioso" oninput="buscarTatuagens()" style="flex:2;min-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--text)">
+        <select id="tatBuscaLocal" onchange="buscarTatuagens()" style="flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
+          <option value="">Qualquer local</option>
+        </select>
+      </div>
+
+      <div id="tatBuscaSugestoes" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px"></div>
+      <div id="tatBuscaCount" style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-bottom:10px"></div>
+      <div id="tatBuscaResultados"></div>
+    </div>
+
     <!-- SITES DE PESQUISA -->
     <div class="page" id="page-pesquisa">
       <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
@@ -1133,6 +1166,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     <button class="bnav-btn" onclick="go('foragidos')" data-p="foragidos" style="min-width:64px"><span class="ni">🚨</span>FORAGIDOS</button>
     <button class="bnav-btn" onclick="go('mapa')" data-p="mapa" style="min-width:48px"><span class="ni">🗺️</span>MAPA</button>
     <button class="bnav-btn" onclick="go('face')" data-p="face" style="min-width:48px"><span class="ni">🧬</span>FACE</button>
+    <button class="bnav-btn" onclick="go('tatuagens')" data-p="tatuagens" style="min-width:56px"><span class="ni">🎨</span>TATUAGENS</button>
     <button class="bnav-btn" onclick="go('pesquisa')" data-p="pesquisa" style="min-width:56px"><span class="ni">📋</span>PESQUISA</button>
     <button class="bnav-btn" onclick="go('usuarios')" data-p="usuarios" id="bnUsuarios" style="min-width:62px"><span class="ni">👥</span>USUÁRIOS</button>
   </div>
@@ -1301,6 +1335,34 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       </div>
       <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>📸 CAPTURAR AGORA</button>
       <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">Auto-captura ativada · estabilize o rosto na câmera</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR TATUAGEM (descrição + tags + local) -->
+<div class="modal-overlay" id="tatModal">
+  <div class="modal" style="max-width:560px">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="mtitle">🎨 EDITAR TATUAGEM</div>
+        <button class="mclose" onclick="fecharTatModal()">✕</button>
+      </div>
+      <img id="tatModalImg" style="width:100%;max-height:240px;object-fit:contain;border-radius:10px;background:#f1f5f9;margin-bottom:12px">
+      <div class="fg"><label>Descrição livre</label><input type="text" id="tatModalDesc" placeholder="Ex: anjo segurando uma rosa"></div>
+      <div class="fg"><label>Local no corpo</label>
+        <select id="tatModalLocal"></select>
+      </div>
+      <div class="fg">
+        <label>Tags (separadas por vírgula)</label>
+        <input type="text" id="tatModalTags" placeholder="ex: anjo, peito, religioso">
+        <div id="tatModalSugestoes" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;max-height:140px;overflow-y:auto;padding:6px;background:var(--surface2);border-radius:8px"></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:6px">💡 Clique nas sugestões pra adicionar rapidamente. Quanto mais tags, mais fácil achar via busca reversa.</div>
+      </div>
+      <div class="row-btns" style="margin-top:4px">
+        <button class="btn btn-outline" onclick="fecharTatModal()">CANCELAR</button>
+        <button class="btn btn-primary" onclick="salvarTatuagem()">✓ SALVAR</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1567,6 +1629,109 @@ function go(n){
   if(n==='foragidos'){loadAlertas();showForagidoTab('alertas');}
   if(n==='mapa')loadMapa();
   if(n==='face') loadFaceModels(); // pré-carrega modelos ao abrir a aba
+  if(n==='tatuagens') loadTatuagensSearch();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── BUSCA REVERSA DE TATUAGENS ──
+// ══════════════════════════════════════════════════════════════
+async function loadTatuagensSearch(){
+  if (!allP.length) {
+    showOv('CARREGANDO...');
+    try { allP = await DB.getPersons(); } catch(e) {}
+    hideOv();
+  }
+  // Popula select de locais
+  const sel = document.getElementById('tatBuscaLocal');
+  sel.innerHTML = '<option value="">Qualquer local</option>' + LOCAIS_CORPO.map(l => `<option value="${l}">${l}</option>`).join('');
+  // Coleta tags mais usadas no banco pra mostrar como sugestões
+  const counts = {};
+  for (const p of allP) {
+    const tats = parseTats(p.tatuagens).map(_normTat).filter(Boolean);
+    for (const t of tats) for (const tg of (t.tags||[])) counts[tg] = (counts[tg]||0) + 1;
+  }
+  const topTags = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 14);
+  document.getElementById('tatBuscaSugestoes').innerHTML = topTags.length
+    ? '<span style="font-size:10px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace;letter-spacing:1px;margin-right:4px;align-self:center">TAGS MAIS USADAS:</span>' + topTags.map(([tg, n]) => `<button class="tag-sug" onclick="addBuscaTag('${tg}')">${esc(tg)} <span style="opacity:.5">${n}</span></button>`).join('')
+    : '';
+  buscarTatuagens();
+}
+
+function addBuscaTag(tag){
+  const inp = document.getElementById('tatBuscaInput');
+  const atual = inp.value.trim();
+  inp.value = atual ? atual + ', ' + tag : tag;
+  buscarTatuagens();
+}
+
+function buscarTatuagens(){
+  const q = (document.getElementById('tatBuscaInput')?.value || '').toLowerCase().trim();
+  const localFiltro = document.getElementById('tatBuscaLocal')?.value || '';
+  const termos = q.split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
+
+  const alertIds = new Set((allAlertas||[]).filter(a => a.pessoa_id).map(a => a.pessoa_id));
+
+  const matches = [];
+  for (const p of allP) {
+    const tats = parseTats(p.tatuagens).map(_normTat).filter(Boolean);
+    if (!tats.length) continue;
+
+    for (const t of tats) {
+      // Filtro de local
+      if (localFiltro && t.local !== localFiltro) continue;
+      // Sem termo de busca: lista tudo (com filtro de local se aplicável)
+      let score = 0;
+      let matchedTerms = [];
+      if (termos.length === 0 && !localFiltro) {
+        // Sem busca: pula
+        continue;
+      }
+      if (termos.length === 0 && localFiltro) {
+        score = 1; // filtra só por local
+      } else {
+        const haystack = ((t.desc||'') + ' ' + (t.tags||[]).join(' ') + ' ' + (t.local||'')).toLowerCase();
+        for (const tm of termos) {
+          if (haystack.includes(tm)) {
+            score++;
+            matchedTerms.push(tm);
+          }
+        }
+      }
+      if (score > 0) matches.push({ p, t, score, matchedTerms, isAlert: alertIds.has(p.id) });
+    }
+  }
+
+  // Ordena por score desc
+  matches.sort((a,b) => b.score - a.score);
+
+  const total = matches.length;
+  const pessoasUnicas = new Set(matches.map(m => m.p.id)).size;
+  document.getElementById('tatBuscaCount').innerHTML = total
+    ? `<b>${total}</b> tatuagem${total>1?'s':''} de <b>${pessoasUnicas}</b> pessoa${pessoasUnicas>1?'s':''}`
+    : (termos.length || localFiltro ? 'Nenhum resultado pra essa busca.' : 'Digite tags ou escolha um local pra começar.');
+
+  const wrap = document.getElementById('tatBuscaResultados');
+  if (!total) { wrap.innerHTML = ''; return; }
+
+  wrap.innerHTML = matches.slice(0, 40).map(m => {
+    const t = m.t;
+    const p = m.p;
+    const tagsHtml = (t.tags||[]).map(tg => {
+      const isMatch = m.matchedTerms.includes(tg.toLowerCase());
+      return `<span style="background:${isMatch?'#7c3aed':'#e2e8f0'};color:${isMatch?'#fff':'var(--text-mid)'};font-size:9px;padding:2px 7px;border-radius:99px;font-weight:600">${esc(tg)}</span>`;
+    }).join(' ');
+    return `
+      <div class="card" style="display:flex;gap:14px;padding:12px;cursor:pointer;align-items:center" onclick="viewPerson('${p.id}')">
+        <img src="${t.img}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;flex-shrink:0;background:#f1f5f9">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px;color:#000">${m.isAlert?'🚨 ':''}${esc(p.nome)}</div>
+          ${p.apelido?`<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mid)">@${esc(p.apelido)}</div>`:''}
+          ${t.desc?`<div style="font-size:12px;color:var(--text);margin-top:4px">${esc(t.desc)}</div>`:''}
+          ${t.local?`<div style="font-size:11px;color:var(--text-dim);margin-top:2px">📍 ${esc(t.local)}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:6px">${tagsHtml}</div>
+        </div>
+      </div>`;
+  }).join('') + (matches.length > 40 ? `<div style="text-align:center;font-size:11px;color:var(--text-dim);padding:14px">+${matches.length-40} resultados não mostrados — refine a busca.</div>` : '');
 }
 
 // ── DASHBOARD ──
@@ -1800,9 +1965,86 @@ async function deletePerson(){
 // ── FOTOS ──
 function onFaceFile(inp){if(!inp.files||!inp.files[0])return;resize(inp.files[0],d=>{faceD=d;const prev=document.getElementById('facePreview');prev.src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';});}
 function faceRem(){faceD=null;document.getElementById('facePreviewWrap').style.display='none';document.getElementById('faceBtnsWrap').style.display='flex';}
-function onTatFiles(inp){if(!inp.files)return;Array.from(inp.files).forEach(f=>resize(f,d=>{tatD.push(d);renderTats();}));}
-function renderTats(){document.getElementById('tatThumbs').innerHTML=tatD.map((d,i)=>`<div class="thumb"><img src="${d}" loading="lazy"><div class="thumb-del" onclick="rmTat(${i})">✕</div></div>`).join('');}
-function rmTat(i){tatD.splice(i,1);renderTats();}
+// Tatuagens armazenam: { img: dataUrl, desc: 'descrição livre', tags: ['tribal','peito'], local: 'braço direito' }
+// Compat: string solta vira { img }; objeto antigo {img,desc} vira {img,desc,tags:[]}
+function _normTat(t){
+  if (!t) return null;
+  if (typeof t === 'string') return { img: t, desc: '', tags: [], local: '' };
+  return { img: t.img || '', desc: t.desc || '', tags: Array.isArray(t.tags) ? t.tags : [], local: t.local || '' };
+}
+
+function onTatFiles(inp){
+  if (!inp.files) return;
+  Array.from(inp.files).forEach(f => resize(f, d => {
+    tatD.push({ img: d, desc: '', tags: [], local: '' });
+    renderTats();
+  }));
+}
+
+function renderTats(){
+  // Normaliza qualquer formato antigo
+  tatD = tatD.map(_normTat).filter(Boolean);
+  document.getElementById('tatThumbs').innerHTML = tatD.map((t, i) => {
+    const tagsHtml = (t.tags||[]).length
+      ? '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">' + t.tags.map(tg => `<span style="background:#7c3aed;color:#fff;font-size:8px;padding:1px 5px;border-radius:99px;font-weight:600">${esc(tg)}</span>`).join('') + '</div>'
+      : '';
+    const descHtml = t.desc ? `<div style="font-size:9px;color:var(--text-mid);margin-top:2px;line-height:1.2">${esc(t.desc.substring(0,28))}${t.desc.length>28?'...':''}</div>` : '';
+    return `
+      <div class="thumb" style="width:90px;height:auto" onclick="editarTatuagem(${i})">
+        <div style="position:relative;width:90px;height:90px"><img src="${t.img}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px"><div class="thumb-del" onclick="event.stopPropagation();rmTat(${i})">✕</div></div>
+        ${descHtml}${tagsHtml}
+      </div>`;
+  }).join('');
+}
+
+function rmTat(i){ tatD.splice(i,1); renderTats(); }
+
+// Lista de tags sugeridas (frequentes em cadastros policiais)
+const TAGS_SUGERIDAS = [
+  'tribal','letra','número','data','cruz','rosa','anjo','demônio','santo','caveira',
+  'dragão','coração','estrela','coroa','mãe','filho','nome','iniciais','símbolo','religioso',
+  'arabesco','pontilhismo','realista','aquarela','colorido','preto','sombreado',
+  '777','333','13','100','cv','tcc','pcc','ck','rs','df'
+];
+const LOCAIS_CORPO = ['braço direito','braço esquerdo','antebraço direito','antebraço esquerdo','mão direita','mão esquerda','peito','costas','ombro direito','ombro esquerdo','perna direita','perna esquerda','panturrilha','pescoço','nuca','rosto','cabeça','outro'];
+
+let _editTatIdx = null;
+function editarTatuagem(idx){
+  _editTatIdx = idx;
+  const t = tatD[idx];
+  if (!t) return;
+  document.getElementById('tatModalImg').src = t.img;
+  document.getElementById('tatModalDesc').value = t.desc || '';
+  document.getElementById('tatModalTags').value = (t.tags||[]).join(', ');
+  // Popula select de locais
+  const sel = document.getElementById('tatModalLocal');
+  sel.innerHTML = '<option value="">Selecione o local</option>' + LOCAIS_CORPO.map(l => `<option value="${l}"${l===t.local?' selected':''}>${l}</option>`).join('');
+  // Renderiza sugestões clicáveis de tags
+  document.getElementById('tatModalSugestoes').innerHTML = TAGS_SUGERIDAS.map(tg => `<button type="button" class="tag-sug" onclick="addTagModal('${tg}')">+ ${tg}</button>`).join('');
+  document.getElementById('tatModal').classList.add('open');
+}
+
+function addTagModal(tag){
+  const inp = document.getElementById('tatModalTags');
+  const atuais = inp.value.split(',').map(s => s.trim()).filter(Boolean);
+  if (!atuais.includes(tag)) atuais.push(tag);
+  inp.value = atuais.join(', ');
+}
+
+function salvarTatuagem(){
+  if (_editTatIdx == null) return;
+  const desc = document.getElementById('tatModalDesc').value.trim();
+  const tagsRaw = document.getElementById('tatModalTags').value;
+  const tags = tagsRaw.split(/[,;]/).map(s => s.trim().toLowerCase()).filter(Boolean);
+  const local = document.getElementById('tatModalLocal').value;
+  tatD[_editTatIdx] = { ...tatD[_editTatIdx], desc, tags, local };
+  document.getElementById('tatModal').classList.remove('open');
+  _editTatIdx = null;
+  renderTats();
+  toast('Tatuagem atualizada','success');
+}
+
+function fecharTatModal(){ document.getElementById('tatModal').classList.remove('open'); _editTatIdx = null; }
 
 // ── CÂMERA ──
 async function camOpen(t){
