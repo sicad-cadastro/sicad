@@ -10,6 +10,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- face-api.js — reconhecimento facial 100% client-side, sem API key, sem servidor -->
 <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
+<!-- Supabase JS SDK — auth + cliente do banco -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -431,9 +433,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     </div>
     <div class="login-card">
       <div class="login-err" id="loginErr"></div>
-      <div class="fg"><label>Usuário</label><input type="text" id="lu" placeholder="Digite seu usuário" autocomplete="username"></div>
+      <div class="fg"><label>E-mail</label><input type="email" id="lu" placeholder="seu@email.gov.br" autocomplete="username"></div>
       <div class="fg"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
       <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">ENTRAR</button>
+      <button class="btn btn-outline btn-full btn-sm" onclick="resetPwd()" style="margin-top:8px;font-size:11px">Esqueci minha senha</button>
     </div>
     <div class="mode-lbl" id="modeLbl"></div>
   </div>
@@ -1232,24 +1235,56 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SUPABASE CONFIG ──
+// ── SUPABASE CONFIG ── (anon key pública — segura de expor; RLS protege os dados)
 const SB = 'https://vkrkirientpljlxstafm.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcmtpcmllbnRwbGpseHN0YWZtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjY1MDI3NSwiZXhwIjoyMDg4MjI2Mjc1fQ.FriB-TPL5uue5xcFXVBcKLp3YEXqes09Sk4KZaRtQow';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcmtpcmllbnRwbGpseHN0YWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTAyNzUsImV4cCI6MjA4ODIyNjI3NX0.Q2TT1sBSgi_Y_h5JxVZVWpVni5XpvtGzPbJHBdlbuAE';
 
+// Cliente Supabase (singleton)
+const supabase = window.supabase.createClient(SB, SB_ANON, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+});
+
+// sbFetch — usa anon key + JWT do usuário logado (RLS controla acesso)
 async function sbFetch(method, table, body, qs) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token || SB_ANON;
   const r = await fetch(`${SB}/rest/v1/${table}${qs?'?'+qs:''}`, {
     method,
     headers: {
-      'apikey': KEY,
-      'Authorization': `Bearer ${KEY}`,
+      'apikey': SB_ANON,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
       'Prefer': 'return=representation'
     },
     body: body ? JSON.stringify(body) : undefined
   });
   const t = await r.text();
-  if (!r.ok) { let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{} throw new Error(m); }
+  if (!r.ok) {
+    let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{}
+    // 401/403 = sessão expirou ou sem permissão pra RLS
+    if (r.status===401 || r.status===403) {
+      console.warn('[sbFetch]', r.status, m);
+    }
+    throw new Error(m);
+  }
   try{return JSON.parse(t);}catch{return [];}
+}
+
+// ── AUDIT LOG ── grava ações importantes em sicad_audit
+async function logAudit(acao, recurso, recursoId, detalhes) {
+  if (!CU) return;
+  try {
+    await sbFetch('POST', 'sicad_audit', {
+      user_id: CU.id,
+      user_email: CU.email,
+      user_role: CU.role,
+      acao: acao,
+      recurso: recurso || null,
+      recurso_id: recursoId ? String(recursoId) : null,
+      detalhes: detalhes || null,
+      user_agent: navigator.userAgent ? navigator.userAgent.substring(0, 200) : null
+    });
+  } catch(e) { console.warn('[audit]', e.message); }
 }
 
 // ── STATE ──
@@ -1265,27 +1300,18 @@ const lsS=(k,v)=>localStorage.setItem('sicad_'+k,JSON.stringify(v));
 
 // ── INIT ──
 async function init() {
-  showOv('CONECTANDO...');
-  try {
-    await sbFetch('GET','sicad_users',null,'limit=1');
-    document.getElementById('modeLbl').textContent='☁️ SUPABASE CONECTADO';
-    window._L = false;
-  } catch(e) {
-    window._L = true;
-    if(!lsG('u').length) lsS('u',[{id:'u1',usuario:'admin',nome:'Administrador',senha:'admin123',role:'admin',criado_em:new Date().toISOString()}]);
-    document.getElementById('modeLbl').textContent='📱 MODO LOCAL';
-  }
-  hideOv();
+  // Online sempre — Auth gerencia conexão. Indica conectividade simples.
+  window._L = false;
+  document.getElementById('modeLbl').textContent='🔒 SUPABASE AUTH';
 }
 
 // ── DB ──
 const enc = s => encodeURIComponent(s||'');
 const DB = {
-  async getUsers(){if(window._L)return lsG('u');return await sbFetch('GET','sicad_users',null,'order=criado_em.asc');},
-  async findUser(u,s){if(window._L)return lsG('u').find(x=>x.usuario===u&&x.senha===s)||null;const r=await sbFetch('GET','sicad_users',null,`usuario=eq.${enc(u)}&senha=eq.${enc(s)}`);return r[0]||null;},
-  async addUser(d){if(window._L){const u=lsG('u');u.push(d);lsS('u',u);return d;}const r=await sbFetch('POST','sicad_users',d);return Array.isArray(r)?r[0]:r;},
-  async updUser(id,d){if(window._L){lsS('u',lsG('u').map(x=>x.id===id?{...x,...d}:x));return d;}return await sbFetch('PATCH','sicad_users',d,`id=eq.${id}`);},
-  async delUser(id){if(window._L){lsS('u',lsG('u').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_users',null,`id=eq.${id}`);},
+  // Usuários agora vivem em sicad_perfis (vinculados a auth.users)
+  async getUsers(){return await sbFetch('GET','sicad_perfis',null,'order=created_at.asc&select=*');},
+  async updUser(id,d){return await sbFetch('PATCH','sicad_perfis',d,`id=eq.${id}`);},
+  async delUser(id){return await sbFetch('DELETE','sicad_perfis',null,`id=eq.${id}`);},
   async getPersons(f={}){
     if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
     let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
@@ -1303,30 +1329,117 @@ const DB = {
   async delPerson(id){if(window._L){lsS('p',lsG('p').filter(x=>x.id!==id));return;}return await sbFetch('DELETE','sicad_pessoas',null,`id=eq.${id}`);}
 };
 
-// ── LOGIN ──
+// ── LOGIN (Supabase Auth) ──
 async function login(){
-  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
-  if(!u||!p){errLg('Preencha usuário e senha.');return;}
+  const email=document.getElementById('lu').value.trim();
+  const password=document.getElementById('lp').value;
+  if(!email||!password){errLg('Preencha e-mail e senha.');return;}
   const btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> ENTRANDO...';
   document.getElementById('loginErr').style.display='none';
   try{
-    let found=null;try{found=await DB.findUser(u,p);}catch(e){}
-    if(!found&&u==='admin'&&p==='admin123')found={id:'u1',usuario:'admin',nome:'Administrador',role:'admin'};
-    if(!found){errLg('Usuário ou senha inválidos.');return;}
-    CU=found;
-    document.getElementById('loginWrap').style.display='none';
-    document.getElementById('shell').style.display='block';
-    document.getElementById('userChip').innerHTML=`${esc(found.nome)} <b>${(found.role||'editor').toUpperCase()}</b>`;
-    const isA=found.role==='admin';
-    document.getElementById('bnUsuarios').style.display=isA?'':'none';
-    document.getElementById('tnUsuarios').style.display=isA?'':'none';
-    go('dashboard');
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { errLg('E-mail ou senha inválidos.'); return; }
+    await aplicarPerfilLogado(data.user);
   }catch(e){errLg('Erro: '+e.message);}
   finally{btn.disabled=false;btn.textContent='ENTRAR';}
 }
+
+// Carrega perfil + role do usuário e prepara a interface
+async function aplicarPerfilLogado(user){
+  // Busca perfil em sicad_perfis
+  let profile = null;
+  try {
+    const r = await sbFetch('GET','sicad_perfis',null,`id=eq.${user.id}&select=*`);
+    profile = r[0] || null;
+  } catch(e) { console.warn('[perfil]', e); }
+
+  if (!profile) {
+    await supabase.auth.signOut();
+    errLg('Perfil não cadastrado. Solicite ao administrador.');
+    return;
+  }
+  if (!profile.ativo) {
+    await supabase.auth.signOut();
+    errLg('Conta desativada. Contate o administrador.');
+    return;
+  }
+
+  CU = {
+    id: user.id,
+    email: user.email,
+    nome: profile.nome,
+    role: profile.role,
+    matricula: profile.matricula || null,
+    usuario: user.email,
+    login: user.email,
+  };
+
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('shell').style.display='block';
+  document.getElementById('userChip').innerHTML=`${esc(CU.nome)} <b>${(CU.role||'operator').toUpperCase()}</b>`;
+
+  // UI baseado em role
+  aplicarUIporRole();
+  await logAudit('login', 'auth', user.id);
+  go('dashboard');
+}
+
+// Mostra/esconde elementos conforme role
+function aplicarUIporRole(){
+  const isAdmin = CU?.role === 'admin';
+  const isSuperOrAdmin = ['admin','supervisor'].includes(CU?.role);
+  const usuariosBtns = ['bnUsuarios','tnUsuarios'];
+  usuariosBtns.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAdmin ? '' : 'none';
+  });
+}
+
 function errLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginWrap').style.display!=='none')login();});
-function logout(){CU=null;allP=[];document.getElementById('shell').style.display='none';document.getElementById('loginWrap').style.display='flex';['lu','lp'].forEach(id=>document.getElementById(id).value='');}
+
+async function logout(){
+  await logAudit('logout', 'auth', CU?.id);
+  await supabase.auth.signOut();
+  CU=null; allP=[];
+  document.getElementById('shell').style.display='none';
+  document.getElementById('loginWrap').style.display='flex';
+  ['lu','lp'].forEach(id=>document.getElementById(id).value='');
+}
+
+// Recuperação de senha — envia e-mail
+async function resetPwd(){
+  const email = (document.getElementById('lu').value||'').trim();
+  if (!email) { errLg('Digite o e-mail acima e clique de novo em "Esqueci minha senha".'); return; }
+  if (!confirm('Enviar e-mail de redefinição de senha para ' + email + '?')) return;
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.href
+    });
+    if (error) { errLg('Erro: '+error.message); return; }
+    errLg('✅ Verifique seu e-mail (inclusive spam).');
+    document.getElementById('loginErr').style.color='var(--success)';
+  } catch(e) { errLg('Erro: '+e.message); }
+}
+
+// Boot: verifica sessão existente e auto-loga
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await aplicarPerfilLogado(session.user);
+    }
+  } catch(e) { console.warn('[boot]', e); }
+});
+
+// Reage a logout em outras abas
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT' && CU) {
+    CU = null; allP = [];
+    document.getElementById('shell').style.display='none';
+    document.getElementById('loginWrap').style.display='flex';
+  }
+});
 
 // ── NAV ──
 function go(n){
