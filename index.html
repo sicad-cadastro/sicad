@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#0099cc">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SICAD">
+<meta name="mobile-web-app-capable" content="yes">
 <title>SICAD — Sistema de Cadastro</title>
 <!-- Leaflet (mapa grátis, sem chave de API) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -1366,6 +1371,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
     </div>
   </div>
 </div>
+
+<!-- Botão flutuante de instalar PWA -->
+<button id="pwaInstallBtn" onclick="pwaInstall()" style="display:none;position:fixed;bottom:88px;right:16px;z-index:300;background:linear-gradient(135deg,#0099cc,#0086b3);color:#fff;border:none;border-radius:99px;padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 8px 24px rgba(0,153,204,.35);align-items:center;gap:8px"><span style="font-size:18px">📲</span> INSTALAR APP</button>
 
 <div class="toast" id="toast"></div>
 
@@ -3700,6 +3708,46 @@ async function consultarVeiculoModal(campo){
   document.getElementById('sinespBody').innerHTML=html;
   sm.classList.add('open');
 }
+
+// ══════════════════════════════════════════════════════════════
+// ── PWA — Service Worker + prompt de instalação ──
+// ══════════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('[PWA] SW registrado:', reg.scope);
+      // Verifica atualizações periodicamente
+      setInterval(() => reg.update(), 60 * 60 * 1000); // a cada 1h
+    }).catch(err => console.warn('[PWA] SW falhou:', err));
+  });
+}
+
+// Captura prompt de instalação
+let _deferredInstall = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredInstall = e;
+  // Mostra botão de instalar (criado abaixo)
+  const btn = document.getElementById('pwaInstallBtn');
+  if (btn) btn.style.display = 'flex';
+});
+
+async function pwaInstall(){
+  if (!_deferredInstall) {
+    toast('Pra instalar, use o menu do navegador → "Adicionar à tela inicial"', 'info');
+    return;
+  }
+  _deferredInstall.prompt();
+  const { outcome } = await _deferredInstall.userChoice;
+  _deferredInstall = null;
+  document.getElementById('pwaInstallBtn').style.display = 'none';
+  if (outcome === 'accepted') toast('SICAD instalado! Procure o ícone na tela inicial.', 'success');
+}
+
+window.addEventListener('appinstalled', () => {
+  toast('✅ SICAD instalado com sucesso!', 'success');
+  document.getElementById('pwaInstallBtn').style.display = 'none';
+});
 
 // ══════════════════════════════════════════════════════════════
 // ── RECONHECIMENTO FACIAL (face-api.js) — 100% client-side ──
