@@ -1476,20 +1476,11 @@ const DB = {
   async delUser(id){return await sbFetch('DELETE','sicad_perfis',null,`id=eq.${id}`);},
   async getPersons(f={}){
     if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
-    // PERFORMANCE: query light (sem foto/tatuagens/observacoes/senhas) — reduz 95% do payload
-    // Foto é buscada individualmente quando abre a pessoa (viewPerson)
-    const camposLeves = 'id,nome,apelido,mae,cpf,nascimento,telefone,bairro,quadra,faccionado,faccao,criado_em,criado_por,atualizado_em';
-    let qs=`select=${camposLeves}&order=criado_em.desc`;
-    if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}
-    if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;
-    if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
+    let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
     return await sbFetch('GET','sicad_pessoas',null,qs);
   },
-  // Versão completa (com foto/tatuagens) — só usar quando precisar de TODOS os campos
-  async getPersonsFull(){
-    if(window._L) return lsG('p').slice().reverse();
-    return await sbFetch('GET','sicad_pessoas',null,'order=criado_em.desc');
-  },
+  // Versão completa (alias pra dedup) — mesma coisa de getPersons agora
+  async getPersonsFull(){ return await this.getPersons(); },
   async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await sbFetch('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
   async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await sbFetch('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
   async updPerson(id,d){
@@ -1814,7 +1805,7 @@ let _listaRenderizada = 0;
 async function loadPersons(){
   showOv('BUSCANDO...');
   try{allP=await DB.getPersons();renderList(allP);}
-  catch(e){toast('Erro ao buscar.','error');}
+  catch(e){console.error('[loadPersons]', e); toast('Erro ao buscar: '+(e.message||'falha'),'error');}
   finally{hideOv();}
 }
 function renderList(l){
