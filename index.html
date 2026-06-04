@@ -1794,7 +1794,11 @@ function pCard(p){
   </div>`;
 }
 
-// ── CONSULTAR ──
+// ── CONSULTAR (com paginação + debounce pra performance) ──
+const PAGE_SIZE = 60;
+let _listaFiltrada = [];
+let _listaRenderizada = 0;
+
 async function loadPersons(){
   showOv('BUSCANDO...');
   try{allP=await DB.getPersons();renderList(allP);}
@@ -1802,11 +1806,39 @@ async function loadPersons(){
   finally{hideOv();}
 }
 function renderList(l){
-  document.getElementById('rcnt').textContent=`${l.length} registro${l.length!==1?'s':''} encontrado${l.length!==1?'s':''}`;
-  document.getElementById('emptyList').style.display=l.length?'none':'block';
-  document.getElementById('pgrid').innerHTML=l.map(pCard).join('');
+  _listaFiltrada = l || [];
+  _listaRenderizada = 0;
+  document.getElementById('rcnt').textContent=`${_listaFiltrada.length} registro${_listaFiltrada.length!==1?'s':''} encontrado${_listaFiltrada.length!==1?'s':''}`;
+  document.getElementById('emptyList').style.display=_listaFiltrada.length?'none':'block';
+  document.getElementById('pgrid').innerHTML='';
+  _renderMaisPagina();
 }
+function _renderMaisPagina(){
+  const ini = _listaRenderizada;
+  const fim = Math.min(ini + PAGE_SIZE, _listaFiltrada.length);
+  if (ini >= fim) return;
+  const slice = _listaFiltrada.slice(ini, fim);
+  const grid = document.getElementById('pgrid');
+  // Remove botão "carregar mais" antigo
+  const btnVelho = document.getElementById('btnCarregarMais');
+  if (btnVelho) btnVelho.remove();
+  // Append em chunk
+  grid.insertAdjacentHTML('beforeend', slice.map(pCard).join(''));
+  _listaRenderizada = fim;
+  // Adiciona botão "carregar mais" se sobrou
+  if (fim < _listaFiltrada.length){
+    const restante = _listaFiltrada.length - fim;
+    grid.insertAdjacentHTML('afterend',
+      `<button id="btnCarregarMais" class="btn btn-outline" onclick="_renderMaisPagina()" style="margin:14px auto;display:block;font-family:'IBM Plex Mono',monospace;font-weight:700">▼ CARREGAR MAIS ${Math.min(PAGE_SIZE, restante)} (de ${restante} restantes)</button>`);
+  }
+}
+
+let _filterTimer = null;
 function filterList(){
+  clearTimeout(_filterTimer);
+  _filterTimer = setTimeout(_filterListAgora, 220);
+}
+function _filterListAgora(){
   const n=document.getElementById('sNome').value.trim().toLowerCase();
   const b=document.getElementById('sBairro').value.toLowerCase();
   const qq=document.getElementById('sQuadra').value.trim().toLowerCase();
@@ -1816,7 +1848,10 @@ function filterList(){
   if(qq)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(qq));
   renderList(l);
 }
-function clearSearch(){['sNome','sBairro','sQuadra'].forEach(id=>document.getElementById(id).value='');renderList(allP);}
+function clearSearch(){
+  ['sNome','sBairro','sQuadra'].forEach(id=>document.getElementById(id).value='');
+  renderList(allP);
+}
 
 // ── CADASTRAR ──
 async function savePerson(){
@@ -2548,12 +2583,15 @@ let _dedupGrupos = [];
 function _dedupNormStr(s){
   return String(s||'')
     .toUpperCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^\w\s]/g, ' ')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '') // remove acentos
+    .replace(/[^A-Z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 function _dedupNormCpf(s){ return String(s||'').replace(/\D/g, ''); }
+
+// Telefone só dígitos, últimos 11
+function _dedupNormFone(s){ const d = String(s||'').replace(/\D/g,''); return d.length >= 10 ? d.slice(-11) : ''; }
 
 function _dedupScore(p){
   let n = 0;
@@ -2569,50 +2607,68 @@ function _dedupScore(p){
   return n;
 }
 
+// Encontra grupos de duplicatas usando MÚLTIPLAS chaves (union-find por chave)
+function _dedupEncontrarGrupos(pessoas){
+  // Cada pessoa tem um conjunto de chaves; se 2 pessoas compartilham QUALQUER chave, são duplicatas
+  const parent = new Map();
+  pessoas.forEach(p => parent.set(p.id, p.id));
+  function find(x){ while (parent.get(x) !== x){ parent.set(x, parent.get(parent.get(x))); x = parent.get(x); } return x; }
+  function union(a,b){ const ra=find(a), rb=find(b); if (ra!==rb) parent.set(ra, rb); }
+
+  const indexCpf = new Map();
+  const indexNomeNasc = new Map();
+  const indexNomeMae = new Map();
+  const indexFone = new Map();
+  const indexNome = new Map();
+  const semChave = new Set();
+
+  pessoas.forEach(p => {
+    const cpf = _dedupNormCpf(p.cpf);
+    const nome = _dedupNormStr(p.nome);
+    const mae = _dedupNormStr(p.mae);
+    const nasc = (p.nascimento || '').slice(0,10);
+    const fone = _dedupNormFone(p.telefone);
+    let temChave = false;
+    function addIdx(map, key, criterio){
+      if (!key) return;
+      if (map.has(key)) union(p.id, map.get(key)._id);
+      else map.set(key, { _id: p.id });
+      temChave = true;
+    }
+    if (cpf && cpf.length === 11) addIdx(indexCpf, cpf, 'CPF');
+    if (nome && nasc) addIdx(indexNomeNasc, nome+'|'+nasc, 'NOME+NASC');
+    if (nome && mae) addIdx(indexNomeMae, nome+'|'+mae, 'NOME+MAE');
+    if (fone) addIdx(indexFone, fone, 'FONE');
+    if (nome && !cpf && !nasc && !mae && !fone){
+      // Só usa nome puro como matching fraco se não tiver NADA além disso
+      addIdx(indexNome, nome, 'NOME');
+    }
+    if (!temChave) semChave.add(p.id);
+  });
+
+  // Agrupa por root
+  const buckets = new Map();
+  pessoas.forEach(p => {
+    if (semChave.has(p.id)) return;
+    const root = find(p.id);
+    if (!buckets.has(root)) buckets.set(root, []);
+    buckets.get(root).push(p);
+  });
+  return [...buckets.values()].filter(g => g.length > 1);
+}
+
 function dedupAbrir(){
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
-  const porCpf = new Map(), porNomeNasc = new Map(), porNome = new Map();
-  allP.forEach(p => {
-    const cpf = _dedupNormCpf(p.cpf);
-    const nome = _dedupNormStr(p.nome);
-    const nasc = (p.nascimento || '').slice(0,10);
-    if (cpf && cpf.length === 11){
-      if (!porCpf.has(cpf)) porCpf.set(cpf, []);
-      porCpf.get(cpf).push(p);
-    } else if (nome && nasc){
-      const k = nome + '|' + nasc;
-      if (!porNomeNasc.has(k)) porNomeNasc.set(k, []);
-      porNomeNasc.get(k).push(p);
-    } else if (nome){
-      if (!porNome.has(nome)) porNome.set(nome, []);
-      porNome.get(nome).push(p);
-    }
-  });
-  const grupos = [];
-  porCpf.forEach((arr, cpf) => { if (arr.length > 1) grupos.push({ tipo: 'CPF', chave: cpf, itens: arr, criterio: 'mesmo CPF' }); });
-  porNomeNasc.forEach((arr, k) => {
-    if (arr.length > 1){
-      const semDup = arr.filter(p => {
-        const c = _dedupNormCpf(p.cpf);
-        if (!c || c.length !== 11) return true;
-        return !porCpf.has(c) || porCpf.get(c).length === 1;
-      });
-      if (semDup.length > 1) grupos.push({ tipo: 'NOME+NASC', chave: k, itens: semDup, criterio: 'mesmo nome e nascimento' });
-    }
-  });
-  porNome.forEach((arr, nome) => {
-    if (arr.length > 1) grupos.push({ tipo: 'NOME', chave: nome, itens: arr, criterio: 'mesmo nome (sem CPF nem nascimento)' });
-  });
-  grupos.forEach(g => {
-    g.itens.sort((a,b) => {
+  const bruto = _dedupEncontrarGrupos(allP);
+  const grupos = bruto.map(itens => {
+    itens.sort((a,b) => {
       const sa = _dedupScore(a), sb = _dedupScore(b);
       if (sb !== sa) return sb - sa;
       return String(a.criado_em||'').localeCompare(String(b.criado_em||''));
     });
-    g.vencedor = g.itens[0];
-    g.descartar = g.itens.slice(1);
+    return { itens, vencedor: itens[0], descartar: itens.slice(1) };
   });
   _dedupGrupos = grupos;
 
@@ -2631,9 +2687,9 @@ function dedupAbrir(){
       <b>Estratégia:</b> em cada grupo eu mantenho o cadastro <b>mais completo</b> (mais campos preenchidos · empate vai pelo mais antigo). Os demais são apagados.
     </div>
     <div style="max-height:50vh;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:14px">`;
-  grupos.slice(0, 50).forEach((g) => {
+  grupos.slice(0, 50).forEach((g, gi) => {
     html += `<div style="border-bottom:1px solid var(--border);padding:10px 6px">
-      <div style="font-size:11px;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px">${escapeHtml(g.tipo)} · ${escapeHtml(g.criterio)}</div>
+      <div style="font-size:11px;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px">GRUPO ${gi+1} · ${g.itens.length} cadastros similares</div>
       <div style="display:flex;flex-direction:column;gap:5px">`;
     g.itens.forEach((p, i) => {
       const isV = i === 0;
@@ -2662,46 +2718,14 @@ async function dedupAuto(){
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
-
-  // Reaproveita a lógica de detecção do dedupAbrir, mas sem renderizar modal
-  const porCpf = new Map(), porNomeNasc = new Map(), porNome = new Map();
-  allP.forEach(p => {
-    const cpf = _dedupNormCpf(p.cpf);
-    const nome = _dedupNormStr(p.nome);
-    const nasc = (p.nascimento || '').slice(0,10);
-    if (cpf && cpf.length === 11){
-      if (!porCpf.has(cpf)) porCpf.set(cpf, []);
-      porCpf.get(cpf).push(p);
-    } else if (nome && nasc){
-      const k = nome + '|' + nasc;
-      if (!porNomeNasc.has(k)) porNomeNasc.set(k, []);
-      porNomeNasc.get(k).push(p);
-    } else if (nome){
-      if (!porNome.has(nome)) porNome.set(nome, []);
-      porNome.get(nome).push(p);
-    }
-  });
-  const grupos = [];
-  porCpf.forEach((arr) => { if (arr.length > 1) grupos.push({ itens: arr }); });
-  porNomeNasc.forEach((arr) => {
-    if (arr.length > 1){
-      const semDup = arr.filter(p => {
-        const c = _dedupNormCpf(p.cpf);
-        if (!c || c.length !== 11) return true;
-        return !porCpf.has(c) || porCpf.get(c).length === 1;
-      });
-      if (semDup.length > 1) grupos.push({ itens: semDup });
-    }
-  });
-  porNome.forEach((arr) => { if (arr.length > 1) grupos.push({ itens: arr }); });
-
-  grupos.forEach(g => {
-    g.itens.sort((a,b) => {
+  const bruto = _dedupEncontrarGrupos(allP);
+  const grupos = bruto.map(itens => {
+    itens.sort((a,b) => {
       const sa = _dedupScore(a), sb = _dedupScore(b);
       if (sb !== sa) return sb - sa;
       return String(a.criado_em||'').localeCompare(String(b.criado_em||''));
     });
-    g.descartar = g.itens.slice(1);
+    return { itens, vencedor: itens[0], descartar: itens.slice(1) };
   });
   _dedupGrupos = grupos;
 
@@ -2709,7 +2733,6 @@ async function dedupAuto(){
   const totalDesc = grupos.reduce((s,g) => s + g.descartar.length, 0);
 
   if (!confirm(`MODO AUTOMÁTICO\n\nDetectei ${grupos.length} grupo(s) de duplicatas.\nVou remover ${totalDesc} cadastro(s), mantendo o mais completo de cada grupo.\n\nConfirma remoção (sem revisão prévia)?`)) return;
-
   await dedupExecutar();
 }
 

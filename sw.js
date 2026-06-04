@@ -1,6 +1,6 @@
 // SICAD Service Worker — cache estratégia network-first com fallback
 // Garante operação básica offline depois da primeira carga
-const CACHE_NAME = 'sicad-v1-2026-05-25';
+const CACHE_NAME = 'sicad-v2-2026-06-04-dedup-perf';
 const APP_SHELL = [
   './',
   './index.html',
