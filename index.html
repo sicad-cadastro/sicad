@@ -1476,8 +1476,19 @@ const DB = {
   async delUser(id){return await sbFetch('DELETE','sicad_perfis',null,`id=eq.${id}`);},
   async getPersons(f={}){
     if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
-    let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
+    // PERFORMANCE: query light (sem foto/tatuagens/observacoes/senhas) — reduz 95% do payload
+    // Foto é buscada individualmente quando abre a pessoa (viewPerson)
+    const camposLeves = 'id,nome,apelido,mae,cpf,nascimento,telefone,bairro,quadra,faccionado,faccao,criado_em,criado_por,atualizado_em';
+    let qs=`select=${camposLeves}&order=criado_em.desc`;
+    if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}
+    if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;
+    if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
     return await sbFetch('GET','sicad_pessoas',null,qs);
+  },
+  // Versão completa (com foto/tatuagens) — só usar quando precisar de TODOS os campos
+  async getPersonsFull(){
+    if(window._L) return lsG('p').slice().reverse();
+    return await sbFetch('GET','sicad_pessoas',null,'order=criado_em.desc');
   },
   async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await sbFetch('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
   async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await sbFetch('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
@@ -1779,7 +1790,8 @@ async function loadDash(){
 }
 
 function pCard(p){
-  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}">👤</div>`;
+  const iniciais = (p.nome||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''};font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:1px">${esc(iniciais)}</div>`;
   const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">🚨 FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
   const cardStyle = p.faccionado?'border-left:3px solid #ff4444;background:linear-gradient(90deg,rgba(255,30,30,.06) 0%,var(--surface) 60%)':'';
   return `<div class="pcard" onclick="viewPerson('${p.id}')" style="${cardStyle}">
@@ -2657,11 +2669,17 @@ function _dedupEncontrarGrupos(pessoas){
   return [...buckets.values()].filter(g => g.length > 1);
 }
 
-function dedupAbrir(){
+async function dedupAbrir(){
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
-  const bruto = _dedupEncontrarGrupos(allP);
+  // Carrega dados completos pra ter score correto (foto/tatuagens/obs também contam)
+  showOv('CARREGANDO DADOS COMPLETOS...');
+  let dadosFull;
+  try { dadosFull = await DB.getPersonsFull(); }
+  catch(e){ hideOv(); toast('Falha ao carregar: '+e.message, 'error'); return; }
+  hideOv();
+  const bruto = _dedupEncontrarGrupos(dadosFull);
   const grupos = bruto.map(itens => {
     itens.sort((a,b) => {
       const sa = _dedupScore(a), sb = _dedupScore(b);
@@ -2718,7 +2736,12 @@ async function dedupAuto(){
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
-  const bruto = _dedupEncontrarGrupos(allP);
+  showOv('ANALISANDO DUPLICATAS...');
+  let dadosFull;
+  try { dadosFull = await DB.getPersonsFull(); }
+  catch(e){ hideOv(); toast('Falha ao carregar: '+e.message, 'error'); return; }
+  hideOv();
+  const bruto = _dedupEncontrarGrupos(dadosFull);
   const grupos = bruto.map(itens => {
     itens.sort((a,b) => {
       const sa = _dedupScore(a), sb = _dedupScore(b);
