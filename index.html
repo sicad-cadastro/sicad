@@ -567,10 +567,16 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <div style="font-weight:700;font-size:13px;color:#000;margin-bottom:2px">LEITURA AUTOMÁTICA DE DOCUMENTO</div>
             <div style="font-size:11px;color:var(--text-mid)">Tire foto do RG/CPF/CNH — o sistema lê e preenche os campos.</div>
           </div>
-          <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700;flex-shrink:0">
-            📷 ESCANEAR
-            <input type="file" accept="image/*" capture="environment" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
-          </label>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
+              🖼 GALERIA
+              <input type="file" accept="image/*" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
+              📷 CÂMERA
+              <input type="file" accept="image/*" capture="environment" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+          </div>
         </div>
         <div id="ocrProgress" style="display:none;margin-top:10px">
           <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid);margin-bottom:4px"><span id="ocrMsg">Processando...</span> <span id="ocrPct" style="float:right">0%</span></div>
@@ -578,6 +584,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
         </div>
         <div id="ocrResultado" style="display:none;margin-top:10px;background:rgba(255,255,255,.7);border-radius:8px;padding:10px;font-size:12px"></div>
       </div>
+
       <div class="card">
         <!-- Foto rosto -->
         <div class="fg">
@@ -594,6 +601,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
               <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
               <input type="file" id="faceFileCam" accept="image/*" capture="user" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+            </div>
+            <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px dashed var(--border);overflow:hidden;background:transparent;cursor:pointer" onclick="document.getElementById('facePasteHelper').focus()">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📋 COLAR (CTRL+V)</span>
+              <input type="text" id="facePasteHelper" onpaste="onFacePaste(event)" placeholder="" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;background:transparent" readonly>
             </div>
           </div>
           <div class="camwrap" id="faceCam"><video id="faceVid" autoplay playsinline muted></video></div>
@@ -818,7 +829,13 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
           <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="min-width:44px;padding:10px">✕</button>
         </div>
       </div>
-      <div class="rcnt" id="rcnt"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap">
+        <div class="rcnt" id="rcnt"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-family:'IBM Plex Mono',monospace;font-weight:700" title="Mostra os grupos antes de remover">🧹 REVISAR DUPLICATAS</button>
+          <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">🤖 LIMPAR AUTOMÁTICO</button>
+        </div>
+      </div>
       <div class="pgrid" id="pgrid"></div>
       <div id="emptyList" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum cadastro encontrado.</p></div>
     </div>
@@ -1972,6 +1989,47 @@ async function deletePerson(){
 // ── FOTOS ──
 function onFaceFile(inp){if(!inp.files||!inp.files[0])return;resize(inp.files[0],d=>{faceD=d;const prev=document.getElementById('facePreview');prev.src=d;document.getElementById('facePreviewWrap').style.display='block';document.getElementById('faceBtnsWrap').style.display='none';});}
 function faceRem(){faceD=null;document.getElementById('facePreviewWrap').style.display='none';document.getElementById('faceBtnsWrap').style.display='flex';}
+
+// Cola imagem do clipboard como foto de perfil (Ctrl+V)
+function onFacePaste(ev){
+  const items = (ev.clipboardData||{}).items || [];
+  for (let i=0; i<items.length; i++){
+    if (items[i].type && items[i].type.indexOf('image/') === 0){
+      ev.preventDefault();
+      const blob = items[i].getAsFile();
+      if (!blob) return;
+      resize(blob, d => {
+        faceD = d;
+        const prev = document.getElementById('facePreview');
+        if (prev){
+          prev.src = d;
+          document.getElementById('facePreviewWrap').style.display='block';
+          document.getElementById('faceBtnsWrap').style.display='none';
+        }
+        if (typeof toast === 'function') toast('Foto colada','success');
+      });
+      return;
+    }
+  }
+}
+
+// Listener global: Ctrl+V em qualquer lugar da página de cadastro cola a foto
+document.addEventListener('paste', function(ev){
+  const pg = document.getElementById('page-cadastrar');
+  if (!pg || pg.style.display === 'none') return;
+  // Ignora se está colando em campo de texto (não atrapalha digitação)
+  const tag = (ev.target && ev.target.tagName||'').toLowerCase();
+  if (tag === 'input' && ev.target.type !== 'text') return;
+  if (tag === 'textarea') return;
+  // Só age se tem imagem no clipboard
+  const items = (ev.clipboardData||{}).items || [];
+  for (let i=0; i<items.length; i++){
+    if (items[i].type && items[i].type.indexOf('image/') === 0){
+      onFacePaste(ev);
+      return;
+    }
+  }
+});
 // Tatuagens armazenam: { img: dataUrl, desc: 'descrição livre', tags: ['tribal','peito'], local: 'braço direito' }
 // Compat: string solta vira { img }; objeto antigo {img,desc} vira {img,desc,tags:[]}
 function _normTat(t){
@@ -2479,6 +2537,212 @@ function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m
 let toastT;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
 
+
+// ══════════════════════════════════════════════════════════════
+// ── DETECTOR/REMOVEDOR DE DUPLICATAS ──
+// Agrupa por CPF (forte) ou nome+nascimento (médio) ou nome (fraco)
+// Mantém o "vencedor" mais completo, remove os outros.
+// ══════════════════════════════════════════════════════════════
+let _dedupGrupos = [];
+
+function _dedupNormStr(s){
+  return String(s||'')
+    .toUpperCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function _dedupNormCpf(s){ return String(s||'').replace(/\D/g, ''); }
+
+function _dedupScore(p){
+  let n = 0;
+  ['cpf','nascimento','mae','telefone','endereco','quadra','bairro','apelido','foto'].forEach(k => {
+    const v = p[k];
+    if (v && String(v).trim() && v !== 'null' && v !== '[]') n++;
+  });
+  try {
+    const t = typeof p.tatuagens === 'string' ? JSON.parse(p.tatuagens) : p.tatuagens;
+    if (Array.isArray(t) && t.length) n++;
+  } catch(e){}
+  if (p.observacoes && String(p.observacoes).trim()) n++;
+  return n;
+}
+
+function dedupAbrir(){
+  if (!Array.isArray(allP) || !allP.length){
+    toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
+  }
+  const porCpf = new Map(), porNomeNasc = new Map(), porNome = new Map();
+  allP.forEach(p => {
+    const cpf = _dedupNormCpf(p.cpf);
+    const nome = _dedupNormStr(p.nome);
+    const nasc = (p.nascimento || '').slice(0,10);
+    if (cpf && cpf.length === 11){
+      if (!porCpf.has(cpf)) porCpf.set(cpf, []);
+      porCpf.get(cpf).push(p);
+    } else if (nome && nasc){
+      const k = nome + '|' + nasc;
+      if (!porNomeNasc.has(k)) porNomeNasc.set(k, []);
+      porNomeNasc.get(k).push(p);
+    } else if (nome){
+      if (!porNome.has(nome)) porNome.set(nome, []);
+      porNome.get(nome).push(p);
+    }
+  });
+  const grupos = [];
+  porCpf.forEach((arr, cpf) => { if (arr.length > 1) grupos.push({ tipo: 'CPF', chave: cpf, itens: arr, criterio: 'mesmo CPF' }); });
+  porNomeNasc.forEach((arr, k) => {
+    if (arr.length > 1){
+      const semDup = arr.filter(p => {
+        const c = _dedupNormCpf(p.cpf);
+        if (!c || c.length !== 11) return true;
+        return !porCpf.has(c) || porCpf.get(c).length === 1;
+      });
+      if (semDup.length > 1) grupos.push({ tipo: 'NOME+NASC', chave: k, itens: semDup, criterio: 'mesmo nome e nascimento' });
+    }
+  });
+  porNome.forEach((arr, nome) => {
+    if (arr.length > 1) grupos.push({ tipo: 'NOME', chave: nome, itens: arr, criterio: 'mesmo nome (sem CPF nem nascimento)' });
+  });
+  grupos.forEach(g => {
+    g.itens.sort((a,b) => {
+      const sa = _dedupScore(a), sb = _dedupScore(b);
+      if (sb !== sa) return sb - sa;
+      return String(a.criado_em||'').localeCompare(String(b.criado_em||''));
+    });
+    g.vencedor = g.itens[0];
+    g.descartar = g.itens.slice(1);
+  });
+  _dedupGrupos = grupos;
+
+  if (!grupos.length){ toast('Nenhuma duplicata detectada 🎉', 'success'); return; }
+  const totalDesc = grupos.reduce((s,g) => s + g.descartar.length, 0);
+
+  let html = `<div style="background:var(--surface);border-radius:14px;padding:20px;max-width:680px;width:90%;max-height:88vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+      <div>
+        <div style="font-weight:700;font-size:16px">DUPLICATAS DETECTADAS</div>
+        <div style="font-size:11.5px;color:var(--text-mid);margin-top:2px">${grupos.length} grupo(s) · ${totalDesc} cadastro(s) seriam removidos</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="hideOv()">FECHAR</button>
+    </div>
+    <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12px;color:#000;margin-bottom:14px;line-height:1.5">
+      <b>Estratégia:</b> em cada grupo eu mantenho o cadastro <b>mais completo</b> (mais campos preenchidos · empate vai pelo mais antigo). Os demais são apagados.
+    </div>
+    <div style="max-height:50vh;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:14px">`;
+  grupos.slice(0, 50).forEach((g) => {
+    html += `<div style="border-bottom:1px solid var(--border);padding:10px 6px">
+      <div style="font-size:11px;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px">${escapeHtml(g.tipo)} · ${escapeHtml(g.criterio)}</div>
+      <div style="display:flex;flex-direction:column;gap:5px">`;
+    g.itens.forEach((p, i) => {
+      const isV = i === 0;
+      html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;background:${isV?'#dcfce7':'#fee2e2'};border:1px solid ${isV?'#86efac':'#fca5a5'}">
+        <div style="font-size:11px;font-weight:700;width:60px;flex-shrink:0;color:${isV?'#15803d':'#991b1b'}">${isV?'MANTER':'APAGAR'}</div>
+        <div style="flex:1;min-width:0;font-size:12px">
+          <div style="font-weight:600">${escapeHtml(p.nome||'(sem nome)')}</div>
+          <div style="font-size:11px;color:var(--text-mid)">${p.cpf?'CPF '+escapeHtml(p.cpf)+' · ':''}${p.nascimento?'Nasc '+escapeHtml(p.nascimento.slice(0,10))+' · ':''}score ${_dedupScore(p)}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  if (grupos.length > 50) html += `<div style="text-align:center;padding:10px;font-size:11px;color:var(--text-mid)">... e mais ${grupos.length - 50} grupos não mostrados (mas serão processados)</div>`;
+  html += `</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-outline btn-sm" onclick="hideOv()">CANCELAR</button>
+      <button class="btn btn-primary btn-sm" onclick="dedupExecutar()" style="background:#991b1b;border-color:#991b1b">🗑 REMOVER ${totalDesc} DUPLICATAS</button>
+    </div>
+  </div>`;
+  showOv(html);
+}
+
+// MODO AUTOMÁTICO — detecta e remove sem mostrar review
+async function dedupAuto(){
+  if (!Array.isArray(allP) || !allP.length){
+    toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
+  }
+
+  // Reaproveita a lógica de detecção do dedupAbrir, mas sem renderizar modal
+  const porCpf = new Map(), porNomeNasc = new Map(), porNome = new Map();
+  allP.forEach(p => {
+    const cpf = _dedupNormCpf(p.cpf);
+    const nome = _dedupNormStr(p.nome);
+    const nasc = (p.nascimento || '').slice(0,10);
+    if (cpf && cpf.length === 11){
+      if (!porCpf.has(cpf)) porCpf.set(cpf, []);
+      porCpf.get(cpf).push(p);
+    } else if (nome && nasc){
+      const k = nome + '|' + nasc;
+      if (!porNomeNasc.has(k)) porNomeNasc.set(k, []);
+      porNomeNasc.get(k).push(p);
+    } else if (nome){
+      if (!porNome.has(nome)) porNome.set(nome, []);
+      porNome.get(nome).push(p);
+    }
+  });
+  const grupos = [];
+  porCpf.forEach((arr) => { if (arr.length > 1) grupos.push({ itens: arr }); });
+  porNomeNasc.forEach((arr) => {
+    if (arr.length > 1){
+      const semDup = arr.filter(p => {
+        const c = _dedupNormCpf(p.cpf);
+        if (!c || c.length !== 11) return true;
+        return !porCpf.has(c) || porCpf.get(c).length === 1;
+      });
+      if (semDup.length > 1) grupos.push({ itens: semDup });
+    }
+  });
+  porNome.forEach((arr) => { if (arr.length > 1) grupos.push({ itens: arr }); });
+
+  grupos.forEach(g => {
+    g.itens.sort((a,b) => {
+      const sa = _dedupScore(a), sb = _dedupScore(b);
+      if (sb !== sa) return sb - sa;
+      return String(a.criado_em||'').localeCompare(String(b.criado_em||''));
+    });
+    g.descartar = g.itens.slice(1);
+  });
+  _dedupGrupos = grupos;
+
+  if (!grupos.length){ toast('Nenhuma duplicata detectada 🎉', 'success'); return; }
+  const totalDesc = grupos.reduce((s,g) => s + g.descartar.length, 0);
+
+  if (!confirm(`MODO AUTOMÁTICO\n\nDetectei ${grupos.length} grupo(s) de duplicatas.\nVou remover ${totalDesc} cadastro(s), mantendo o mais completo de cada grupo.\n\nConfirma remoção (sem revisão prévia)?`)) return;
+
+  await dedupExecutar();
+}
+
+async function dedupExecutar(){
+  const descartar = [];
+  _dedupGrupos.forEach(g => g.descartar.forEach(p => descartar.push(p)));
+  if (!descartar.length){ hideOv(); return; }
+  if (!confirm(`Remover ${descartar.length} cadastro(s) duplicados? Esta ação não pode ser desfeita.`)) return;
+  hideOv();
+  showOv(`<div style="background:var(--surface);border-radius:14px;padding:30px;text-align:center;max-width:380px">
+    <div style="font-weight:700;font-size:15px;margin-bottom:14px">REMOVENDO DUPLICATAS...</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-mid);margin-bottom:10px"><span id="dedupMsg">0/${descartar.length}</span></div>
+    <div style="height:8px;background:var(--surface2);border-radius:99px;overflow:hidden"><div id="dedupBar" style="height:100%;background:linear-gradient(90deg,#991b1b,#dc2626);width:0%;transition:width .3s"></div></div>
+  </div>`);
+  let ok = 0, falhou = 0;
+  for (let i = 0; i < descartar.length; i++){
+    const p = descartar[i];
+    try {
+      await DB.delPerson(p.id);
+      const idx = allP.findIndex(x => x.id === p.id);
+      if (idx >= 0) allP.splice(idx, 1);
+      ok++;
+    } catch(e){ console.error('Falha remover', p.id, e); falhou++; }
+    const pct = Math.round(((i+1)/descartar.length) * 100);
+    const bar = document.getElementById('dedupBar');
+    const msg = document.getElementById('dedupMsg');
+    if (bar) bar.style.width = pct + '%';
+    if (msg) msg.textContent = `${i+1}/${descartar.length}${falhou?' · '+falhou+' falhas':''}`;
+  }
+  hideOv();
+  toast(`${ok} duplicatas removidas${falhou?' · '+falhou+' falhas':''}`, falhou?'warn':'success');
+  if (typeof renderList === 'function') renderList(allP);
+}
 
 // ══════════════════════════════════════════════════════════════
 // ── OCR DE DOCUMENTOS (Tesseract.js) ── lê RG/CPF/CNH e preenche
