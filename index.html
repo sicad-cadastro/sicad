@@ -1122,7 +1122,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
         <div class="row-btns" style="margin-bottom:16px">
           <button class="btn btn-outline" onclick="resetFaceWeb()">🗑️ LIMPAR</button>
-          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>🌐 BUSCAR EM YANDEX + GOOGLE + PIMEYES</button>
+          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>🌐 BUSCAR EM REDES SOCIAIS + WEB</button>
         </div>
 
         <div id="faceWebStatus" style="display:none;background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid)"></div>
@@ -1135,11 +1135,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
         <!-- Como funciona — modo web -->
         <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
-          <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Sobre cada buscador</div>
-          <b>Yandex Images:</b> melhor pra rostos no geral. Funciona muito bem com foto frontal.<br>
-          <b>Google Lens:</b> pega contexto — roupa, tatuagem visível, ambiente. Bom pra identificar local.<br>
-          <b>PimEyes:</b> faz reconhecimento facial em milhões de páginas. Mostra os resultados borrados grátis; pago pra ver os links.<br>
-          <div style="margin-top:6px;font-size:11px;color:var(--text-dim)">⚠️ Triagem investigativa. Sempre confirme manualmente.</div>
+          <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Sobre cada buscador (5 fontes)</div>
+          <div style="color:#7c3aed;font-weight:700;margin-bottom:4px">🎯 ESPECIALISTAS EM REDES SOCIAIS</div>
+          <b>FaceCheck.ID:</b> o melhor pra achar perfis em Instagram, Facebook, TikTok, fóruns. Mostra os links borrados grátis (dá pra confirmar presença).<br>
+          <b>Lenso.ai:</b> alternativa gratuita focada em rosto + redes sociais. Bom complemento.<br>
+          <b>PimEyes:</b> reconhecimento facial em milhões de páginas indexadas. Resultados borrados grátis.<br>
+          <div style="color:#3b82f6;font-weight:700;margin:8px 0 4px">🌐 BUSCA GERAL NA WEB</div>
+          <b>Yandex Images:</b> ainda é o melhor pra rosto em buscadores genéricos. Indexa VK, OK.ru e parte de Insta/FB.<br>
+          <b>Google Lens:</b> pega contexto — roupa, tatuagem visível, ambiente. Identifica local.<br>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)">⚠️ FaceCheck/Lenso/PimEyes não aceitam URL — a foto é baixada automaticamente pra você arrastar/colar (Ctrl+V). Yandex e Google Lens abrem com a foto já carregada.<br><br>🚨 Triagem investigativa. Sempre confirme manualmente. Sujeito à LGPD.</div>
         </div>
       </div>
 
@@ -4222,7 +4226,7 @@ function usarFotoDoBancoNaWeb(){
 }
 async function buscarRostoWeb(){
   if(!_faceWebData){ toast('Carregue uma foto primeiro.','error'); return; }
-  if(!confirm('Confirma o envio da foto para busca pública na internet?\n\n• A foto será publicada temporariamente em catbox.moe\n• 3 abas serão abertas (Yandex, Google Lens, PimEyes)\n• Use apenas com base legal (investigação institucional)\n\nProsseguir?')) return;
+  if(!confirm('Confirma o envio da foto para busca pública na internet?\n\n• A foto será publicada temporariamente em catbox.moe\n• 5 abas serão abertas (FaceCheck, Lenso, PimEyes, Yandex, Google Lens)\n• Foco em encontrar perfis em redes sociais e fóruns\n• Use apenas com base legal (investigação institucional)\n\nProsseguir?')) return;
   const btn = document.getElementById('btnBuscarRostoWeb');
   const status = document.getElementById('faceWebStatus');
   const linksBox = document.getElementById('faceWebLinks');
@@ -4242,29 +4246,44 @@ async function buscarRostoWeb(){
     const url = (await resp.text()).trim();
     if(!url.startsWith('http')) throw new Error('resposta inválida do servidor de upload');
     const enc = encodeURIComponent(url);
-    const yandexU = 'https://yandex.com/images/search?rpt=imageview&url='+enc;
-    const lensU   = 'https://lens.google.com/uploadbyurl?url='+enc;
-    const pimU    = 'https://pimeyes.com/en';
-    status.innerHTML = '✅ Foto pública: <a href="'+url+'" target="_blank" style="color:var(--accent)">'+url+'</a><br>Abrindo abas de busca...';
+    const facecheckU = 'https://facecheck.id/';                            // não aceita URL — abre pra upload
+    const lensoU     = 'https://lenso.ai/en';                              // não aceita URL — abre pra upload
+    const pimU       = 'https://pimeyes.com/en';                           // não aceita URL — abre pra upload
+    const yandexU    = 'https://yandex.com/images/search?rpt=imageview&url='+enc; // aceita URL ✓
+    const googleLU   = 'https://lens.google.com/uploadbyurl?url='+enc;     // aceita URL ✓
+    status.innerHTML = '✅ Foto pública: <a href="'+url+'" target="_blank" style="color:var(--accent);word-break:break-all">'+url+'</a><br><br>📋 <b>Yandex e Google Lens</b> abriram com a foto já carregada.<br>📤 <b>FaceCheck, Lenso e PimEyes</b> não aceitam URL — você cola a foto manualmente (Ctrl+V) ou arrasta o arquivo baixado.';
+    // Baixa a foto pra facilitar drag&drop nas que não aceitam URL
+    const a = document.createElement('a'); a.href = _faceWebData; a.download = 'face_busca_'+Date.now()+'.jpg'; a.click();
+    // Abre as 5 abas (escalonado pra não travar)
     window.open(yandexU,'_blank');
-    setTimeout(()=>window.open(lensU,'_blank'), 350);
-    setTimeout(()=>window.open(pimU,'_blank'), 700);
+    setTimeout(()=>window.open(googleLU,'_blank'), 300);
+    setTimeout(()=>window.open(facecheckU,'_blank'), 600);
+    setTimeout(()=>window.open(lensoU,'_blank'), 900);
+    setTimeout(()=>window.open(pimU,'_blank'), 1200);
     linksContent.innerHTML =
-      '<a href="'+yandexU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images (melhor pra rosto)</a>'+
-      '<a href="'+lensU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens (contexto)</a>'+
-      '<a href="'+pimU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 PimEyes (rec. facial) — fazer upload manual</a>';
+      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px">🎯 FOCO EM REDES SOCIAIS</div>'+
+      '<a href="'+facecheckU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥇 FaceCheck.ID — especialista em redes sociais e fóruns (upload manual)</a>'+
+      '<a href="'+lensoU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥈 Lenso.ai — rostos em redes (gratuito, upload manual)</a>'+
+      '<a href="'+pimU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥉 PimEyes — rec. facial em milhões de páginas (upload manual)</a>'+
+      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin:8px 0 4px">🌐 BUSCA GERAL NA WEB (foto já carregada)</div>'+
+      '<a href="'+yandexU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images — ótimo pra rosto + VK/OK</a>'+
+      '<a href="'+googleLU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens — contexto (roupa/local/tatuagem)</a>';
     linksBox.style.display='block';
-    toast('3 abas de busca abertas.','info');
+    toast('5 abas abertas + foto baixada pra upload.','info');
   }catch(e){
     status.innerHTML = '❌ Falha no upload: '+e.message+'<br>Baixando a foto local pra você arrastar manualmente nas buscas.';
     const a = document.createElement('a'); a.href = _faceWebData; a.download = 'face_busca_'+Date.now()+'.jpg'; a.click();
-    setTimeout(()=>window.open('https://yandex.com/images/','_blank'), 200);
-    setTimeout(()=>window.open('https://lens.google.com/','_blank'), 500);
+    setTimeout(()=>window.open('https://facecheck.id/','_blank'), 200);
+    setTimeout(()=>window.open('https://lenso.ai/en','_blank'), 500);
     setTimeout(()=>window.open('https://pimeyes.com/en','_blank'), 800);
+    setTimeout(()=>window.open('https://yandex.com/images/','_blank'), 1100);
+    setTimeout(()=>window.open('https://lens.google.com/','_blank'), 1400);
     linksContent.innerHTML =
-      '<a href="https://yandex.com/images/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images — upload manual</a>'+
-      '<a href="https://lens.google.com/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens — upload manual</a>'+
-      '<a href="https://pimeyes.com/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 PimEyes — upload manual</a>';
+      '<a href="https://facecheck.id/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥇 FaceCheck.ID — redes sociais</a>'+
+      '<a href="https://lenso.ai/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥈 Lenso.ai — rostos em redes</a>'+
+      '<a href="https://pimeyes.com/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥉 PimEyes — web geral</a>'+
+      '<a href="https://yandex.com/images/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images</a>'+
+      '<a href="https://lens.google.com/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens</a>';
     linksBox.style.display='block';
   }finally{
     btn.innerHTML = txtOrig; btn.disabled = false;
