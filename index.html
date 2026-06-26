@@ -977,6 +977,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
       <div class="face-tabs">
         <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">🆚 COMPARAR 1 vs 1</button>
         <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">🔍 BUSCAR NO BANCO</button>
+        <button class="face-tab" id="faceTabWeb" onclick="setFaceMode('web')">🌐 BUSCAR NA WEB</button>
       </div>
 
       <!-- Status dos modelos -->
@@ -1089,6 +1090,57 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'IB
 
         <!-- Lista de resultados -->
         <div id="faceSearchResults"></div>
+      </div>
+
+      <!-- ─── MODO BUSCAR NA WEB ─── -->
+      <div id="faceModeWeb" style="display:none">
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#78350f;line-height:1.55">
+          <b>⚠️ LGPD — uso institucional autorizado.</b> A foto será enviada a um servidor público temporário (catbox.moe) pra gerar uma URL que será passada aos buscadores (Yandex, Google Lens, PimEyes). Dados biométricos exigem base legal — use somente em investigação/operação devidamente fundamentada.
+        </div>
+
+        <div class="face-slot" id="faceSlotWeb" style="margin-bottom:16px">
+          <div class="face-slot-label">FOTO PARA BUSCAR NA INTERNET</div>
+          <div class="face-slot-frame" id="faceFrameWeb" style="aspect-ratio:16/10;max-width:420px;margin:0 auto 10px">
+            <div class="face-empty">
+              <div style="font-size:48px;opacity:.3">🌐</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">CARREGUE UMA FOTO PARA BUSCAR EM SITES E REDES</div>
+            </div>
+            <img id="faceImgWeb" class="face-img" alt="">
+          </div>
+          <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
+              📁 GALERIA
+              <input type="file" accept="image/*" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
+              📷 FOTO
+              <input type="file" accept="image/*" capture="environment" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+            </label>
+            <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">👤 DO BANCO</button>
+          </div>
+        </div>
+
+        <div class="row-btns" style="margin-bottom:16px">
+          <button class="btn btn-outline" onclick="resetFaceWeb()">🗑️ LIMPAR</button>
+          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>🌐 BUSCAR EM YANDEX + GOOGLE + PIMEYES</button>
+        </div>
+
+        <div id="faceWebStatus" style="display:none;background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid)"></div>
+
+        <div id="faceWebLinks" style="display:none;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px">
+          <div style="font-weight:700;color:#000;margin-bottom:10px;font-size:13px;letter-spacing:1px">🔗 LINKS DAS BUSCAS</div>
+          <div id="faceWebLinksContent" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:10px;line-height:1.5">Se alguma aba não abriu (pop-up bloqueado), clique nos links acima.</div>
+        </div>
+
+        <!-- Como funciona — modo web -->
+        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
+          <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Sobre cada buscador</div>
+          <b>Yandex Images:</b> melhor pra rostos no geral. Funciona muito bem com foto frontal.<br>
+          <b>Google Lens:</b> pega contexto — roupa, tatuagem visível, ambiente. Bom pra identificar local.<br>
+          <b>PimEyes:</b> faz reconhecimento facial em milhões de páginas. Mostra os resultados borrados grátis; pago pra ver os links.<br>
+          <div style="margin-top:6px;font-size:11px;color:var(--text-dim)">⚠️ Triagem investigativa. Sempre confirme manualmente.</div>
+        </div>
       </div>
 
       <!-- Como funciona -->
@@ -4118,8 +4170,105 @@ function setFaceMode(mode){
   _faceMode = mode;
   document.getElementById('faceTab1v1').classList.toggle('active', mode === '1v1');
   document.getElementById('faceTabBanco').classList.toggle('active', mode === 'banco');
+  const tabWeb = document.getElementById('faceTabWeb'); if(tabWeb) tabWeb.classList.toggle('active', mode === 'web');
   document.getElementById('faceMode1v1').style.display = mode === '1v1' ? 'block' : 'none';
   document.getElementById('faceModeBanco').style.display = mode === 'banco' ? 'block' : 'none';
+  const modeWeb = document.getElementById('faceModeWeb'); if(modeWeb) modeWeb.style.display = mode === 'web' ? 'block' : 'none';
+}
+
+// ─── BUSCA REVERSA NA WEB (Yandex / Google Lens / PimEyes) ───
+let _faceWebData = null;
+function onFaceWebPick(file){
+  if(!file) return;
+  const fr = new FileReader();
+  fr.onload = e => {
+    _faceWebData = e.target.result;
+    const img = document.getElementById('faceImgWeb');
+    img.src = _faceWebData; img.style.display = 'block';
+    const frame = document.getElementById('faceFrameWeb');
+    const empty = frame.querySelector('.face-empty'); if(empty) empty.style.display = 'none';
+    document.getElementById('btnBuscarRostoWeb').disabled = false;
+  };
+  fr.readAsDataURL(file);
+}
+function resetFaceWeb(){
+  _faceWebData = null;
+  const img = document.getElementById('faceImgWeb'); img.src=''; img.style.display='none';
+  const frame = document.getElementById('faceFrameWeb');
+  const empty = frame.querySelector('.face-empty'); if(empty) empty.style.display = 'flex';
+  document.getElementById('btnBuscarRostoWeb').disabled = true;
+  document.getElementById('faceWebStatus').style.display='none';
+  document.getElementById('faceWebLinks').style.display='none';
+}
+function usarFotoDoBancoNaWeb(){
+  // pega lista de pessoas com foto e deixa escolher
+  if(!Array.isArray(allP) || !allP.length){ toast('Nenhuma pessoa cadastrada.','error'); return; }
+  const comFoto = allP.filter(p => p.foto);
+  if(!comFoto.length){ toast('Nenhuma pessoa com foto cadastrada.','error'); return; }
+  const nome = prompt('Digite o nome (ou apelido) da pessoa cadastrada:');
+  if(!nome) return;
+  const alvo = comFoto.find(p =>
+    (p.nome||'').toLowerCase().includes(nome.toLowerCase()) ||
+    (p.apelido||'').toLowerCase().includes(nome.toLowerCase())
+  );
+  if(!alvo){ toast('Pessoa não encontrada.','error'); return; }
+  _faceWebData = alvo.foto;
+  const img = document.getElementById('faceImgWeb');
+  img.src = _faceWebData; img.style.display = 'block';
+  const frame = document.getElementById('faceFrameWeb');
+  const empty = frame.querySelector('.face-empty'); if(empty) empty.style.display = 'none';
+  document.getElementById('btnBuscarRostoWeb').disabled = false;
+  toast('Foto de '+(alvo.nome||alvo.apelido)+' carregada.','info');
+}
+async function buscarRostoWeb(){
+  if(!_faceWebData){ toast('Carregue uma foto primeiro.','error'); return; }
+  if(!confirm('Confirma o envio da foto para busca pública na internet?\n\n• A foto será publicada temporariamente em catbox.moe\n• 3 abas serão abertas (Yandex, Google Lens, PimEyes)\n• Use apenas com base legal (investigação institucional)\n\nProsseguir?')) return;
+  const btn = document.getElementById('btnBuscarRostoWeb');
+  const status = document.getElementById('faceWebStatus');
+  const linksBox = document.getElementById('faceWebLinks');
+  const linksContent = document.getElementById('faceWebLinksContent');
+  const txtOrig = btn.innerHTML;
+  btn.innerHTML = '⏳ ENVIANDO FOTO...'; btn.disabled = true;
+  status.style.display = 'block';
+  status.innerHTML = '📤 Subindo foto pro servidor temporário (catbox.moe)...';
+  linksBox.style.display='none';
+  try{
+    const blob = await (await fetch(_faceWebData)).blob();
+    const fd = new FormData();
+    fd.append('reqtype','fileupload');
+    fd.append('fileToUpload', blob, 'face_'+Date.now()+'.jpg');
+    const resp = await fetch('https://catbox.moe/user/api.php', {method:'POST', body:fd});
+    if(!resp.ok) throw new Error('upload falhou ('+resp.status+')');
+    const url = (await resp.text()).trim();
+    if(!url.startsWith('http')) throw new Error('resposta inválida do servidor de upload');
+    const enc = encodeURIComponent(url);
+    const yandexU = 'https://yandex.com/images/search?rpt=imageview&url='+enc;
+    const lensU   = 'https://lens.google.com/uploadbyurl?url='+enc;
+    const pimU    = 'https://pimeyes.com/en';
+    status.innerHTML = '✅ Foto pública: <a href="'+url+'" target="_blank" style="color:var(--accent)">'+url+'</a><br>Abrindo abas de busca...';
+    window.open(yandexU,'_blank');
+    setTimeout(()=>window.open(lensU,'_blank'), 350);
+    setTimeout(()=>window.open(pimU,'_blank'), 700);
+    linksContent.innerHTML =
+      '<a href="'+yandexU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images (melhor pra rosto)</a>'+
+      '<a href="'+lensU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens (contexto)</a>'+
+      '<a href="'+pimU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 PimEyes (rec. facial) — fazer upload manual</a>';
+    linksBox.style.display='block';
+    toast('3 abas de busca abertas.','info');
+  }catch(e){
+    status.innerHTML = '❌ Falha no upload: '+e.message+'<br>Baixando a foto local pra você arrastar manualmente nas buscas.';
+    const a = document.createElement('a'); a.href = _faceWebData; a.download = 'face_busca_'+Date.now()+'.jpg'; a.click();
+    setTimeout(()=>window.open('https://yandex.com/images/','_blank'), 200);
+    setTimeout(()=>window.open('https://lens.google.com/','_blank'), 500);
+    setTimeout(()=>window.open('https://pimeyes.com/en','_blank'), 800);
+    linksContent.innerHTML =
+      '<a href="https://yandex.com/images/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images — upload manual</a>'+
+      '<a href="https://lens.google.com/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens — upload manual</a>'+
+      '<a href="https://pimeyes.com/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 PimEyes — upload manual</a>';
+    linksBox.style.display='block';
+  }finally{
+    btn.innerHTML = txtOrig; btn.disabled = false;
+  }
 }
 
 async function loadFaceModels(){
