@@ -3742,7 +3742,6 @@ async function exportPDF(){
     doc.setTextColor(100,116,139);
     doc.text('SICAD — DOCUMENTO SIGILOSO — USO EXCLUSIVO POLICIAL',W/2,290,{align:'center'});
     doc.setTextColor(148,163,184);
-    doc.text('Operador: '+(CU?CU.nome||CU.login:'—'),MAR,290);
     doc.text('Pág '+(doc.internal.getCurrentPageInfo().pageNumber),W-MAR,290,{align:'right'});
   }
 
@@ -3990,16 +3989,7 @@ async function exportPDF(){
   }
 
   // ══════════════════════════════════════
-  // REGISTRO
-  // ══════════════════════════════════════
-  check(16);
-  y+=2;
-  doc.setFillColor(248,250,252);
-  doc.rect(MAR,y,W-MAR*2,14,'F');
-  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(71,85,105);
-  doc.text('Cadastrado por: '+(p.criado_por||'—'),MAR+3,y+5);
-  if(p.criado_em)doc.text('Data: '+new Date(p.criado_em).toLocaleString('pt-BR'),MAR+3,y+11);
-  y+=17;
+  // REGISTRO — removido do PDF conforme solicitação (dados só visíveis no sistema)
 
   // ══════════════════════════════════════
   // RODAPÉ FINAL
