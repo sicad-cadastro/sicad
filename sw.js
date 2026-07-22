@@ -1,20 +1,19 @@
-// SICAD Service Worker — cache estratégia network-first com fallback
-// Garante operação básica offline depois da primeira carga
-const CACHE_NAME = 'sicad-v4-2026-06-04-rollback-light';
+// SICAD Service Worker — v5 (2026-07-15)
+// Estratégia: NETWORK-FIRST pro index.html + navigation (garante sempre versão nova),
+// cache-first pra assets estáticos externos (CDN libs, tiles).
+const CACHE_NAME = 'sicad-v5-2026-07-15-network-first';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest'
 ];
 
-// Install — cache app shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
   );
 });
 
-// Activate — limpa caches antigos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -23,33 +22,44 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch — estratégia diferenciada por tipo
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Não cacheia: API Supabase, BrasilAPI, Nominatim, OCR models (dinâmico)
+  // APIs — sempre network-only, nunca cacheia
   const noCacheHosts = ['supabase.co', 'brasilapi.com.br', 'viacep.com.br', 'awesomeapi.com.br', 'nominatim.openstreetmap.org', 'api.supabase.com'];
-  if (noCacheHosts.some((h) => url.hostname.includes(h))) {
-    // Network-only — não cacheia chamadas de API
+  if (noCacheHosts.some((h) => url.hostname.includes(h))) return;
+
+  if (event.request.method !== 'GET') return;
+
+  // Navegação (index.html, /) → NETWORK-FIRST — garante versão nova sempre
+  // Cai no cache SÓ se estiver offline
+  const isNavigation = event.request.mode === 'navigate' ||
+                       url.pathname.endsWith('/') ||
+                       url.pathname.endsWith('/index.html');
+  if (isNavigation) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone).catch(() => {}));
+        }
+        return response;
+      }).catch(() => caches.match(event.request).then((c) => c || new Response('Offline', { status: 503 })))
+    );
     return;
   }
 
-  // GET de assets (JS, CSS, fonts, tiles) — cache-first com revalidação
-  if (event.request.method === 'GET') {
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        const fetchPromise = fetch(event.request).then((response) => {
-          // Só cacheia respostas válidas (2xx) e do mesmo origin OU CDNs conhecidos
-          if (response && response.status === 200 && response.type !== 'error') {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone).catch(() => {});
-            });
-          }
-          return response;
-        }).catch(() => cached || new Response('Offline', { status: 503 }));
-        return cached || fetchPromise;
-      })
-    );
-  }
+  // Assets estáticos → cache-first (rápido) com revalidação em background
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const fetchPromise = fetch(event.request).then((response) => {
+        if (response && response.status === 200 && response.type !== 'error') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone).catch(() => {}));
+        }
+        return response;
+      }).catch(() => cached || new Response('Offline', { status: 503 }));
+      return cached || fetchPromise;
+    })
+  );
 });
