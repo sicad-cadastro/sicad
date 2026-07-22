@@ -1825,12 +1825,34 @@ function toggleSignup(show){
 }
 
 // Auto-cadastro — cria conta como inativa (pendente de aprovação)
-// Signup público FOI DESABILITADO (2026-07-15) — abertura de contas só via admin.
-// Quem clicar no botão vê mensagem orientando a procurar o admin.
-// No Supabase Console → Authentication → Settings, também desmarque "Enable Sign Ups".
+// Signup público — cria conta em auth.users. Um trigger no banco (handle_new_user)
+// insere automaticamente em sicad_perfis com ativo=false → conta fica PENDENTE
+// esperando aprovação de admin (Users → toggle Ativo).
 async function signup(){
-  errLg('Cadastro público desabilitado por segurança. Solicite acesso ao administrador do SICAD (chefe da SP ou responsável pela unidade). Envie: nome completo, matrícula, e-mail funcional.');
-  return;
+  const nome = document.getElementById('suNome').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const senha = document.getElementById('suSenha').value;
+  if (!nome || !email || !senha) { errLg('Preencha nome, e-mail e senha.'); return; }
+  if (senha.length < 6) { errLg('Senha mínima de 6 caracteres.'); return; }
+  if (!email.includes('@')) { errLg('E-mail inválido.'); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="ld"></span> ENVIANDO...';
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email, password: senha,
+      options: { data: { nome } }
+    });
+    if (error) throw new Error(error.message);
+    // Trigger no banco criou perfil com ativo=false. Assina out pra não deixar sessão pendente logada.
+    await supabase.auth.signOut();
+    okLg('✅ Solicitação enviada! Aguarde um administrador aprovar sua conta. Você poderá fazer login depois disso.');
+    setTimeout(() => toggleSignup(false), 4000);
+  } catch(e) {
+    errLg('Erro: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Enviar solicitação';
+  }
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginWrap').style.display!=='none')login();});
 
