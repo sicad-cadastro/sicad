@@ -1801,7 +1801,9 @@ async function aplicarPerfilLogado(user){
   // UI baseado em role
   aplicarUIporRole();
   await logAudit('login', 'auth', user.id);
-  go('dashboard');
+  // Respeita a rota do hash — permite deep-linking (ex: /#mapa abre no mapa direto)
+  const rotaInicial = (location.hash || '').replace('#','');
+  go((rotaInicial && SICAD_ROTAS.includes(rotaInicial)) ? rotaInicial : 'dashboard');
 }
 
 // Mostra/esconde elementos conforme role
@@ -1900,12 +1902,25 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 // ── NAV ──
-function go(n){
+// ─── Rotas do SICAD: telas válidas ───
+const SICAD_ROTAS = ['dashboard','cadastrar','consultar','usuarios','mapa','foragidos','face','tatuagens','pesquisa'];
+
+function go(n, _fromPop){
+  // Fallback: rota desconhecida cai no dashboard
+  if(!SICAD_ROTAS.includes(n)) n = 'dashboard';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+n).classList.add('active');
   document.querySelectorAll(`[data-p="${n}"]`).forEach(b=>b.classList.add('active'));
   window.scrollTo&&window.scrollTo(0,0);
+  // Atualiza URL (hash) — só se veio de clique do usuário, não de popstate.
+  // Sem isso, voltar do navegador criaria loop.
+  if(!_fromPop){
+    const novoHash = '#'+n;
+    if(location.hash !== novoHash){
+      try { history.pushState({pagina:n}, '', novoHash); } catch(e){}
+    }
+  }
   // Mostrar botão voltar quando não estiver no dashboard
   const backBtn = document.getElementById('backDashBtn');
   if(backBtn) backBtn.style.display = n!=='dashboard' ? 'flex' : 'none';
@@ -1917,6 +1932,24 @@ function go(n){
   if(n==='face') loadFaceModels(); // pré-carrega modelos ao abrir a aba
   if(n==='tatuagens') loadTatuagensSearch();
 }
+
+// ─── Voltar/Avançar do navegador ↔ URL hash ↔ tela ativa ───
+window.addEventListener('popstate', (ev) => {
+  const nome = (ev.state && ev.state.pagina)
+    || (location.hash || '').replace('#','')
+    || 'dashboard';
+  go(nome, true); // true = veio do popstate, não empurra novo history
+});
+
+// Boot: respeita a rota inicial do URL (ex: alguém abre /#mapa)
+(function _sicadRotaInicial(){
+  const inicial = (location.hash || '').replace('#','');
+  if(inicial && SICAD_ROTAS.includes(inicial)){
+    // Marca history com pagina inicial pra popstate funcionar
+    try { history.replaceState({pagina: inicial}, '', '#'+inicial); } catch(e){}
+    // A go() será chamada pelo init do app; aqui só garantimos o hash correto
+  }
+})();
 
 // ══════════════════════════════════════════════════════════════
 // ── BUSCA REVERSA DE TATUAGENS ──
