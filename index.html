@@ -2150,10 +2150,14 @@ async function savePerson(){
       toast('Atualizado! ✅','success');
     }
     if(!editMode){
-      // Postgres gera UUID default via gen_random_uuid() — não mandamos id
-      const d={ ...campos, criado_por:CU.usuario||'admin', criado_em:now };
+      // UUID gerado no cliente (funciona mesmo se a migration SQL que define DEFAULT
+      // gen_random_uuid() no banco ainda não foi rodada). crypto.randomUUID é nativo
+      // em todos os browsers modernos.
+      const novoId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}));
+      const d={ id: novoId, ...campos, criado_por:CU.usuario||'admin', criado_em:now };
       const salvo = await DB.addPerson(d);
-      // O Supabase retorna o registro com id gerado pelo banco
       const registroFinal = salvo && salvo.id ? salvo : d;
       allP.unshift(registroFinal);
       toast('Cadastro salvo! ✅','success');
@@ -3852,7 +3856,9 @@ async function saveAlerta() {
   btn.disabled=true; btn.innerHTML='<span class="ld"></span> SALVANDO...';
   try {
     const d = {
-      // UUID gerado pelo Postgres (gen_random_uuid) — não mandamos id
+      // UUID gerado no cliente (crypto.randomUUID nativo, fallback pra polyfill)
+      id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID()
+          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}),
       nome, tipo: alertaTipo,
       pessoa_id: alertaPessoaId||null,
       foto: alertaFotoD||null,
