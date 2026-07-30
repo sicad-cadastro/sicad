@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1E3A8A">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -543,6 +543,207 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .face-metric{background:var(--surface2);border-radius:8px;padding:10px 6px}
 .face-metric-n{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:#000}
 .face-metric-l{font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:3px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATION PACK — SICAD v3.1 (2026-07-15)
+   Ajusta layout inteiro para funcionar bem em telas <768px (Android/iPhone).
+   Foco: touch targets ≥44px, tipografia legível, respiração adequada, sem overflow.
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── HEADER ── mais compacto no mobile, esconde user-chip por espaço */
+@media(max-width:767px){
+  .hdr{padding:0 var(--sp-3);height:52px}
+  .hdr-logo{font-size:17px}
+  .hdr-logo::before{width:5px;height:17px}
+  .hdr-logo small{font-size:9px;margin-left:6px;padding-left:6px}
+  .hdr-right{gap:6px}
+  .user-chip{display:none} /* nome sai — sobra pra botões */
+  .hdr-right .btn-sm{padding:0 10px;min-height:34px;font-size:11px}
+  #backDashBtn{display:none!important} /* voltar já tem no history do navegador */
+}
+
+/* ── CONTENT PADDING — mais respirável em telas pequenas ── */
+@media(max-width:767px){
+  .content{padding:var(--sp-3) var(--sp-3) 88px;max-width:100%}
+  .sec-title{margin:var(--sp-5) 0 var(--sp-3);font-size:10px}
+}
+@media(max-width:400px){
+  .content{padding:var(--sp-2) var(--sp-2) 88px}
+}
+
+/* ── STATS GRID ── 2×2 em mobile, tamanho ajustado */
+@media(max-width:599px){
+  .stats-grid{gap:var(--sp-2);margin-bottom:var(--sp-4)}
+  .stat-card{padding:var(--sp-4) var(--sp-3)}
+  .stat-num{font-size:24px}
+  .stat-lbl{font-size:10px;margin-top:var(--sp-1)}
+}
+
+/* ── HI-CARDS (dashboard) ── menos padding, ícones menores */
+@media(max-width:767px){
+  .hi-card{padding:var(--sp-4) var(--sp-4);margin-bottom:var(--sp-2);gap:var(--sp-3)}
+  .hi-icon{width:38px;height:38px}
+  .hi-icon .ico{width:20px;height:20px}
+  .hi-title{font-size:14px}
+  .hi-sub{font-size:11.5px;line-height:1.35}
+}
+
+/* ── FORMS ── inputs maiores no toque, labels mais visíveis ── */
+@media(max-width:767px){
+  .fg{margin-bottom:var(--sp-3)}
+  .fg label{font-size:11.5px;margin-bottom:var(--sp-1)}
+  .fg input,.fg select,.fg textarea{
+    height:46px;padding:0 var(--sp-3);font-size:16px; /* 16px = anti-zoom iOS */
+  }
+  .fg textarea{height:auto;min-height:100px;padding:var(--sp-3)}
+  .fgrid{grid-template-columns:1fr;gap:0}
+  .fgrid .fg{margin-bottom:var(--sp-3)}
+}
+
+/* ── BUTTONS ── touch target ≥48px */
+@media(max-width:767px){
+  .btn{min-height:46px;padding:0 var(--sp-4);font-size:14px}
+  .btn-sm{min-height:38px;padding:0 var(--sp-3);font-size:12.5px}
+  .btn-lg{min-height:52px;padding:0 var(--sp-5)}
+  .row-btns{gap:var(--sp-2)}
+  .row-btns .btn{min-width:0} /* flex:1 já cuida disso */
+}
+
+/* ── SEARCH BOX ── coluna vertical + maior */
+@media(max-width:767px){
+  .search-box{margin-bottom:var(--sp-3)}
+  .s-main input{height:48px;font-size:16px;padding-left:44px}
+  .s-ico{font-size:16px;left:14px}
+  .s-filters{gap:var(--sp-2);flex-direction:column}
+  .s-filters input{height:44px;font-size:15px}
+  .rcnt{font-size:11px;margin-bottom:var(--sp-3)}
+}
+
+/* ── PERSON CARDS (consulta) ── mais legível */
+@media(max-width:767px){
+  .pgrid{gap:var(--sp-2)}
+  .pcard{padding:var(--sp-3);border-radius:10px}
+  .parrow{color:var(--neutral-400)}
+}
+
+/* ── DETAIL VIEW (ficha da pessoa) ── */
+@media(max-width:767px){
+  .d-hero{gap:var(--sp-3);margin-bottom:var(--sp-4)}
+  .d-avatar{width:64px;height:64px}
+  .d-name{font-size:17px;line-height:1.25}
+  .d-nick{font-size:12px}
+  .d-flds{gap:var(--sp-3)}
+  .d-fld label{font-size:10px}
+  .d-fld span{font-size:13.5px}
+  .d-actions{flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-4)}
+  .d-actions .btn{width:100%}
+  .d-photo{width:70px;height:70px}
+}
+
+/* ── MODAL (bottom sheet full-screen no mobile) ── */
+@media(max-width:599px){
+  .modal{max-height:96vh;border-radius:16px 16px 0 0}
+  .mi{padding:var(--sp-4) var(--sp-4) var(--sp-6);padding-bottom:calc(var(--sp-6) + env(safe-area-inset-bottom,0px))}
+  .mtitle{font-size:17px;letter-spacing:0.5px}
+  .mhdr{margin-bottom:var(--sp-4)}
+  .mclose{width:32px;height:32px;font-size:14px}
+  .mhandle{width:36px;height:4px;margin:var(--sp-2) auto 0}
+}
+
+/* ── PHOTO UPLOAD (cadastro) ── grid melhor */
+@media(max-width:600px){
+  .photo-row{flex-direction:column;gap:var(--sp-2)}
+  .pcam-col{flex-direction:row;justify-content:stretch}
+  .pcam-col .btn{flex:1}
+  .pdrop{min-height:110px;padding:var(--sp-3)}
+  .pd-ico{font-size:26px}
+  .pd-lbl{font-size:11px}
+  .thumb{width:64px;height:64px}
+}
+
+/* ── USER LIST (usuários) ── stack quando aperta */
+@media(max-width:500px){
+  .uitem{padding:var(--sp-3);flex-wrap:wrap;gap:var(--sp-2)}
+  .uitem-info{flex:1 1 100%;min-width:0}
+  .uactions{flex:0 0 auto;gap:var(--sp-2);flex-wrap:wrap;width:100%;margin-top:var(--sp-2)}
+  .uactions .btn{flex:1;min-width:0}
+  .ulogin{font-size:13px}
+  .unome{font-size:11.5px}
+}
+
+/* ── TABLES ── scroll horizontal com indicação */
+@media(max-width:767px){
+  .table-wrap,.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 calc(-1*var(--sp-3));padding:0 var(--sp-3)}
+}
+
+/* ── MAP ── altura menor no mobile pra caber toolbar/legenda */
+@media(max-width:600px){
+  #mapaContainer{height:calc(100dvh - 220px);min-height:280px}
+}
+
+/* ── SIDEBAR (se existir) ── slide over em mobile */
+@media(max-width:767px){
+  .sidebar{position:fixed;left:0;top:52px;bottom:0;z-index:150;width:80vw;max-width:300px;transform:translateX(-100%);transition:transform 220ms ease;box-shadow:var(--shadow-xl)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:140;display:none;backdrop-filter:blur(2px)}
+  .sidebar-overlay.open{display:block}
+}
+
+/* ── FACE (comparação) ── slots empilhados em telas mto pequenas ── */
+@media(max-width:400px){
+  .face-slots{grid-template-columns:1fr!important}
+  .face-slot{padding:var(--sp-3)}
+  .face-metrics{grid-template-columns:repeat(3,1fr);gap:var(--sp-2)}
+  .face-metric{padding:var(--sp-3) var(--sp-2)}
+}
+
+/* ── LOGIN mobile ── card ocupa a viewport ── */
+@media(max-width:500px){
+  .login-box{max-width:100%}
+  .login-card{padding:var(--sp-6) var(--sp-5);border-radius:14px}
+  .login-logo{font-size:32px}
+  .login-logo::before{width:8px;height:32px}
+  .login-sub{font-size:10px;letter-spacing:0.08em}
+  .login-logobox{margin-bottom:var(--sp-6)}
+}
+
+/* ── TAGS/BADGES mobile ── */
+@media(max-width:500px){
+  .tag,.badge{font-size:10px;padding:2px 6px}
+}
+
+/* ── TOAST ── acima do bottom nav ── */
+@media(max-width:767px){
+  .toast{bottom:80px!important;left:var(--sp-3);right:var(--sp-3);max-width:none}
+}
+
+/* ── OVERLAY DE LOADING ── */
+@media(max-width:600px){
+  #ov{font-size:13px;padding:var(--sp-4)}
+}
+
+/* ── PATCHES DEFENSIVOS ── evita overflow horizontal em toda a app ── */
+@media(max-width:767px){
+  body,html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+  img,video,canvas{max-width:100%;height:auto}
+  pre,code{white-space:pre-wrap;word-break:break-word}
+  .card{padding:var(--sp-4);border-radius:12px}
+}
+
+/* ── SAFE AREA (iPhone com notch) ── */
+@supports(padding: max(0px)){
+  @media(max-width:767px){
+    .hdr{padding-left:max(var(--sp-3),env(safe-area-inset-left));padding-right:max(var(--sp-3),env(safe-area-inset-right))}
+    .content{padding-left:max(var(--sp-3),env(safe-area-inset-left));padding-right:max(var(--sp-3),env(safe-area-inset-right))}
+    .bottom-nav{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  }
+}
+
+/* Viewport dinâmica (mobile browsers com chrome escondível) */
+@media(max-width:767px){
+  #shell{min-height:100dvh}
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
