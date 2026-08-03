@@ -744,6 +744,165 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
   #shell{min-height:100dvh}
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CAMADA DIDÁTICA — SICAD (2026-08-03)
+   Torna o sistema mais fácil de aprender e usar. Tudo controlado por flag
+   sicad_didatico (localStorage) — o usuário pode desligar se quiser.
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Banner de dica no topo de cada tela */
+.help-banner{
+  display:flex;align-items:flex-start;gap:var(--sp-3);
+  background:linear-gradient(135deg,var(--brand-navy-soft) 0%,#fefaef 100%);
+  border:1px solid rgba(30,58,138,.15);
+  border-radius:var(--radius-md);
+  padding:var(--sp-4) var(--sp-5);
+  margin-bottom:var(--sp-5);
+  font-size:var(--text-sm);color:var(--neutral-800);line-height:1.55;
+  position:relative;
+}
+.help-banner-icon{
+  width:32px;height:32px;flex-shrink:0;background:var(--brand-navy);color:#fff;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;font-family:var(--font-sans);
+}
+.help-banner-body{flex:1;padding-top:4px}
+.help-banner-title{font-weight:700;color:var(--brand-navy);margin-bottom:2px;font-size:var(--text-sm)}
+.help-banner-body p{margin:0;font-size:13px;color:var(--neutral-700)}
+.help-banner-body kbd{background:#fff;border:1px solid var(--neutral-300);border-radius:4px;padding:1px 6px;font-family:var(--font-mono);font-size:11px;color:var(--neutral-700);box-shadow:0 1px 0 var(--neutral-300)}
+.help-banner-close{
+  position:absolute;top:8px;right:8px;
+  background:transparent;border:none;cursor:pointer;
+  width:28px;height:28px;border-radius:6px;
+  color:var(--neutral-500);font-size:14px;font-family:var(--font-sans);
+  display:flex;align-items:center;justify-content:center;transition:var(--transition);
+}
+.help-banner-close:hover{background:rgba(15,23,42,.06);color:var(--neutral-900)}
+@media(max-width:767px){
+  .help-banner{padding:var(--sp-3) var(--sp-3);margin-bottom:var(--sp-3);gap:var(--sp-2)}
+  .help-banner-icon{width:28px;height:28px;font-size:14px}
+  .help-banner-body p{font-size:12.5px;line-height:1.5}
+}
+body.no-didatico .help-banner{display:none}
+
+/* Empty state educativo */
+.empty-state{
+  text-align:center;padding:var(--sp-8) var(--sp-5);
+  background:var(--neutral-0);border:1px dashed var(--neutral-300);
+  border-radius:var(--radius-md);margin:var(--sp-4) 0;
+}
+.empty-state-icon{
+  width:56px;height:56px;margin:0 auto var(--sp-4);
+  background:var(--brand-navy-soft);color:var(--brand-navy);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.empty-state-icon .ico{width:28px;height:28px}
+.empty-state-title{font-size:var(--text-lg);font-weight:700;color:var(--neutral-900);margin-bottom:var(--sp-1);letter-spacing:-0.01em}
+.empty-state-desc{font-size:var(--text-sm);color:var(--neutral-600);line-height:1.55;max-width:380px;margin:0 auto var(--sp-4)}
+.empty-state-actions{display:flex;gap:var(--sp-2);justify-content:center;flex-wrap:wrap}
+
+/* Tooltip on hover — visível ao dar tab tb (acessibilidade) */
+[data-tip]{position:relative}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--neutral-900);color:#fff;padding:6px 10px;border-radius:6px;
+  font-size:12px;font-family:var(--font-sans);font-weight:500;letter-spacing:0;
+  white-space:nowrap;pointer-events:none;z-index:800;box-shadow:var(--shadow-lg);
+  animation:tipFade .15s ease-out;
+}
+[data-tip]:hover::before,[data-tip]:focus-visible::before{
+  content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-top-color:var(--neutral-900);pointer-events:none;z-index:800;
+}
+@keyframes tipFade{from{opacity:0;transform:translate(-50%,4px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:767px){[data-tip]:hover::after,[data-tip]:hover::before{display:none}} /* toque não mostra tooltip */
+body.no-didatico [data-tip]:hover::after,body.no-didatico [data-tip]:hover::before{display:none}
+
+/* Botão flutuante de ajuda */
+.help-fab{
+  position:fixed;bottom:80px;right:16px;z-index:400;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--brand-navy);color:#fff;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-lg);transition:var(--transition);
+  font-weight:800;font-size:20px;font-family:var(--font-sans);
+}
+.help-fab:hover{background:var(--brand-navy-dark);transform:translateY(-2px);box-shadow:var(--shadow-xl)}
+@media(min-width:768px){.help-fab{bottom:24px;right:24px}}
+body.no-didatico .help-fab{display:none}
+
+/* Painel de ajuda contextual */
+.help-panel{
+  position:fixed;bottom:0;right:0;top:0;z-index:600;
+  width:100%;max-width:420px;background:var(--neutral-0);
+  border-left:1px solid var(--neutral-200);
+  transform:translateX(100%);transition:transform 260ms cubic-bezier(0.32,0.72,0,1);
+  display:flex;flex-direction:column;box-shadow:var(--shadow-xl);
+}
+.help-panel.open{transform:translateX(0)}
+.help-panel-hdr{padding:var(--sp-4) var(--sp-5);border-bottom:1px solid var(--neutral-200);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3)}
+.help-panel-title{font-size:var(--text-md);font-weight:700;color:var(--neutral-900)}
+.help-panel-close{width:32px;height:32px;border-radius:var(--radius);border:none;background:transparent;cursor:pointer;color:var(--neutral-500);display:flex;align-items:center;justify-content:center;font-size:18px}
+.help-panel-close:hover{background:var(--neutral-100);color:var(--neutral-900)}
+.help-panel-body{flex:1;overflow-y:auto;padding:var(--sp-5)}
+.help-topic{padding:var(--sp-3) 0;border-bottom:1px solid var(--neutral-100)}
+.help-topic:last-child{border-bottom:none}
+.help-topic h4{font-size:var(--text-sm);font-weight:700;color:var(--neutral-900);margin-bottom:var(--sp-2);display:flex;align-items:center;gap:var(--sp-2)}
+.help-topic h4 .ico{color:var(--brand-navy)}
+.help-topic p{font-size:var(--text-sm);color:var(--neutral-700);line-height:1.55;margin:0}
+.help-topic ul{margin:var(--sp-2) 0 0;padding-left:var(--sp-5);font-size:var(--text-sm);color:var(--neutral-700);line-height:1.7}
+.help-topic li{margin-bottom:var(--sp-1)}
+.help-backdrop{position:fixed;inset:0;z-index:590;background:rgba(15,23,42,.35);display:none;backdrop-filter:blur(2px)}
+.help-backdrop.open{display:block}
+
+/* Toggle didático nas configurações da conta */
+.didactic-toggle{
+  display:inline-flex;align-items:center;gap:var(--sp-2);
+  background:var(--neutral-100);border:1px solid var(--neutral-200);
+  border-radius:var(--radius-full);padding:6px 12px;font-size:11px;
+  font-family:var(--font-sans);font-weight:600;color:var(--neutral-600);
+  cursor:pointer;transition:var(--transition);
+}
+.didactic-toggle:hover{background:var(--neutral-200)}
+.didactic-toggle.on{background:var(--success);color:#fff;border-color:transparent}
+
+/* Field hint inline (embaixo dos inputs) */
+.field-hint{
+  display:block;font-size:11.5px;color:var(--neutral-500);
+  margin-top:var(--sp-1);line-height:1.5;font-weight:400;
+}
+.field-hint.warn{color:var(--warning)}
+.field-hint.ok{color:var(--success)}
+body.no-didatico .field-hint{display:none}
+
+/* Welcome tour — overlay que destaca elemento e mostra caixa de instrução */
+.tour-backdrop{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(15,23,42,.75);backdrop-filter:blur(3px);
+  display:none;
+}
+.tour-backdrop.open{display:block;animation:tourFade .25s ease-out}
+@keyframes tourFade{from{opacity:0}to{opacity:1}}
+.tour-card{
+  position:fixed;z-index:901;max-width:340px;
+  background:var(--neutral-0);border-radius:var(--radius-md);
+  padding:var(--sp-5);box-shadow:var(--shadow-xl);
+  animation:tourCardIn .3s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes tourCardIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.tour-step{font-size:var(--text-xs);color:var(--brand-accent);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--sp-2)}
+.tour-title{font-size:var(--text-lg);font-weight:700;color:var(--neutral-900);margin-bottom:var(--sp-2);letter-spacing:-0.01em}
+.tour-desc{font-size:var(--text-sm);color:var(--neutral-700);line-height:1.6;margin-bottom:var(--sp-4)}
+.tour-actions{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2)}
+.tour-actions .btn{min-height:36px}
+.tour-progress{display:flex;gap:4px}
+.tour-progress-dot{width:6px;height:6px;border-radius:50%;background:var(--neutral-300);transition:var(--transition)}
+.tour-progress-dot.active{background:var(--brand-navy);width:18px;border-radius:3px}
+.tour-highlight{
+  position:relative;z-index:901;box-shadow:0 0 0 4px var(--brand-navy),0 0 0 8px rgba(30,58,138,.3),0 20px 60px rgba(0,0,0,.4);
+  border-radius:8px;transition:box-shadow .2s;
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -1909,6 +2068,355 @@ function _renderIcones(root){
 }
 if(document.readyState !== 'loading') _renderIcones();
 else document.addEventListener('DOMContentLoaded', ()=>_renderIcones());
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CAMADA DIDÁTICA — orquestra banners, tooltips, FAB, welcome tour
+// Tudo pode ser desligado com: localStorage.sicad_didatico = 'off'
+// ═══════════════════════════════════════════════════════════════════════════
+
+function sicadDidaticoLigado(){ return localStorage.getItem('sicad_didatico') !== 'off'; }
+function sicadDidaticoToggle(){
+  const novo = sicadDidaticoLigado() ? 'off' : 'on';
+  localStorage.setItem('sicad_didatico', novo);
+  document.body.classList.toggle('no-didatico', novo === 'off');
+  toast(novo === 'on' ? 'Modo didático LIGADO — dicas visíveis' : 'Modo didático DESLIGADO — dicas ocultas', 'info');
+}
+
+// Aplica classe body no boot
+(function(){
+  if(!sicadDidaticoLigado()) document.body.classList.add('no-didatico');
+})();
+
+// ─── BANNERS POR TELA ───────────────────────────────────────
+const HELP_BANNERS = {
+  dashboard: {
+    titulo: 'Painel geral',
+    corpo: 'Números do sistema, atalhos rápidos e últimos cadastros. Clique nos cards coloridos para ir direto para uma área.'
+  },
+  cadastrar: {
+    titulo: 'Cadastro de pessoa',
+    corpo: 'Preencha o que souber — só o <strong>nome</strong> é obrigatório. Use a câmera pra tirar foto do documento e o OCR extrai nome/CPF/nascimento automático. Foto do rosto ajuda o reconhecimento facial.'
+  },
+  consultar: {
+    titulo: 'Buscar pessoa cadastrada',
+    corpo: 'Digite parte do nome, apelido ou nome da mãe. Você pode filtrar por bairro e quadra. Clique num card para ver a ficha completa e editar/imprimir/excluir.'
+  },
+  mapa: {
+    titulo: 'Mapa de cadastros',
+    corpo: 'Cada ponto é uma pessoa cadastrada com endereço. Cores diferentes = bairros diferentes. Ative <strong>Modo calor</strong> pra ver concentração. Clique no marcador → Maps ou Waze pra ir até o local.'
+  },
+  face: {
+    titulo: 'Reconhecimento facial',
+    corpo: 'Três modos: <strong>Comparar 2 fotos</strong> (1×1), <strong>Buscar no banco</strong> (acha semelhantes já cadastrados) e <strong>Buscar na web</strong> (Yandex, Google Lens). IA roda no seu celular — nada sobe pra servidor externo.'
+  },
+  foragidos: {
+    titulo: 'Alertas de foragidos',
+    corpo: 'Registre alertas de pessoas foragidas com foto e nível de periculosidade. Aparece pra toda a equipe. A aba "Sistema" traz a lista oficial da Polícia Penal (PPDF).'
+  },
+  tatuagens: {
+    titulo: 'Busca reversa de tatuagens',
+    corpo: 'Achou uma tatuagem numa foto de vítima/local? Digite as <strong>tags</strong> (ex: "cruz, letra") e o <strong>local do corpo</strong> — o sistema lista pessoas cadastradas com tatuagens parecidas.'
+  },
+  pesquisa: {
+    titulo: 'Links úteis',
+    corpo: 'Atalhos rápidos pros sistemas oficiais que você usa no dia a dia (BNMP, NEXUS, GENESIS, Foragidos PPDF). Abre em nova aba.'
+  },
+  usuarios: {
+    titulo: 'Gerenciar equipe',
+    corpo: 'Aprove novos cadastros pendentes, altere permissões (admin/supervisor/operador) ou desative contas. Só quem tem role admin vê essa aba.'
+  }
+};
+
+function _injetarBanner(pagina){
+  if(!sicadDidaticoLigado()) return;
+  const info = HELP_BANNERS[pagina];
+  if(!info) return;
+  const pageEl = document.getElementById('page-'+pagina);
+  if(!pageEl) return;
+  // Não duplica se já tem
+  if(pageEl.querySelector('.help-banner')) return;
+  // Não injeta se usuário fechou esse banner específico
+  if(localStorage.getItem('sicad_banner_fechado_'+pagina) === '1') return;
+  const banner = document.createElement('div');
+  banner.className = 'help-banner';
+  banner.innerHTML = `
+    <div class="help-banner-icon">i</div>
+    <div class="help-banner-body">
+      <div class="help-banner-title">${info.titulo}</div>
+      <p>${info.corpo}</p>
+    </div>
+    <button class="help-banner-close" title="Não mostrar de novo" onclick="_fecharBanner('${pagina}',this)">×</button>
+  `;
+  pageEl.insertBefore(banner, pageEl.firstChild);
+}
+function _fecharBanner(pagina, btn){
+  localStorage.setItem('sicad_banner_fechado_'+pagina, '1');
+  const banner = btn.closest('.help-banner');
+  if(banner) banner.remove();
+}
+
+// Injeta banners quando a tela ativa muda
+const _goOriginal = window.go;
+window.go = function(n, fromPop){
+  const ret = _goOriginal.call(this, n, fromPop);
+  setTimeout(()=> _injetarBanner(n), 50);
+  return ret;
+};
+
+// ─── PAINEL DE AJUDA (FAB + drawer lateral) ─────────────────
+function _criarFAB(){
+  if(document.getElementById('sicad-fab')) return;
+  const fab = document.createElement('button');
+  fab.id = 'sicad-fab';
+  fab.className = 'help-fab';
+  fab.setAttribute('data-tip','Central de ajuda');
+  fab.textContent = '?';
+  fab.onclick = abrirAjuda;
+  document.body.appendChild(fab);
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'help-backdrop';
+  backdrop.id = 'sicad-help-backdrop';
+  backdrop.onclick = fecharAjuda;
+  document.body.appendChild(backdrop);
+
+  const panel = document.createElement('div');
+  panel.className = 'help-panel';
+  panel.id = 'sicad-help-panel';
+  panel.innerHTML = `
+    <div class="help-panel-hdr">
+      <div class="help-panel-title">Central de ajuda</div>
+      <button class="help-panel-close" onclick="fecharAjuda()">×</button>
+    </div>
+    <div class="help-panel-body" id="sicad-help-body"></div>
+  `;
+  document.body.appendChild(panel);
+}
+function abrirAjuda(){
+  _criarFAB();
+  _preencherAjuda();
+  document.getElementById('sicad-help-backdrop').classList.add('open');
+  document.getElementById('sicad-help-panel').classList.add('open');
+}
+function fecharAjuda(){
+  const bd = document.getElementById('sicad-help-backdrop');
+  const pn = document.getElementById('sicad-help-panel');
+  if(bd) bd.classList.remove('open');
+  if(pn) pn.classList.remove('open');
+}
+function _preencherAjuda(){
+  const body = document.getElementById('sicad-help-body');
+  if(!body) return;
+  const paginaAtual = document.querySelector('.page.active')?.id?.replace('page-','') || 'dashboard';
+  const info = HELP_BANNERS[paginaAtual] || HELP_BANNERS.dashboard;
+  const didaticoOn = sicadDidaticoLigado();
+  body.innerHTML = `
+    <div class="help-topic">
+      <h4>${ICON('dashboard',{size:16})} Você está em: ${info.titulo}</h4>
+      <p>${info.corpo}</p>
+    </div>
+
+    <div class="help-topic">
+      <h4>${ICON('cadastrar',{size:16})} Cadastrar rápido no campo</h4>
+      <p>Só o <strong>nome</strong> é obrigatório. Complete os outros dados depois pelo botão "Editar" na consulta.</p>
+      <ul>
+        <li><strong>OCR:</strong> câmera do celular → foto do documento → extrai nome/CPF/nasc automático</li>
+        <li><strong>Foto rosto:</strong> câmera ou galeria — ativa o reconhecimento facial</li>
+        <li><strong>Tatuagens:</strong> adicione com descrição e local do corpo</li>
+      </ul>
+    </div>
+
+    <div class="help-topic">
+      <h4>${ICON('consultar',{size:16})} Buscando pessoa</h4>
+      <p>A busca é <strong>inteligente</strong>: encontra mesmo com erro de digitação (ex: "Joao" acha "João").</p>
+      <ul>
+        <li>Nome, apelido ou nome da mãe</li>
+        <li>Filtre por bairro/quadra pra afunilar</li>
+        <li>Toque no card → ficha completa</li>
+      </ul>
+    </div>
+
+    <div class="help-topic">
+      <h4>${ICON('face',{size:16})} Reconhecimento facial</h4>
+      <p><strong>Nada sobe pra servidor externo</strong> — a IA roda no seu celular. Use pra identificar quem tá numa foto.</p>
+      <ul>
+        <li><strong>1×1:</strong> comparar duas fotos e ver se é a mesma pessoa</li>
+        <li><strong>Banco:</strong> ver se rosto bate com alguém já cadastrado</li>
+        <li><strong>Web:</strong> abre Yandex/Google Lens/PimEyes com a foto</li>
+      </ul>
+    </div>
+
+    <div class="help-topic">
+      <h4>${ICON('shield',{size:16})} Segurança e LGPD</h4>
+      <p>Senha do celular é gravada em <strong>hash irreversível</strong> — mesmo se o banco vazar, não dá pra descobrir a senha.</p>
+      <ul>
+        <li>Toda ação é registrada no <strong>audit log</strong></li>
+        <li>Só admin exclui cadastros</li>
+        <li>Foto biométrica em bucket privado com URL temporária</li>
+      </ul>
+    </div>
+
+    <div class="help-topic">
+      <h4>Modo didático (dicas)</h4>
+      <p>Se as caixinhas azuis de dica atrapalham quando você já sabe usar, desligue aqui.</p>
+      <div style="margin-top:12px">
+        <button class="didactic-toggle ${didaticoOn?'on':''}" onclick="sicadDidaticoToggle();fecharAjuda();setTimeout(abrirAjuda,150)">
+          ${didaticoOn?'✓ LIGADO':'○ DESLIGADO'}
+        </button>
+      </div>
+    </div>
+
+    <div class="help-topic">
+      <h4>${ICON('foragidos',{size:16})} Precisa de mais?</h4>
+      <p>Aperte <kbd>?</kbd> no teclado a qualquer momento pra abrir essa central.</p>
+    </div>
+  `;
+  _renderIcones(body);
+}
+
+// Atalho de teclado ? abre ajuda
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='?' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){
+    e.preventDefault();
+    abrirAjuda();
+  }
+  if(e.key==='Escape'){
+    fecharAjuda();
+    _fecharTour();
+  }
+});
+
+// Cria FAB assim que o app estiver visível
+document.addEventListener('DOMContentLoaded', ()=>{
+  setTimeout(_criarFAB, 500);
+});
+
+// ─── WELCOME TOUR (primeira visita) ─────────────────────────
+const TOUR_STEPS = [
+  {
+    selector: '.hdr-logo',
+    titulo: 'Bem-vindo ao SICAD',
+    desc: 'Vou te mostrar as principais áreas em 5 passos. Você pode pular a qualquer momento — depois é só clicar no botão <strong>?</strong> pra revisar.'
+  },
+  {
+    selector: '[data-p="dashboard"]',
+    titulo: 'Painel principal',
+    desc: 'Aqui aparecem os números do sistema, últimos cadastros e atalhos pras principais áreas.'
+  },
+  {
+    selector: '[data-p="cadastrar"]',
+    titulo: 'Cadastrar pessoa',
+    desc: 'Só nome é obrigatório. Tire foto do documento pra OCR extrair os dados automaticamente. Cadastre tatuagens e veículos pra buscas cruzadas.'
+  },
+  {
+    selector: '[data-p="consultar"]',
+    titulo: 'Encontrar pessoa',
+    desc: 'Busca inteligente que entende erros de digitação. Filtre por bairro/quadra se souber onde a pessoa mora.'
+  },
+  {
+    selector: '#sicad-fab',
+    titulo: 'Ajuda sempre acessível',
+    desc: 'Esse botão <strong>?</strong> abre a central de ajuda contextual. Também dá pra apertar <kbd>?</kbd> no teclado.'
+  }
+];
+let _tourStep = 0;
+function iniciarTour(){
+  _tourStep = 0;
+  _mostrarPasso();
+}
+function _mostrarPasso(){
+  _fecharTour();
+  if(_tourStep >= TOUR_STEPS.length){
+    _finalizarTour();
+    return;
+  }
+  const s = TOUR_STEPS[_tourStep];
+  const alvo = document.querySelector(s.selector);
+  if(!alvo){ _tourStep++; _mostrarPasso(); return; }
+  // Cria overlay
+  const bd = document.createElement('div');
+  bd.className = 'tour-backdrop open';
+  bd.id = 'sicad-tour-backdrop';
+  bd.onclick = ()=>{ _tourStep++; _mostrarPasso(); };
+  document.body.appendChild(bd);
+  // Destaca alvo
+  alvo.classList.add('tour-highlight');
+  const rect = alvo.getBoundingClientRect();
+  // Card com instrução
+  const card = document.createElement('div');
+  card.className = 'tour-card';
+  card.id = 'sicad-tour-card';
+  card.onclick = (e)=> e.stopPropagation();
+  const dots = TOUR_STEPS.map((_,i)=>`<div class="tour-progress-dot ${i<=_tourStep?'active':''}"></div>`).join('');
+  card.innerHTML = `
+    <div class="tour-step">Passo ${_tourStep+1} de ${TOUR_STEPS.length}</div>
+    <div class="tour-title">${s.titulo}</div>
+    <div class="tour-desc">${s.desc}</div>
+    <div class="tour-actions">
+      <div class="tour-progress">${dots}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="_finalizarTour()">Pular</button>
+        <button class="btn btn-primary btn-sm" onclick="_tourStep++;_mostrarPasso()">${_tourStep === TOUR_STEPS.length-1 ? 'Terminar' : 'Próximo'}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(card);
+  // Posiciona o card perto do alvo (evita ficar em cima)
+  const cardH = 220;
+  const cardW = 340;
+  let top = rect.bottom + 12;
+  let left = rect.left;
+  if(top + cardH > window.innerHeight){ top = rect.top - cardH - 12; }
+  if(top < 12) top = 12;
+  if(left + cardW > window.innerWidth - 12) left = window.innerWidth - cardW - 12;
+  if(left < 12) left = 12;
+  card.style.top = top + 'px';
+  card.style.left = left + 'px';
+}
+function _fecharTour(){
+  document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+  const bd = document.getElementById('sicad-tour-backdrop');
+  const card = document.getElementById('sicad-tour-card');
+  if(bd) bd.remove();
+  if(card) card.remove();
+}
+function _finalizarTour(){
+  _fecharTour();
+  localStorage.setItem('sicad_tour_visto','1');
+  toast('Pronto! Aperte ? a qualquer momento pra ajuda.', 'success');
+}
+// Dispara tour na primeira visita — aguarda app aparecer
+function _talvezIniciarTour(){
+  if(localStorage.getItem('sicad_tour_visto') === '1') return;
+  if(!sicadDidaticoLigado()) return;
+  if(document.getElementById('shell')?.style.display === 'none') {
+    setTimeout(_talvezIniciarTour, 800);
+    return;
+  }
+  setTimeout(iniciarTour, 1200);
+}
+document.addEventListener('DOMContentLoaded', ()=> setTimeout(_talvezIniciarTour, 1200));
+
+// ─── TOOLTIPS EM ELEMENTOS-CHAVE ────────────────────────────
+function _aplicarTooltips(){
+  const map = {
+    'tnav-btn[data-p="dashboard"]': 'Painel geral do sistema',
+    'tnav-btn[data-p="cadastrar"]': 'Cadastrar nova pessoa',
+    'tnav-btn[data-p="consultar"]': 'Buscar pessoa cadastrada',
+    'tnav-btn[data-p="mapa"]': 'Mapa com cadastros por bairro',
+    'tnav-btn[data-p="foragidos"]': 'Alertas e lista PPDF',
+    'tnav-btn[data-p="face"]': 'Reconhecimento facial (IA local)',
+    'tnav-btn[data-p="tatuagens"]': 'Busca por tags de tatuagem',
+    'tnav-btn[data-p="pesquisa"]': 'Links úteis (BNMP, NEXUS...)',
+    'tnav-btn[data-p="usuarios"]': 'Gerenciar equipe (admin)'
+  };
+  Object.entries(map).forEach(([sel, tip]) => {
+    document.querySelectorAll('.'+sel).forEach(el => {
+      if(!el.hasAttribute('data-tip')) el.setAttribute('data-tip', tip);
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', ()=> setTimeout(_aplicarTooltips, 200));
 
 // ── OVERLAY ──
 const showOv=m=>{if(m)document.getElementById('ovMsg').textContent=m;document.getElementById('ov').classList.add('on');};
