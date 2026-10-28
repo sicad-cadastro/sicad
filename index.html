@@ -1930,7 +1930,7 @@ const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 
 // Cliente Supabase (singleton)
 const supabase = window.supabase.createClient(SB, SB_ANON, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' }
 });
 
 // sbFetch — usa anon key + JWT do usuário logado (RLS controla acesso)
