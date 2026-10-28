@@ -4107,8 +4107,8 @@ function abrirMapaAjuste(){
   setTimeout(() => {
     if (!_locMapInst) {
       _locMapInst = L.map('locMap', { center: init, zoom, scrollWheelZoom: true });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap · © CARTO', subdomains:'abcd', maxZoom:19
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors', maxZoom:19
       }).addTo(_locMapInst);
       _locMapInst.on('click', (e) => {
         _setLocMarker(e.latlng.lat, e.latlng.lng, true);
@@ -4198,10 +4198,9 @@ function initMapa() {
     zoomControl: true,
     scrollWheelZoom: true,
   });
-  // Tiles do OpenStreetMap (gratuito, sem chave). Estilo claro CartoDB Voyager.
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap · © CARTO',
-    subdomains: 'abcd',
+  // Tiles direto do OpenStreetMap — gratuito, sem API key.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
     maxZoom: 19,
   }).addTo(mapaInst);
 }
