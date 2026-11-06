@@ -903,6 +903,125 @@ body.no-didatico .field-hint{display:none}
   border-radius:8px;transition:box-shadow .2s;
 }
 
+/* ═══════════════ MÓDULO CAPÃOZINHO 3 ═══════════════ */
+.c3-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap;margin-bottom:var(--sp-4)}
+.c3-title{font-size:var(--text-2xl);font-weight:800;letter-spacing:-0.02em;color:var(--brand-navy);line-height:1.1}
+.c3-sub{font-size:var(--text-sm);color:var(--neutral-500);margin-top:4px}
+#c3AcoesTopo .btn{white-space:nowrap}
+@media(max-width:560px){#c3AcoesTopo{width:100%}#c3AcoesTopo .btn{flex:1}}
+.c3-search{position:relative;margin-bottom:var(--sp-4)}
+.c3-search input{width:100%;height:48px;border:1px solid var(--neutral-300);border-radius:var(--radius-md);padding:0 44px 0 46px;font-size:15px;font-family:var(--font-sans);background:var(--neutral-0);outline:none;transition:var(--transition);box-shadow:var(--shadow-xs)}
+.c3-search input:focus{border-color:var(--brand-navy);box-shadow:0 0 0 3px rgba(30,58,138,.12)}
+.c3-search .c3-s-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--neutral-400);display:flex}
+.c3-search .c3-s-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:var(--neutral-100);width:28px;height:28px;border-radius:50%;cursor:pointer;color:var(--neutral-500);display:none;align-items:center;justify-content:center}
+.c3-search.has .c3-s-x{display:flex}
+.c3-tabs{display:flex;gap:4px;background:var(--neutral-100);padding:4px;border-radius:var(--radius-md);margin-bottom:var(--sp-5);overflow-x:auto;scrollbar-width:none}
+.c3-tabs::-webkit-scrollbar{display:none}
+.c3-tab{flex:1;min-width:max-content;border:none;background:transparent;padding:10px 14px;border-radius:var(--radius);font-family:var(--font-sans);font-size:var(--text-sm);font-weight:600;color:var(--neutral-500);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--transition)}
+.c3-tab:hover{color:var(--neutral-900)}
+.c3-tab.active{background:var(--neutral-0);color:var(--brand-navy);box-shadow:var(--shadow-sm)}
+.c3-tab .c3-cnt{font-size:10px;background:var(--neutral-200);color:var(--neutral-600);border-radius:99px;padding:1px 7px;font-weight:700}
+.c3-tab.active .c3-cnt{background:var(--brand-navy-soft);color:var(--brand-navy)}
+.c3-pane{display:none}.c3-pane.active{display:block}
+.c3-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);margin-bottom:var(--sp-5)}
+@media(min-width:700px){.c3-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.c3-kpis{grid-template-columns:repeat(6,1fr)}}
+.c3-kpi{background:var(--neutral-0);border:1px solid var(--neutral-200);border-radius:var(--radius-md);padding:var(--sp-4);position:relative;overflow:hidden}
+.c3-kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--k,var(--brand-navy))}
+.c3-kpi-n{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums;color:var(--neutral-900)}
+.c3-kpi-l{font-size:10.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--neutral-500);margin-top:8px;line-height:1.3}
+.c3-kpi.click{cursor:pointer}.c3-kpi.click:hover{border-color:var(--neutral-400)}
+.c3-grid2{display:grid;grid-template-columns:1fr;gap:var(--sp-4)}
+@media(min-width:800px){.c3-grid2{grid-template-columns:1fr 1fr}}
+.c3-card{background:var(--neutral-0);border:1px solid var(--neutral-200);border-radius:var(--radius-md);padding:var(--sp-5)}
+.c3-card h3{font-size:var(--text-sm);font-weight:700;color:var(--neutral-800);margin-bottom:var(--sp-4);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.c3-card h3 small{font-weight:500;color:var(--neutral-400);font-size:var(--text-xs)}
+.c3-bar{display:grid;grid-template-columns:120px 1fr 36px;align-items:center;gap:10px;margin-bottom:10px;font-size:var(--text-sm)}
+.c3-bar-l{color:var(--neutral-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+.c3-bar-t{height:10px;background:var(--neutral-100);border-radius:99px;overflow:hidden}
+.c3-bar-f{height:100%;border-radius:99px;background:var(--brand-navy);transition:width .5s ease}
+.c3-bar-v{text-align:right;font-weight:700;color:var(--neutral-800);font-variant-numeric:tabular-nums}
+.c3-cols{display:flex;align-items:flex-end;gap:10px;height:140px;padding-top:10px}
+.c3-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.c3-col-b{width:100%;max-width:38px;background:var(--brand-accent);border-radius:6px 6px 0 0;min-height:2px;transition:height .5s ease}
+.c3-col-v{font-size:11px;font-weight:700;color:var(--neutral-700)}
+.c3-col-l{font-size:10.5px;color:var(--neutral-500);text-transform:uppercase;letter-spacing:.04em}
+.c3-empty{text-align:center;color:var(--neutral-400);font-size:var(--text-sm);padding:var(--sp-6) var(--sp-4)}
+.c3-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.c3-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:var(--sp-4);align-items:center}
+.c3-toolbar select,.c3-toolbar input{height:40px;border:1px solid var(--neutral-300);border-radius:var(--radius);padding:0 12px;font-family:var(--font-sans);font-size:14px;background:var(--neutral-0);color:var(--neutral-900);outline:none}
+.c3-toolbar .grow{flex:1;min-width:160px}
+#c3Map{height:560px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--neutral-200);position:relative;z-index:1}
+@media(max-width:700px){#c3Map{height:calc(100dvh - 300px);min-height:320px}}
+.c3-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:var(--sp-3);font-size:var(--text-xs);color:var(--neutral-600)}
+.c3-legend span{display:flex;align-items:center;gap:6px}
+.c3-pin{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 6px rgba(15,23,42,.35);display:flex;align-items:center;justify-content:center}
+.c3-pin b{transform:rotate(45deg);color:#fff;font-size:11px;font-weight:800;font-family:var(--font-sans)}
+.c3-pop{min-width:220px;font-family:var(--font-sans)}
+.c3-pop h4{font-size:14px;font-weight:700;color:var(--neutral-900);margin:0 0 2px}
+.c3-pop .c3-pop-s{font-size:11.5px;color:var(--neutral-500);margin-bottom:8px}
+.c3-pop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12px;margin:0 0 10px}
+.c3-pop dt{color:var(--neutral-500)}.c3-pop dd{margin:0;color:var(--neutral-800);font-weight:500}
+.c3-pop .c3-pop-a{display:flex;gap:6px}
+.c3-pop .c3-pop-a button,.c3-pop .c3-pop-a a{flex:1;font-size:11.5px;padding:7px 8px;border-radius:6px;border:1px solid var(--neutral-300);background:#fff;color:var(--neutral-800);cursor:pointer;text-decoration:none;text-align:center;font-weight:600;font-family:var(--font-sans)}
+.c3-pop .c3-pop-a .pri{background:var(--brand-navy);color:#fff;border-color:var(--brand-navy)}
+.c3-list{display:flex;flex-direction:column;gap:8px}
+.c3-item{background:var(--neutral-0);border:1px solid var(--neutral-200);border-radius:var(--radius-md);padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:var(--transition)}
+.c3-item:hover{border-color:var(--brand-navy);box-shadow:var(--shadow-md)}
+.c3-av{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;font-size:15px;color:#fff}
+.c3-item-b{flex:1;min-width:0}
+.c3-item-t{font-weight:600;color:var(--neutral-900);font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-item-s{font-size:12px;color:var(--neutral-500);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
+.c3-tag{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--neutral-100);color:var(--neutral-600);white-space:nowrap}
+.c3-tag.warn{background:var(--warning-soft);color:var(--warning)}
+.c3-tag.err{background:var(--danger-soft);color:var(--danger)}
+.c3-tag.ok{background:var(--success-soft);color:var(--success)}
+.c3-tag.nav{background:var(--brand-navy-soft);color:var(--brand-navy)}
+.c3-res-g{margin-bottom:var(--sp-5)}
+.c3-res-g h4{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--neutral-500);margin-bottom:var(--sp-2)}
+.c3-res-g mark{background:#FEF08A;color:inherit;border-radius:2px;padding:0 1px}
+.c3-note{font-size:11.5px;color:var(--neutral-500);background:var(--neutral-50);border:1px solid var(--neutral-200);border-radius:var(--radius);padding:10px 12px;display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.c3-banner{background:var(--warning-soft);border:1px solid rgba(217,119,6,.35);color:#92400E;border-radius:var(--radius-md);padding:14px 16px;margin-bottom:var(--sp-4);font-size:var(--text-sm);line-height:1.5}
+.c3-banner code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px}
+#c3Modal .modal{max-width:760px}
+.c3-mtitle{font-size:var(--text-lg);font-weight:700;color:var(--neutral-900);letter-spacing:-0.01em}
+.c3-fsec{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-navy);margin:var(--sp-5) 0 var(--sp-3);display:flex;align-items:center;gap:10px}
+.c3-fsec::after{content:'';flex:1;height:1px;background:var(--neutral-200)}
+.c3-fsec:first-child{margin-top:0}
+.c3-req{color:var(--danger)}
+#c3MiniMap{height:240px;border-radius:var(--radius);border:1px solid var(--neutral-300);margin-bottom:var(--sp-2);z-index:1}
+.c3-geo-msg{font-size:12px;margin:-6px 0 var(--sp-3);min-height:16px}
+.c3-geo-msg.ok{color:var(--success)}.c3-geo-msg.err{color:var(--danger)}.c3-geo-msg.warn{color:var(--warning)}
+.c3-mrow{display:grid;grid-template-columns:1.6fr 1fr 1fr 34px;gap:8px;margin-bottom:8px}
+.c3-mrow input,.c3-mrow select{height:40px;border:1px solid var(--neutral-300);border-radius:var(--radius);padding:0 10px;font-size:14px;font-family:var(--font-sans);width:100%;min-width:0}
+.c3-mrow button{border:1px solid var(--neutral-300);background:#fff;border-radius:var(--radius);cursor:pointer;color:var(--danger)}
+@media(max-width:560px){.c3-mrow{grid-template-columns:1fr 1fr 34px}.c3-mrow .c3-mr-nasc{display:none}}
+.c3-dgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 16px}
+@media(min-width:600px){.c3-dgrid{grid-template-columns:repeat(3,1fr)}}
+.c3-dgrid .full{grid-column:1/-1}
+.c3-dl{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--neutral-400);margin-bottom:3px}
+.c3-dv{font-size:14px;color:var(--neutral-900);word-break:break-word;white-space:pre-wrap}
+.c3-reg{border:1px solid var(--neutral-200);border-left:3px solid var(--brand-navy);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;background:var(--neutral-0)}
+.c3-reg.oc{border-left-color:var(--danger)}
+.c3-reg-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.c3-reg-t{font-weight:700;font-size:14px;color:var(--neutral-900)}
+.c3-reg-m{font-size:12px;color:var(--neutral-500);margin-top:2px}
+.c3-reg-d{font-size:13px;color:var(--neutral-700);margin-top:8px;white-space:pre-wrap;line-height:1.5}
+.c3-reg-o{font-size:11px;color:var(--neutral-500);margin-top:8px;padding-top:8px;border-top:1px dashed var(--neutral-200);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.c3-reg-act{display:flex;gap:4px;flex-shrink:0}
+.c3-reg-act button{border:none;background:var(--neutral-100);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--neutral-600);display:flex;align-items:center;justify-content:center}
+.c3-reg-act button:hover{background:var(--brand-navy-soft);color:var(--brand-navy)}
+.c3-reg-act button.del:hover{background:var(--danger-soft);color:var(--danger)}
+.c3-anx{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.c3-anx button{font-size:11.5px;border:1px solid var(--neutral-300);background:var(--neutral-50);border-radius:6px;padding:5px 9px;cursor:pointer;color:var(--neutral-700);font-family:var(--font-sans)}
+.c3-anx button:hover{border-color:var(--brand-navy);color:var(--brand-navy)}
+.c3-subtabs{display:flex;gap:6px;margin:var(--sp-5) 0 var(--sp-3);border-bottom:1px solid var(--neutral-200)}
+.c3-subtab{border:none;background:none;padding:10px 12px;font-family:var(--font-sans);font-weight:600;font-size:var(--text-sm);color:var(--neutral-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.c3-subtab.active{color:var(--brand-navy);border-bottom-color:var(--brand-navy)}
+.c3-mfoot{display:flex;gap:10px;margin-top:var(--sp-5);flex-wrap:wrap}
+.c3-mfoot .btn{flex:1;min-width:130px}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -959,6 +1078,7 @@ body.no-didatico .field-hint{display:none}
     <button class="tnav-btn active" onclick="go('dashboard')" data-p="dashboard"><span data-icon="dashboard"></span>Dashboard</button>
     <button class="tnav-btn" onclick="if(editMode){if(!confirm('Sair do modo edição?')){return;}cadClear();}go('cadastrar')" data-p="cadastrar"><span data-icon="cadastrar"></span>Cadastrar</button>
     <button class="tnav-btn" onclick="go('consultar')" data-p="consultar"><span data-icon="consultar"></span>Consultar</button>
+    <button class="tnav-btn" onclick="go('capaozinho3')" data-p="capaozinho3"><span data-icon="chacara"></span>Capãozinho 3</button>
     <button class="tnav-btn" onclick="go('foragidos')" data-p="foragidos"><span data-icon="foragidos"></span>Foragidos</button>
     <button class="tnav-btn" onclick="go('mapa')" data-p="mapa"><span data-icon="mapa"></span>Mapa</button>
     <button class="tnav-btn" onclick="go('face')" data-p="face"><span data-icon="face"></span>Face</button>
@@ -1350,6 +1470,94 @@ body.no-didatico .field-hint{display:none}
     </div>
 
 
+    <!-- CAPÃOZINHO 3 — mapeamento territorial -->
+    <div class="page" id="page-capaozinho3">
+      <div class="c3-head">
+        <div>
+          <div class="c3-title">Capãozinho 3</div>
+          <div class="c3-sub">Mapeamento territorial · chácaras, moradores e histórico</div>
+        </div>
+        <div class="row-btns" id="c3AcoesTopo" style="flex:0 0 auto">
+          <button class="btn btn-outline" onclick="c3FormMorador()"><span data-icon="cadastrar" data-size="16"></span>Morador</button>
+          <button class="btn btn-primary" onclick="c3FormChacara()"><span data-icon="novo" data-size="16"></span>Nova chácara</button>
+        </div>
+      </div>
+
+      <div id="c3Banner"></div>
+
+      <div class="c3-search" id="c3SearchWrap">
+        <span class="c3-s-ico"><span data-icon="consultar" data-size="18"></span></span>
+        <input id="c3Busca" type="search" autocomplete="off" placeholder="Pesquisar chácara, morador, telefone, CPF, endereço ou nº de ocorrência…" oninput="c3OnBusca()">
+        <button class="c3-s-x" onclick="c3LimparBusca()" title="Limpar"><span data-icon="x" data-size="14"></span></button>
+      </div>
+
+      <div class="c3-tabs" id="c3Tabs">
+        <button class="c3-tab active" data-t="painel" onclick="c3Tab('painel')"><span data-icon="dashboard" data-size="15"></span>Painel</button>
+        <button class="c3-tab" data-t="mapa" onclick="c3Tab('mapa')"><span data-icon="mapa" data-size="15"></span>Mapa</button>
+        <button class="c3-tab" data-t="chacaras" onclick="c3Tab('chacaras')"><span data-icon="chacara" data-size="15"></span>Chácaras <span class="c3-cnt" id="c3CntCh">0</span></button>
+        <button class="c3-tab" data-t="moradores" onclick="c3Tab('moradores')"><span data-icon="usuarios" data-size="15"></span>Moradores <span class="c3-cnt" id="c3CntMo">0</span></button>
+      </div>
+
+      <!-- Resultados da pesquisa -->
+      <div class="c3-pane" id="c3PaneBusca"></div>
+
+      <!-- PAINEL -->
+      <div class="c3-pane active" id="c3PanePainel">
+        <div class="c3-kpis" id="c3Kpis"></div>
+        <div class="c3-grid2">
+          <div class="c3-card"><h3>Propriedades por categoria</h3><div id="c3ChartCat"></div></div>
+          <div class="c3-card"><h3>Ocorrências <small>últimos 6 meses</small></h3><div id="c3ChartMes"></div></div>
+          <div class="c3-card"><h3>Naturezas mais frequentes <small>ocorrências + passagens</small></h3><div id="c3ChartNat"></div></div>
+          <div class="c3-card"><h3>Pendentes de atualização <small id="c3PendInfo"></small></h3><div id="c3Pend"></div></div>
+        </div>
+        <div class="c3-note" style="margin-top:var(--sp-4)"><span data-icon="shield" data-size="16"></span><span>Dados pessoais de uso restrito ao serviço policial. Toda consulta de ficha, cadastro, alteração e exclusão fica registrada na auditoria do SICAD com usuário e horário.</span></div>
+      </div>
+
+      <!-- MAPA -->
+      <div class="c3-pane" id="c3PaneMapa">
+        <div class="c3-toolbar">
+          <input class="grow" id="c3MapFiltTxt" placeholder="Filtrar no mapa por chácara, proprietário ou morador…" oninput="c3RenderMarkers()">
+          <select id="c3MapFiltCat" onchange="c3RenderMarkers()"><option value="">Todas as categorias</option></select>
+          <button class="btn btn-outline btn-sm" onclick="c3EnquadrarMapa()" title="Enquadrar todas"><span data-icon="navegar" data-size="15"></span>Enquadrar</button>
+        </div>
+        <div id="c3Map"></div>
+        <div class="c3-legend" id="c3Legend"></div>
+        <div class="c3-note" style="margin-top:var(--sp-3)"><span data-icon="pin" data-size="16"></span><span id="c3MapInfo">Clique em um marcador para ver a ficha resumida. Use o seletor no canto do mapa para alternar entre Ruas e Satélite.</span></div>
+      </div>
+
+      <!-- CHÁCARAS -->
+      <div class="c3-pane" id="c3PaneChacaras">
+        <div class="c3-toolbar">
+          <select id="c3ChFiltCat" onchange="c3RenderChacaras()"><option value="">Todas as categorias</option></select>
+          <select id="c3ChFiltSit" onchange="c3RenderChacaras()">
+            <option value="">Todas as situações</option>
+            <option value="semgeo">Sem localização</option>
+            <option value="pend">Pendentes de atualização</option>
+            <option value="comoc">Com ocorrências</option>
+          </select>
+          <select id="c3ChOrd" onchange="c3RenderChacaras()">
+            <option value="nome">Ordem: nome</option>
+            <option value="ident">Ordem: identificação</option>
+            <option value="recente">Ordem: mais recentes</option>
+          </select>
+        </div>
+        <div class="c3-list" id="c3ListCh"></div>
+      </div>
+
+      <!-- MORADORES -->
+      <div class="c3-pane" id="c3PaneMoradores">
+        <div class="c3-toolbar">
+          <select id="c3MoFiltCh" class="grow" onchange="c3RenderMoradores()"><option value="">Todas as chácaras</option></select>
+          <select id="c3MoFiltHist" onchange="c3RenderMoradores()">
+            <option value="">Todos</option>
+            <option value="comreg">Com passagens/ocorrências</option>
+            <option value="semch">Sem chácara vinculada</option>
+          </select>
+        </div>
+        <div class="c3-list" id="c3ListMo"></div>
+      </div>
+    </div>
+
     <!-- MAPA -->
     <div class="page" id="page-mapa">
       <div class="sec-title">🗺️ MAPA — BRAZLÂNDIA DF</div>
@@ -1723,6 +1931,20 @@ body.no-didatico .field-hint{display:none}
   </div>
 </div><!-- /app -->
 
+<!-- MODAL CAPÃOZINHO 3 (genérico: formulários e fichas) -->
+<div class="modal-overlay" id="c3Modal" onclick="if(event.target===this)c3FecharModal()">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mi">
+      <div class="mhdr">
+        <div class="c3-mtitle" id="c3ModalTitle">—</div>
+        <div class="mclose" onclick="c3FecharModal()">✕</div>
+      </div>
+      <div id="c3ModalBody"></div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PESSOA -->
 <div class="modal-overlay" id="personModal">
   <div class="modal">
@@ -1993,6 +2215,7 @@ function abrirMenuMais(){
       <div class="more-sheet-handle"></div>
       <div class="more-sheet-title">Navegar</div>
       <div class="more-sheet-grid">
+        <button class="more-btn" onclick="abrirMenuMais();go('capaozinho3')"><span data-icon="chacara" data-size="22"></span><span>Capãozinho 3</span></button>
         <button class="more-btn" onclick="abrirMenuMais();go('foragidos')"><span data-icon="foragidos" data-size="22"></span><span>Foragidos</span></button>
         <button class="more-btn" onclick="abrirMenuMais();go('face')"><span data-icon="face" data-size="22"></span><span>Face</span></button>
         <button class="more-btn" onclick="abrirMenuMais();go('tatuagens')"><span data-icon="tatuagens" data-size="22"></span><span>Tatuagens</span></button>
@@ -2050,7 +2273,10 @@ const ICONS = {
   mais: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
   filter: '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
   clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  chacara: '<path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/><path d="M1 12l4-3M23 12l-4-3"/>',
+  pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  anexo: '<path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>'
 };
 function ICON(name, opts){
   const size = (opts && opts.size) || 18;
@@ -2612,7 +2838,7 @@ supabase.auth.onAuthStateChange((event, session) => {
 
 // ── NAV ──
 // ─── Rotas do SICAD: telas válidas ───
-const SICAD_ROTAS = ['dashboard','cadastrar','consultar','usuarios','mapa','foragidos','face','tatuagens','pesquisa'];
+const SICAD_ROTAS = ['dashboard','cadastrar','consultar','capaozinho3','usuarios','mapa','foragidos','face','tatuagens','pesquisa'];
 
 function go(n, _fromPop){
   // Fallback: rota desconhecida cai no dashboard
@@ -2635,6 +2861,7 @@ function go(n, _fromPop){
   if(backBtn) backBtn.style.display = n!=='dashboard' ? 'flex' : 'none';
   if(n==='dashboard')loadDash();
   if(n==='consultar')loadPersons();
+  if(n==='capaozinho3')c3Abrir();
   if(n==='usuarios')loadUsers();
   if(n==='foragidos'){loadAlertas();showForagidoTab('alertas');}
   if(n==='mapa')loadMapa();
@@ -5894,6 +6121,864 @@ function renderFaceMatches(matches){
   wrap.innerHTML = html;
   wrap.scrollIntoView({ behavior:'smooth', block:'start' });
 }
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// MÓDULO CAPÃOZINHO 3 — mapeamento territorial
+// Tabelas: c3_chacaras · c3_moradores · c3_passagens · c3_ocorrencias
+// Anexos: Storage bucket privado "c3-anexos" (links assinados de 5 min)
+// Banco: migration_v4_capaozinho3.sql
+// ══════════════════════════════════════════════════════════════════════
+const C3_CAT = {
+  residencial:{l:'Residencial',    c:'#1E3A8A'},
+  producao:   {l:'Produção rural', c:'#059669'},
+  comercial:  {l:'Comercial',      c:'#0891B2'},
+  construcao: {l:'Em construção',  c:'#D97706'},
+  desocupada: {l:'Desocupada',     c:'#94A3B8'},
+  outros:     {l:'Outros',         c:'#7C3AED'}
+};
+const C3_VINC = {proprietario:'Proprietário',morador:'Morador',caseiro:'Caseiro',familiar:'Familiar',funcionario:'Funcionário',outro:'Outro'};
+const C3_SIT = {registrada:['nav','Registrada'],em_apuracao:['warn','Em apuração'],concluida:['ok','Concluída'],arquivada:['','Arquivada']};
+const C3_FONTES = ['Ocorrência policial (BO)','Sistema institucional de consulta','Inquérito / procedimento','Termo circunstanciado','Abordagem com registro','Ofício / documento oficial'];
+const C3_PEND_DIAS = 180;
+const C3_CENTRO = [-15.6760, -48.1870];   // Brazlândia/DF — o mapa enquadra as chácaras quando houver
+const C3_BUCKET = 'c3-anexos';
+
+let C3 = { ch:[], mo:[], pa:[], oc:[], ok:false, tab:'painel', enquadrado:false };
+let c3MapInst = null, c3Layer = null, c3Markers = {};
+let c3MiniInst = null, c3MiniMk = null;
+let c3BuscaT = null, c3FichaSub = 'pa', c3AnexosRemover = [];
+
+// ── utilitários ──
+const c3PodeEditar  = () => !!CU && ['admin','supervisor','operator'].includes(CU.role);
+const c3PodeExcluir = () => !!CU && ['admin','supervisor'].includes(CU.role);
+function c3NormCh(c){ return c.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+function c3Norm(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
+function c3Dig(s){ return String(s||'').replace(/\D/g,''); }
+function c3Data(d){
+  if(!d) return '—';
+  const s = String(d);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ const [y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; }
+  const dt = new Date(s); return isNaN(dt) ? '—' : dt.toLocaleDateString('pt-BR');
+}
+function c3DataHora(d){ if(!d) return '—'; const dt=new Date(d); return isNaN(dt)?'—':dt.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}); }
+function c3ParaInputDT(iso){ if(!iso) return ''; const d=new Date(iso); if(isNaN(d)) return ''; return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+function c3Hoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function c3Iniciais(n){ const p=String(n||'?').trim().split(/\s+/).filter(x=>!/^(da|de|do|das|dos|e)$/i.test(x)); return ((p[0]||'?')[0]+((p.length>1?p[p.length-1]:'')[0]||'')).toUpperCase(); }
+function c3Idade(n){ if(!n) return null; const d=new Date(n+'T00:00:00'); if(isNaN(d)) return null; const h=new Date(); let i=h.getFullYear()-d.getFullYear(); const m=h.getMonth()-d.getMonth(); if(m<0||(m===0&&h.getDate()<d.getDate())) i--; return i; }
+function c3Num(v){ if(v===''||v==null) return null; const n=parseFloat(String(v).replace(',','.')); return isNaN(n)?null:n; }
+function c3Val(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function c3OuNull(v){ return v==='' ? null : v; }
+function c3FaltaTabela(msg){ return /PGRST205|42P01|could not find the table|does not exist|schema cache/i.test(msg||''); }
+function c3Cat(k){ return C3_CAT[k] || C3_CAT.outros; }
+function c3Ch(id){ return C3.ch.find(x=>x.id===id) || null; }
+function c3Mo(id){ return C3.mo.find(x=>x.id===id) || null; }
+function c3MoDaCh(chId){ return C3.mo.filter(m=>m.chacara_id===chId); }
+function c3TemGeo(o){ return o && o.lat!=null && o.lng!=null; }
+function c3GeoMorador(m){ if(c3TemGeo(m)) return {lat:m.lat,lng:m.lng,origem:'própria'}; const c=c3Ch(m.chacara_id); return c3TemGeo(c)?{lat:c.lat,lng:c.lng,origem:'da chácara'}:null; }
+function c3GmapsUrl(o){
+  if(o && o.gmaps_link && /^https?:\/\//i.test(o.gmaps_link)) return o.gmaps_link;
+  if(c3TemGeo(o)) return `https://www.google.com/maps?q=${o.lat},${o.lng}`;
+  return null;
+}
+function c3CpfValido(c){
+  c = c3Dig(c); if(c.length!==11 || /^(\d)\1{10}$/.test(c)) return false;
+  let s=0; for(let i=0;i<9;i++) s+= +c[i]*(10-i); let d=(s*10)%11; if(d===10) d=0; if(d!==+c[9]) return false;
+  s=0; for(let i=0;i<10;i++) s+= +c[i]*(11-i); d=(s*10)%11; if(d===10) d=0; return d===+c[10];
+}
+function c3FmtCpf(c){ c=c3Dig(c); return c.length===11 ? c.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4') : c; }
+
+// Lê coordenadas de um link do Google Maps (ou de "lat, lng" digitado)
+function c3ParseGmaps(txt){
+  const s = String(txt||'').trim(); if(!s) return {erro:'vazio'};
+  const ok = (a,b)=>{ const lat=+a, lng=+b; return (lat>=-90&&lat<=90&&lng>=-180&&lng<=180) ? {lat,lng} : null; };
+  let m;
+  if((m = s.match(/^\s*(-?\d{1,2}\.\d+)\s*[,;\s]\s*(-?\d{1,3}\.\d+)\s*$/))) return ok(m[1],m[2]) || {erro:'fora'};
+  let dec = s; try { dec = decodeURIComponent(s); } catch(e){}
+  if((m = dec.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/)))                       return ok(m[1],m[2]) || {erro:'fora'};  // ponto exato do lugar
+  if((m = dec.match(/[?&](?:q|query|ll|destination|center|daddr)=(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/))) return ok(m[1],m[2]) || {erro:'fora'};
+  if((m = dec.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)))                            return ok(m[1],m[2]) || {erro:'fora'};  // centro da tela
+  if(/goo\.gl|maps\.app/i.test(s)) return {erro:'curto'};
+  return {erro:'nao'};
+}
+
+// ── carregamento ──
+async function c3Abrir(){
+  document.getElementById('c3AcoesTopo').style.display = c3PodeEditar() ? '' : 'none';
+  c3PreencherSelectsCat();
+  await c3Carregar();
+  c3RenderTudo();
+}
+
+async function c3Carregar(){
+  if(typeof showOv==='function') showOv('CARREGANDO CAPÃOZINHO 3...');
+  const ban = document.getElementById('c3Banner');
+  try {
+    const [ch,mo,pa,oc] = await Promise.all([
+      sbFetch('GET','c3_chacaras',   null,'select=*&order=nome.asc'),
+      sbFetch('GET','c3_moradores',  null,'select=*&order=nome.asc'),
+      sbFetch('GET','c3_passagens',  null,'select=*&order=data.desc.nullslast'),
+      sbFetch('GET','c3_ocorrencias',null,'select=*&order=data_hora.desc.nullslast')
+    ]);
+    C3.ch = ch||[]; C3.mo = mo||[]; C3.pa = pa||[]; C3.oc = oc||[]; C3.ok = true;
+    ban.innerHTML = '';
+  } catch(e){
+    C3.ok = false; C3.ch=[]; C3.mo=[]; C3.pa=[]; C3.oc=[];
+    ban.innerHTML = c3FaltaTabela(e.message)
+      ? `<div class="c3-banner"><b>Banco do Capãozinho 3 ainda não criado.</b><br>Peça ao administrador para rodar o arquivo <code>migration_v4_capaozinho3.sql</code> no Supabase (SQL Editor → colar → Run). Depois é só recarregar esta página.</div>`
+      : `<div class="c3-banner"><b>Não foi possível carregar os dados.</b><br>${esc(e.message)}</div>`;
+  } finally { if(typeof hideOv==='function') hideOv(); }
+}
+
+function c3PreencherSelectsCat(){
+  const opts = Object.entries(C3_CAT).map(([k,v])=>`<option value="${k}">${v.l}</option>`).join('');
+  ['c3MapFiltCat','c3ChFiltCat'].forEach(id=>{
+    const el=document.getElementById(id); if(el && el.options.length<=1) el.insertAdjacentHTML('beforeend', opts);
+  });
+}
+
+function c3RenderTudo(){
+  document.getElementById('c3CntCh').textContent = C3.ch.length;
+  document.getElementById('c3CntMo').textContent = C3.mo.length;
+  const sel = document.getElementById('c3MoFiltCh'); const atual = sel.value;
+  sel.innerHTML = '<option value="">Todas as chácaras</option>' + C3.ch.map(c=>`<option value="${c.id}">${esc(c.nome)}${c.identificacao?' · '+esc(c.identificacao):''}</option>`).join('');
+  sel.value = atual;
+  c3RenderPainel();
+  c3RenderChacaras();
+  c3RenderMoradores();
+  if(c3MapInst) c3RenderMarkers();
+  if(c3Val('c3Busca')) c3ExecBusca();
+}
+
+function c3Tab(t){
+  C3.tab = t;
+  if(c3Val('c3Busca')){ document.getElementById('c3Busca').value=''; document.getElementById('c3SearchWrap').classList.remove('has'); }
+  document.querySelectorAll('#c3Tabs .c3-tab').forEach(b=>b.classList.toggle('active', b.dataset.t===t));
+  const map = {painel:'c3PanePainel',mapa:'c3PaneMapa',chacaras:'c3PaneChacaras',moradores:'c3PaneMoradores'};
+  document.querySelectorAll('#page-capaozinho3 .c3-pane').forEach(p=>p.classList.toggle('active', p.id===map[t]));
+  if(t==='mapa'){
+    c3InitMapa();
+    setTimeout(()=>{ c3MapInst.invalidateSize(); c3RenderMarkers(); }, 60);
+  }
+}
+
+// ── pendências ──
+function c3Pendencias(c){
+  const r = [];
+  if(!c3TemGeo(c)) r.push('Sem localização');
+  if(!c3MoDaCh(c.id).length) r.push('Sem moradores cadastrados');
+  const ref = new Date(c.atualizado_em || c.criado_em);
+  if(!isNaN(ref) && (Date.now()-ref.getTime()) > C3_PEND_DIAS*864e5) r.push(`Sem atualização há +${C3_PEND_DIAS} dias`);
+  return r;
+}
+function c3OcDaCh(chId){
+  const ids = new Set(c3MoDaCh(chId).map(m=>m.id));
+  return C3.oc.filter(o=>o.chacara_id===chId || ids.has(o.morador_id));
+}
+
+// ── PAINEL ──
+function c3RenderPainel(){
+  const comGeo = C3.ch.filter(c3TemGeo).length;
+  const pend = C3.ch.filter(c=>c3Pendencias(c).length);
+  const k = (n,l,cor,acao)=>`<div class="c3-kpi ${acao?'click':''}" style="--k:${cor}" ${acao?`onclick="${acao}"`:''}><div class="c3-kpi-n">${n}</div><div class="c3-kpi-l">${l}</div></div>`;
+  document.getElementById('c3Kpis').innerHTML =
+    k(C3.ch.length,'Chácaras cadastradas','#1E3A8A',"c3Tab('chacaras')") +
+    k(C3.mo.length,'Moradores cadastrados','#0891B2',"c3Tab('moradores')") +
+    k(`${comGeo}<small style="font-size:14px;color:var(--neutral-400);font-weight:600"> / ${C3.ch.length}</small>`,'Com localização no mapa','#059669',"c3Tab('mapa')") +
+    k(C3.oc.length,'Registros de ocorrências','#DC2626') +
+    k(C3.pa.length,'Registros históricos (passagens)','#7C3AED') +
+    k(pend.length,'Pendentes de atualização','#D97706',"document.getElementById('c3ChFiltSit').value='pend';c3Tab('chacaras');c3RenderChacaras()");
+
+  // por categoria
+  const cats = Object.keys(C3_CAT).map(key=>({key, n:C3.ch.filter(c=>(c.categoria||'outros')===key).length}));
+  const maxC = Math.max(1,...cats.map(c=>c.n));
+  document.getElementById('c3ChartCat').innerHTML = C3.ch.length ? cats.map(c=>`
+    <div class="c3-bar"><div class="c3-bar-l"><span class="c3-dot" style="background:${C3_CAT[c.key].c}"></span>${C3_CAT[c.key].l}</div>
+    <div class="c3-bar-t"><div class="c3-bar-f" style="width:${c.n/maxC*100}%;background:${C3_CAT[c.key].c}"></div></div><div class="c3-bar-v">${c.n}</div></div>`).join('')
+    : '<div class="c3-empty">Nenhuma chácara cadastrada ainda.</div>';
+
+  // ocorrências por mês (6 meses)
+  const meses = []; const hoje = new Date();
+  for(let i=5;i>=0;i--){ const d=new Date(hoje.getFullYear(),hoje.getMonth()-i,1); meses.push({y:d.getFullYear(),m:d.getMonth(),l:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),n:0}); }
+  C3.oc.forEach(o=>{ const d=new Date(o.data_hora||o.criado_em); const x=meses.find(mm=>mm.y===d.getFullYear()&&mm.m===d.getMonth()); if(x) x.n++; });
+  const maxM = Math.max(1,...meses.map(m=>m.n));
+  document.getElementById('c3ChartMes').innerHTML = `<div class="c3-cols">${meses.map(m=>`
+    <div class="c3-col"><div class="c3-col-v">${m.n}</div><div class="c3-col-b" style="height:${m.n/maxM*100}%"></div><div class="c3-col-l">${m.l}</div></div>`).join('')}</div>`;
+
+  // naturezas
+  const nat = {};
+  [...C3.oc,...C3.pa].forEach(r=>{ const n=String(r.natureza||'').trim(); if(!n) return; const key=c3Norm(n); nat[key]=nat[key]||{l:n,n:0}; nat[key].n++; });
+  const top = Object.values(nat).sort((a,b)=>b.n-a.n).slice(0,6); const maxN=Math.max(1,...top.map(t=>t.n));
+  document.getElementById('c3ChartNat').innerHTML = top.length ? top.map(t=>`
+    <div class="c3-bar"><div class="c3-bar-l" title="${esc(t.l)}">${esc(t.l)}</div><div class="c3-bar-t"><div class="c3-bar-f" style="width:${t.n/maxN*100}%;background:#7C3AED"></div></div><div class="c3-bar-v">${t.n}</div></div>`).join('')
+    : '<div class="c3-empty">Sem registros ainda.</div>';
+
+  // pendências
+  document.getElementById('c3PendInfo').textContent = pend.length ? `${pend.length} propriedade${pend.length>1?'s':''}` : '';
+  document.getElementById('c3Pend').innerHTML = pend.length ? `<div class="c3-list">${pend.slice(0,6).map(c=>`
+    <div class="c3-item" onclick="c3FichaChacara('${c.id}')" style="padding:10px 12px">
+      <div class="c3-item-b"><div class="c3-item-t">${esc(c.nome)}${c.identificacao?` <span style="color:var(--neutral-400);font-weight:500">· ${esc(c.identificacao)}</span>`:''}</div>
+      <div class="c3-item-s" style="white-space:normal">${c3Pendencias(c).map(p=>`<span class="c3-tag warn" style="margin:3px 4px 0 0;display:inline-block">${p}</span>`).join('')}</div></div>
+    </div>`).join('')}</div>${pend.length>6?`<button class="btn btn-ghost btn-sm btn-full" style="margin-top:8px" onclick="document.getElementById('c3ChFiltSit').value='pend';c3Tab('chacaras');c3RenderChacaras()">Ver todas (${pend.length})</button>`:''}`
+    : '<div class="c3-empty">Tudo em dia. ✔</div>';
+}
+
+// ── MAPA ──
+function c3InitMapa(){
+  if(c3MapInst) return;
+  const sat  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'Imagens © Esri, Maxar, Earthstar Geographics'});
+  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'});
+  c3MapInst = L.map('c3Map', {center:C3_CENTRO, zoom:14, layers:[sat], scrollWheelZoom:true});
+  L.control.layers({'Satélite':sat,'Ruas':ruas}, null, {position:'topright'}).addTo(c3MapInst);
+  c3Layer = L.layerGroup().addTo(c3MapInst);
+  c3MapInst.on('click', e=>{
+    if(!c3PodeEditar()) return;
+    const {lat,lng} = e.latlng;
+    L.popup().setLatLng(e.latlng).setContent(`<div class="c3-pop"><div class="c3-pop-s">${lat.toFixed(6)}, ${lng.toFixed(6)}</div><div class="c3-pop-a"><button class="pri" onclick="c3MapInst.closePopup();c3FormChacara(null,{lat:${lat.toFixed(7)},lng:${lng.toFixed(7)}})">+ Cadastrar chácara aqui</button></div></div>`).openOn(c3MapInst);
+  });
+  document.getElementById('c3Legend').innerHTML = Object.values(C3_CAT).map(v=>`<span><i class="c3-dot" style="background:${v.c}"></i>${v.l}</span>`).join('') + '<span style="color:var(--neutral-400)">· número no pino = moradores cadastrados</span>';
+}
+
+function c3PopupHtml(c){
+  const mor = c3MoDaCh(c.id).length; const oc = c3OcDaCh(c.id).length; const g = c3GmapsUrl(c);
+  return `<div class="c3-pop">
+    <h4>${esc(c.nome)}</h4>
+    <div class="c3-pop-s">${c.identificacao?esc(c.identificacao)+' · ':''}${c3Cat(c.categoria).l}</div>
+    <dl>
+      <dt>Proprietário</dt><dd>${esc(c.proprietario||'—')}</dd>
+      <dt>Moradores</dt><dd>${mor} cadastrado${mor===1?'':'s'}${c.qtd_moradores!=null?` · ${c.qtd_moradores} declarado${c.qtd_moradores===1?'':'s'}`:''}</dd>
+      <dt>Telefone</dt><dd>${esc(c.telefone||'—')}</dd>
+      ${oc?`<dt>Ocorrências</dt><dd style="color:var(--danger)">${oc}</dd>`:''}
+    </dl>
+    <div class="c3-pop-a">
+      <button class="pri" onclick="c3FichaChacara('${c.id}')">Ver ficha</button>
+      ${g?`<a href="${esc(g)}" target="_blank" rel="noopener">Google Maps</a>`:''}
+    </div></div>`;
+}
+
+function c3FiltrarMapa(){
+  const q = c3Norm(c3Val('c3MapFiltTxt')); const cat = c3Val('c3MapFiltCat');
+  return C3.ch.filter(c=>{
+    if(!c3TemGeo(c)) return false;
+    if(cat && (c.categoria||'outros')!==cat) return false;
+    if(!q) return true;
+    const alvo = [c.nome,c.identificacao,c.proprietario,c.endereco,...c3MoDaCh(c.id).map(m=>m.nome)].map(c3Norm).join(' | ');
+    return alvo.includes(q);
+  });
+}
+
+function c3RenderMarkers(){
+  if(!c3MapInst) return;
+  c3Layer.clearLayers(); c3Markers = {};
+  const lista = c3FiltrarMapa();
+  lista.forEach(c=>{
+    const cor = c3Cat(c.categoria).c; const n = c3MoDaCh(c.id).length;
+    const icon = L.divIcon({className:'', html:`<div class="c3-pin" style="background:${cor}"><b>${n||''}</b></div>`, iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28]});
+    const mk = L.marker([c.lat,c.lng], {icon, title:c.nome}).bindPopup(()=>c3PopupHtml(c), {maxWidth:300});
+    mk.addTo(c3Layer); c3Markers[c.id] = mk;
+  });
+  const semGeo = C3.ch.filter(c=>!c3TemGeo(c)).length;
+  document.getElementById('c3MapInfo').innerHTML = `${lista.length} propriedade${lista.length===1?'':'s'} no mapa${semGeo?` · <b style="color:var(--warning)">${semGeo} sem localização</b>`:''}. Clique em um marcador para ver a ficha${c3PodeEditar()?' ou em qualquer ponto do mapa para cadastrar uma chácara ali':''}.`;
+  if(!C3.enquadrado && lista.length){ C3.enquadrado = true; c3EnquadrarMapa(); }
+}
+
+function c3EnquadrarMapa(){
+  if(!c3MapInst) return;
+  const pts = c3FiltrarMapa().map(c=>[c.lat,c.lng]);
+  if(!pts.length){ c3MapInst.setView(C3_CENTRO, 14); return; }
+  if(pts.length===1) c3MapInst.setView(pts[0], 16);
+  else c3MapInst.fitBounds(pts, {padding:[60,60], maxZoom:16});
+}
+
+function c3VerNoMapa(id){
+  const c = c3Ch(id); if(!c3TemGeo(c)){ toast('Esta chácara ainda não tem localização.','info'); return; }
+  c3FecharModal();
+  document.getElementById('c3MapFiltTxt').value=''; document.getElementById('c3MapFiltCat').value='';
+  C3.enquadrado = true;
+  c3Tab('mapa');
+  setTimeout(()=>{ c3MapInst.setView([c.lat,c.lng], 18); const mk=c3Markers[id]; if(mk) mk.openPopup(); }, 150);
+}
+
+// ── LISTAS ──
+function c3ItemChacara(c, q){
+  const cat = c3Cat(c.categoria); const mor = c3MoDaCh(c.id).length; const oc = c3OcDaCh(c.id).length; const pend = c3Pendencias(c);
+  return `<div class="c3-item" onclick="c3FichaChacara('${c.id}')">
+    <div class="c3-av" style="background:${cat.c}">${ICON('chacara',{size:20})}</div>
+    <div class="c3-item-b">
+      <div class="c3-item-t">${c3Hl(c.nome,q)}${c.identificacao?` <span style="color:var(--neutral-400);font-weight:500">· ${c3Hl(c.identificacao,q)}</span>`:''}</div>
+      <div class="c3-item-s">${cat.l} · ${c.proprietario?'Prop.: '+c3Hl(c.proprietario,q)+' · ':''}${mor} morador${mor===1?'':'es'}${c.endereco?' · '+c3Hl(c.endereco,q):''}</div>
+    </div>
+    <div class="c3-tags">
+      ${!c3TemGeo(c)?'<span class="c3-tag warn">Sem localização</span>':''}
+      ${oc?`<span class="c3-tag err">${oc} ocorr.</span>`:''}
+      ${pend.length && c3TemGeo(c)?'<span class="c3-tag warn">Atualizar</span>':''}
+    </div></div>`;
+}
+function c3ItemMorador(m, q){
+  const ch = c3Ch(m.chacara_id); const pa = C3.pa.filter(p=>p.morador_id===m.id).length; const oc = C3.oc.filter(o=>o.morador_id===m.id).length; const id = c3Idade(m.nascimento);
+  return `<div class="c3-item" onclick="c3FichaMorador('${m.id}')">
+    <div class="c3-av" style="background:var(--brand-navy)">${esc(c3Iniciais(m.nome))}</div>
+    <div class="c3-item-b">
+      <div class="c3-item-t">${c3Hl(m.nome,q)}${id!=null?` <span style="color:var(--neutral-400);font-weight:500">· ${id} anos</span>`:''}</div>
+      <div class="c3-item-s">${C3_VINC[m.vinculo]||'Morador'} · ${ch?c3Hl(ch.nome,q):'<i>sem chácara</i>'}${m.telefones?' · '+c3Hl(m.telefones,q):''}</div>
+    </div>
+    <div class="c3-tags">
+      ${pa?`<span class="c3-tag nav">${pa} passag.</span>`:''}
+      ${oc?`<span class="c3-tag err">${oc} ocorr.</span>`:''}
+    </div></div>`;
+}
+
+function c3RenderChacaras(){
+  const cat = c3Val('c3ChFiltCat'), sit = c3Val('c3ChFiltSit'), ord = c3Val('c3ChOrd') || 'nome';
+  let l = C3.ch.filter(c=>{
+    if(cat && (c.categoria||'outros')!==cat) return false;
+    if(sit==='semgeo' && c3TemGeo(c)) return false;
+    if(sit==='pend' && !c3Pendencias(c).length) return false;
+    if(sit==='comoc' && !c3OcDaCh(c.id).length) return false;
+    return true;
+  });
+  if(ord==='ident') l.sort((a,b)=>String(a.identificacao||'~').localeCompare(String(b.identificacao||'~'),'pt-BR',{numeric:true}));
+  else if(ord==='recente') l.sort((a,b)=>new Date(b.criado_em)-new Date(a.criado_em));
+  else l.sort((a,b)=>String(a.nome).localeCompare(String(b.nome),'pt-BR'));
+  document.getElementById('c3ListCh').innerHTML = l.length ? l.map(c=>c3ItemChacara(c,'')).join('')
+    : `<div class="c3-card c3-empty">${C3.ch.length?'Nenhuma chácara com esse filtro.':'Nenhuma chácara cadastrada.'+(c3PodeEditar()&&C3.ok?'<br><br><button class="btn btn-primary" onclick="c3FormChacara()">Cadastrar a primeira</button>':'')}</div>`;
+}
+
+function c3RenderMoradores(){
+  const ch = c3Val('c3MoFiltCh'), h = c3Val('c3MoFiltHist');
+  const l = C3.mo.filter(m=>{
+    if(ch && m.chacara_id!==ch) return false;
+    if(h==='semch' && m.chacara_id) return false;
+    if(h==='comreg' && !C3.pa.some(p=>p.morador_id===m.id) && !C3.oc.some(o=>o.morador_id===m.id)) return false;
+    return true;
+  });
+  document.getElementById('c3ListMo').innerHTML = l.length ? l.map(m=>c3ItemMorador(m,'')).join('')
+    : `<div class="c3-card c3-empty">${C3.mo.length?'Nenhum morador com esse filtro.':'Nenhum morador cadastrado.'}</div>`;
+}
+
+// ── PESQUISA INTELIGENTE ──
+function c3Hl(txt, q){
+  const t = String(txt||''); if(!q) return esc(t);
+  const n = Array.from(t).map(c3NormCh);
+  if(n.some(x=>x.length!==1)) return esc(t);
+  const i = n.join('').indexOf(q); if(i<0) return esc(t);
+  const a = Array.from(t);
+  return esc(a.slice(0,i).join('')) + '<mark>' + esc(a.slice(i,i+q.length).join('')) + '</mark>' + esc(a.slice(i+q.length).join(''));
+}
+function c3OnBusca(){
+  document.getElementById('c3SearchWrap').classList.toggle('has', !!c3Val('c3Busca'));
+  clearTimeout(c3BuscaT); c3BuscaT = setTimeout(c3ExecBusca, 180);
+}
+function c3LimparBusca(){
+  document.getElementById('c3Busca').value=''; document.getElementById('c3SearchWrap').classList.remove('has');
+  c3Tab(C3.tab);
+}
+function c3ExecBusca(){
+  const raw = c3Val('c3Busca'); const pane = document.getElementById('c3PaneBusca');
+  if(!raw){ c3Tab(C3.tab); return; }
+  document.querySelectorAll('#page-capaozinho3 .c3-pane').forEach(p=>p.classList.toggle('active', p===pane));
+  document.querySelectorAll('#c3Tabs .c3-tab').forEach(b=>b.classList.remove('active'));
+  const q = c3Norm(raw); const qd = c3Dig(raw); const usaDig = qd.length>=4;
+  const bate = (campos, digCampos=[]) => campos.some(v=>c3Norm(v).includes(q)) || (usaDig && digCampos.some(v=>c3Dig(v).includes(qd)));
+  const ch = C3.ch.filter(c=>bate([c.nome,c.identificacao,c.endereco,c.proprietario,c.telefone],[c.telefone]));
+  const mo = C3.mo.filter(m=>{ const c=c3Ch(m.chacara_id); return bate([m.nome,m.telefones,m.endereco,c&&c.nome,c&&c.identificacao],[m.telefones,m.cpf]); });
+  const oc = C3.oc.filter(o=>bate([o.numero,o.natureza,o.local,o.pessoas_relacionadas]));
+  const pa = C3.pa.filter(p=>bate([p.numero,p.natureza,p.unidade]));
+  const reg = (r,tipo)=>{ const m=c3Mo(r.morador_id); return `<div class="c3-item" onclick="${m?`c3FichaMorador('${m.id}','${tipo}')`:''}">
+    <div class="c3-av" style="background:${tipo==='oc'?'var(--danger)':'#7C3AED'}">${tipo==='oc'?'OC':'PS'}</div>
+    <div class="c3-item-b"><div class="c3-item-t">${c3Hl(r.natureza,q)}${r.numero?` · nº ${c3Hl(r.numero,q)}`:''}</div>
+    <div class="c3-item-s">${tipo==='oc'?c3DataHora(r.data_hora):c3Data(r.data)} · ${m?esc(m.nome):'<i>sem pessoa vinculada</i>'}</div></div></div>`; };
+  const grupo = (tit, arr, fn) => arr.length ? `<div class="c3-res-g"><h4>${tit} · ${arr.length}</h4><div class="c3-list">${arr.slice(0,30).map(fn).join('')}</div></div>` : '';
+  const html = grupo('Chácaras',ch,c=>c3ItemChacara(c,q)) + grupo('Moradores',mo,m=>c3ItemMorador(m,q)) + grupo('Ocorrências',oc,o=>reg(o,'oc')) + grupo('Passagens',pa,p=>reg(p,'pa'));
+  pane.innerHTML = html || `<div class="c3-card c3-empty">Nada encontrado para "<b>${esc(raw)}</b>".</div>`;
+}
+
+// ── MODAL ──
+function c3AbrirModal(titulo, html){
+  document.getElementById('c3ModalTitle').innerHTML = titulo;
+  document.getElementById('c3ModalBody').innerHTML = html;
+  document.getElementById('c3Modal').classList.add('open');
+  document.querySelector('#c3Modal .modal').scrollTop = 0;
+}
+function c3FecharModal(){
+  document.getElementById('c3Modal').classList.remove('open');
+  if(c3MiniInst){ c3MiniInst.remove(); c3MiniInst=null; c3MiniMk=null; }
+}
+function c3Campo(lbl, inner, cls=''){ return `<div class="fg ${cls}"><label>${lbl}</label>${inner}</div>`; }
+function c3Info(lbl, val, cls=''){ return `<div class="${cls}"><div class="c3-dl">${lbl}</div><div class="c3-dv">${val||'—'}</div></div>`; }
+function c3ExigeEditar(){ if(!c3PodeEditar()){ toast('Seu perfil é somente leitura neste módulo.','error'); return false; } if(!C3.ok){ toast('Banco do Capãozinho 3 indisponível.','error'); return false; } return true; }
+
+// ── CHÁCARA: formulário ──
+function c3FormChacara(id, preset){
+  if(!c3ExigeEditar()) return;
+  const c = id ? c3Ch(id) : null; const p = preset||{};
+  const v = (k, d='') => esc(c ? (c[k]??d) : (p[k]??d));
+  const opts = Object.entries(C3_CAT).map(([k,x])=>`<option value="${k}" ${((c&&c.categoria)||'residencial')===k?'selected':''}>${x.l}</option>`).join('');
+  const morExist = c ? c3MoDaCh(c.id) : [];
+  c3AbrirModal(c ? 'Editar chácara' : 'Nova chácara', `
+    <div class="c3-fsec">Identificação</div>
+    <div class="fgrid">
+      ${c3Campo('Nome da chácara <span class="c3-req">*</span>', `<input id="c3fNome" value="${v('nome')}" placeholder="Ex.: Chácara Boa Vista">`)}
+      ${c3Campo('Nº / identificação', `<input id="c3fIdent" value="${v('identificacao')}" placeholder="Ex.: Chácara 47, Lote 12">`)}
+      ${c3Campo('Categoria', `<select id="c3fCat">${opts}</select>`)}
+      ${c3Campo('Endereço / referência', `<input id="c3fEnd" value="${v('endereco')}" placeholder="Rua, ramal, ponto de referência">`)}
+    </div>
+    <div class="c3-fsec">Localização</div>
+    ${c3Campo('Link do Google Maps', `<div style="display:flex;gap:8px"><input id="c3fLink" value="${v('gmaps_link')}" placeholder="Cole o link do Google Maps ou 'lat, lng'" onchange="c3LerLink()" onpaste="setTimeout(c3LerLink,30)"><button type="button" class="btn btn-outline btn-sm" onclick="c3LerLink()">Ler</button></div>`)}
+    <div class="c3-geo-msg" id="c3fGeoMsg"></div>
+    <div class="fgrid">
+      ${c3Campo('Latitude', `<input id="c3fLat" inputmode="decimal" value="${c?(c.lat??''):(p.lat??'')}" placeholder="-15.676000" oninput="c3SyncMini()">`)}
+      ${c3Campo('Longitude', `<input id="c3fLng" inputmode="decimal" value="${c?(c.lng??''):(p.lng??'')}" placeholder="-48.187000" oninput="c3SyncMini()">`)}
+    </div>
+    <div id="c3MiniMap"></div>
+    <div style="font-size:11.5px;color:var(--neutral-500);margin-bottom:var(--sp-2)">Clique no mapa para marcar o ponto exato da propriedade. Arraste o pino para ajustar.</div>
+
+    <div class="c3-fsec">Proprietário e contato</div>
+    <div class="fgrid">
+      ${c3Campo('Nome do proprietário', `<input id="c3fProp" value="${v('proprietario')}">`)}
+      ${c3Campo('Telefone para contato', `<input id="c3fTel" inputmode="tel" value="${v('telefone')}" placeholder="(61) 9 0000-0000">`)}
+      ${c3Campo('Quantidade de moradores (declarada)', `<input id="c3fQtd" type="number" min="0" value="${c?(c.qtd_moradores??''):''}">`)}
+    </div>
+
+    <div class="c3-fsec">Moradores</div>
+    ${morExist.length ? `<div style="font-size:12.5px;color:var(--neutral-600);margin-bottom:10px">Já vinculados: ${morExist.map(m=>`<b>${esc(m.nome)}</b>`).join(', ')}. Para editar um morador, abra a ficha dele.</div>` : ''}
+    <div id="c3fMRows"></div>
+    <button type="button" class="btn btn-outline btn-sm" onclick="c3AddMRow()">${ICON('novo',{size:14})} Adicionar morador</button>
+
+    <div class="c3-fsec">Administrativo</div>
+    ${c3Campo('Observações administrativas', `<textarea id="c3fObs" placeholder="Acesso, características da propriedade, cães, portões…">${v('observacoes')}</textarea>`)}
+    <div class="fgrid">
+      ${c3Campo('Data de cadastramento', `<input id="c3fData" type="date" value="${c?(c.data_cadastro||''):c3Hoje()}">`)}
+      ${c3Campo('Responsável pelo cadastro', `<input id="c3fResp" value="${esc(c?(c.responsavel_nome||'—'):(CU&&CU.nome||''))}" disabled>`)}
+    </div>
+
+    <div class="c3-mfoot">
+      <button class="btn btn-outline" onclick="${c?`c3FichaChacara('${c.id}')`:'c3FecharModal()'}">Cancelar</button>
+      <button class="btn btn-primary" id="c3fSalvar" onclick="c3SalvarChacara(${c?`'${c.id}'`:'null'})">${ICON('check',{size:16})} Salvar chácara</button>
+    </div>`);
+  if(!c) c3AddMRow();
+  setTimeout(c3InitMini, 80);
+}
+
+function c3AddMRow(){
+  const box = document.getElementById('c3fMRows'); if(!box) return;
+  const div = document.createElement('div'); div.className='c3-mrow';
+  div.innerHTML = `<input class="c3-mr-nome" placeholder="Nome completo do morador"><input class="c3-mr-tel" inputmode="tel" placeholder="Telefone"><input class="c3-mr-nasc" type="date" title="Data de nascimento (opcional)"><button type="button" title="Remover" onclick="this.parentNode.remove()">✕</button>`;
+  box.appendChild(div);
+}
+
+function c3InitMini(){
+  if(c3MiniInst){ c3MiniInst.remove(); c3MiniInst=null; c3MiniMk=null; }
+  const el = document.getElementById('c3MiniMap'); if(!el) return;
+  const lat = c3Num(c3Val('c3fLat')), lng = c3Num(c3Val('c3fLng'));
+  const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'© Esri'});
+  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OSM'});
+  const temPonto = lat!=null && lng!=null;
+  let centro = C3_CENTRO, zoom = 14;
+  if(temPonto){ centro=[lat,lng]; zoom=17; }
+  else { const g = C3.ch.filter(c3TemGeo); if(g.length){ centro=[g.reduce((s,c)=>s+c.lat,0)/g.length, g.reduce((s,c)=>s+c.lng,0)/g.length]; zoom=15; } }
+  c3MiniInst = L.map(el, {center:centro, zoom, layers:[sat]});
+  L.control.layers({'Satélite':sat,'Ruas':ruas}, null, {position:'topright'}).addTo(c3MiniInst);
+  C3.ch.filter(c3TemGeo).forEach(c=>L.circleMarker([c.lat,c.lng],{radius:4,color:'#fff',weight:1,fillColor:c3Cat(c.categoria).c,fillOpacity:.9}).bindTooltip(esc(c.nome)).addTo(c3MiniInst));
+  if(temPonto) c3MiniMarcar(lat,lng,false);
+  c3MiniInst.on('click', e=>c3MiniMarcar(e.latlng.lat, e.latlng.lng, true));
+  setTimeout(()=>c3MiniInst && c3MiniInst.invalidateSize(), 200);
+}
+function c3MiniMarcar(lat,lng,preencher){
+  if(!c3MiniInst) return;
+  if(c3MiniMk) c3MiniMk.setLatLng([lat,lng]);
+  else {
+    c3MiniMk = L.marker([lat,lng],{draggable:true}).addTo(c3MiniInst);
+    c3MiniMk.on('dragend', ()=>{ const p=c3MiniMk.getLatLng(); c3SetLatLng(p.lat,p.lng); });
+  }
+  if(preencher) c3SetLatLng(lat,lng);
+}
+function c3SetLatLng(lat,lng){
+  document.getElementById('c3fLat').value = (+lat).toFixed(7);
+  document.getElementById('c3fLng').value = (+lng).toFixed(7);
+  const m = document.getElementById('c3fGeoMsg'); m.className='c3-geo-msg ok'; m.textContent='✓ Ponto marcado no mapa.';
+}
+function c3SyncMini(){
+  const lat=c3Num(c3Val('c3fLat')), lng=c3Num(c3Val('c3fLng'));
+  if(lat==null||lng==null||lat<-90||lat>90||lng<-180||lng>180||!c3MiniInst) return;
+  c3MiniMarcar(lat,lng,false); c3MiniInst.setView([lat,lng], Math.max(c3MiniInst.getZoom(),16));
+}
+function c3LerLink(){
+  const msg = document.getElementById('c3fGeoMsg'); const txt = c3Val('c3fLink'); if(!txt){ msg.textContent=''; return; }
+  const r = c3ParseGmaps(txt);
+  if(r.lat!=null){
+    document.getElementById('c3fLat').value = r.lat; document.getElementById('c3fLng').value = r.lng;
+    c3SyncMini();
+    const longe = r.lat<-17 || r.lat>-14 || r.lng<-49.5 || r.lng>-46.5;
+    msg.className = 'c3-geo-msg '+(longe?'warn':'ok');
+    msg.textContent = longe ? `⚠ Coordenadas lidas (${r.lat}, ${r.lng}), mas ficam fora do DF/entorno. Confira o link.` : `✓ Localização lida do link: ${r.lat}, ${r.lng}`;
+  } else {
+    msg.className = 'c3-geo-msg '+(r.erro==='curto'?'warn':'err');
+    msg.textContent = r.erro==='curto'
+      ? 'Link curto (maps.app.goo.gl) não traz as coordenadas. Abra o link no navegador e copie o endereço completo da barra, ou marque o ponto no mapa abaixo.'
+      : r.erro==='fora' ? 'Coordenadas inválidas no link.' : 'Não encontrei coordenadas nesse link. Marque o ponto clicando no mapa abaixo.';
+  }
+}
+
+async function c3SalvarChacara(id){
+  if(!c3ExigeEditar()) return;
+  const nome = c3Val('c3fNome'); if(!nome){ toast('Informe o nome da chácara.','error'); document.getElementById('c3fNome').focus(); return; }
+  const lat = c3Num(c3Val('c3fLat')), lng = c3Num(c3Val('c3fLng'));
+  if((lat==null) !== (lng==null)){ toast('Preencha latitude E longitude, ou deixe as duas vazias.','error'); return; }
+  if(lat!=null && (lat<-90||lat>90||lng<-180||lng>180)){ toast('Coordenadas inválidas.','error'); return; }
+  const qtd = c3Val('c3fQtd');
+  const dados = {
+    nome, identificacao:c3OuNull(c3Val('c3fIdent')), categoria:c3Val('c3fCat')||'residencial', endereco:c3OuNull(c3Val('c3fEnd')),
+    gmaps_link:c3OuNull(c3Val('c3fLink')), lat, lng, proprietario:c3OuNull(c3Val('c3fProp')), telefone:c3OuNull(c3Val('c3fTel')),
+    qtd_moradores: qtd===''?null:Math.max(0,parseInt(qtd,10)||0), observacoes:c3OuNull(c3Val('c3fObs')), data_cadastro:c3Val('c3fData')||c3Hoje()
+  };
+  const novosMor = Array.from(document.querySelectorAll('#c3fMRows .c3-mrow')).map(r=>({
+    nome:r.querySelector('.c3-mr-nome').value.trim(), telefones:c3OuNull(r.querySelector('.c3-mr-tel').value.trim()), nascimento:c3OuNull(r.querySelector('.c3-mr-nasc').value)
+  })).filter(m=>m.nome);
+  const btn = document.getElementById('c3fSalvar'); btn.disabled = true;
+  try {
+    let chId = id;
+    if(id){
+      await sbFetch('PATCH','c3_chacaras',dados,`id=eq.${enc(id)}`);
+      logAudit('c3_chacara_editar','c3_chacaras',id,{nome});
+    } else {
+      dados.responsavel_nome = CU.nome;
+      const r = await sbFetch('POST','c3_chacaras',dados);
+      chId = (Array.isArray(r)?r[0]:r).id;
+      logAudit('c3_chacara_criar','c3_chacaras',chId,{nome});
+    }
+    if(novosMor.length){
+      const rows = novosMor.map(m=>({...m, chacara_id:chId, vinculo:'morador', endereco:dados.endereco, criado_por_nome:CU.nome}));
+      const r = await sbFetch('POST','c3_moradores',rows);
+      (r||[]).forEach(m=>logAudit('c3_morador_criar','c3_moradores',m.id,{nome:m.nome}));
+    }
+    toast(id?'Chácara atualizada.':'Chácara cadastrada.','success');
+    await c3Carregar(); c3RenderTudo(); c3FichaChacara(chId);
+  } catch(e){ toast('Erro ao salvar: '+e.message,'error'); btn.disabled = false; }
+}
+
+async function c3ExcluirChacara(id){
+  if(!c3PodeExcluir()){ toast('Apenas administrador ou supervisor pode excluir.','error'); return; }
+  const c = c3Ch(id); if(!c) return;
+  const n = c3MoDaCh(id).length;
+  if(!confirm(`Excluir a chácara "${c.nome}"?${n?`\n\nOs ${n} morador(es) vinculados NÃO serão apagados — ficam sem chácara.`:''}`)) return;
+  try {
+    await sbFetch('DELETE','c3_chacaras',null,`id=eq.${enc(id)}`);
+    logAudit('c3_chacara_excluir','c3_chacaras',id,{nome:c.nome});
+    toast('Chácara excluída.','success'); c3FecharModal(); await c3Carregar(); c3RenderTudo();
+  } catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+// ── CHÁCARA: ficha ──
+function c3FichaChacara(id){
+  const c = c3Ch(id); if(!c){ c3FecharModal(); return; }
+  const cat = c3Cat(c.categoria); const mor = c3MoDaCh(id); const ocs = c3OcDaCh(id); const g = c3GmapsUrl(c); const pend = c3Pendencias(c);
+  if(c3MiniInst){ c3MiniInst.remove(); c3MiniInst=null; c3MiniMk=null; }
+  c3AbrirModal(`${esc(c.nome)} <span class="c3-tag" style="background:${cat.c}1A;color:${cat.c};vertical-align:middle;margin-left:6px">${cat.l}</span>`, `
+    ${pend.length?`<div class="c3-banner" style="padding:10px 14px">Pendências: ${pend.join(' · ')}</div>`:''}
+    <div class="c3-dgrid">
+      ${c3Info('Identificação', esc(c.identificacao))}
+      ${c3Info('Proprietário', esc(c.proprietario))}
+      ${c3Info('Telefone', c.telefone?`<a href="tel:${c3Dig(c.telefone)}" style="color:var(--brand-accent-dark)">${esc(c.telefone)}</a>`:'')}
+      ${c3Info('Moradores', `${mor.length} cadastrado${mor.length===1?'':'s'}${c.qtd_moradores!=null?` · ${c.qtd_moradores} declarado${c.qtd_moradores===1?'':'s'}`:''}`)}
+      ${c3Info('Coordenadas', c3TemGeo(c)?`${(+c.lat).toFixed(6)}, ${(+c.lng).toFixed(6)}`:'<span style="color:var(--warning)">Sem localização</span>')}
+      ${c3Info('Endereço / referência', esc(c.endereco))}
+      ${c3Info('Cadastro', `${c3Data(c.data_cadastro)} · ${esc(c.responsavel_nome||'—')}`)}
+      ${c3Info('Última atualização', c3DataHora(c.atualizado_em))}
+      ${c.observacoes?c3Info('Observações administrativas', esc(c.observacoes), 'full'):''}
+    </div>
+    <div class="row-btns" style="margin-top:var(--sp-4)">
+      ${c3TemGeo(c)?`<button class="btn btn-outline btn-sm" onclick="c3VerNoMapa('${c.id}')">${ICON('mapa',{size:14})} Ver no mapa</button>`:''}
+      ${g?`<a class="btn btn-outline btn-sm" href="${esc(g)}" target="_blank" rel="noopener" style="text-decoration:none">${ICON('navegar',{size:14})} Google Maps</a>`:''}
+    </div>
+
+    <div class="c3-fsec" style="margin-top:var(--sp-6)">Moradores e indivíduos vinculados</div>
+    <div class="c3-list">${mor.length ? mor.map(m=>c3ItemMorador(m,'')).join('') : '<div class="c3-empty" style="padding:12px">Nenhum morador cadastrado nesta propriedade.</div>'}</div>
+    ${c3PodeEditar()?`<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="c3FormMorador(null,{chacara_id:'${c.id}'})">${ICON('novo',{size:14})} Adicionar morador</button>`:''}
+
+    ${ocs.length?`<div class="c3-fsec" style="margin-top:var(--sp-6)">Ocorrências ligadas à propriedade · ${ocs.length}</div>
+      ${ocs.slice(0,10).map(o=>{ const m=c3Mo(o.morador_id); const s=C3_SIT[o.situacao]||C3_SIT.registrada; return `<div class="c3-item" style="margin-bottom:6px" onclick="${m?`c3FichaMorador('${m.id}','oc')`:''}"><div class="c3-item-b"><div class="c3-item-t">${esc(o.natureza)}${o.numero?' · nº '+esc(o.numero):''}</div><div class="c3-item-s">${c3DataHora(o.data_hora)}${m?' · '+esc(m.nome):''}</div></div><span class="c3-tag ${s[0]}">${s[1]}</span></div>`; }).join('')}`:''}
+
+    <div class="c3-mfoot">
+      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirChacara('${c.id}')">${ICON('excluir',{size:15})} Excluir</button>`:''}
+      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormChacara('${c.id}')">${ICON('editar',{size:15})} Editar chácara</button>`:''}
+    </div>`);
+}
+
+// ── MORADOR: formulário ──
+function c3FormMorador(id, preset){
+  if(!c3ExigeEditar()) return;
+  const m = id ? c3Mo(id) : null; const p = preset||{};
+  const v = k => esc(m ? (m[k]??'') : (p[k]??''));
+  const chSel = m ? m.chacara_id : p.chacara_id;
+  const chOpts = '<option value="">— sem chácara vinculada —</option>' + C3.ch.map(c=>`<option value="${c.id}" ${c.id===chSel?'selected':''}>${esc(c.nome)}${c.identificacao?' · '+esc(c.identificacao):''}</option>`).join('');
+  const vOpts = Object.entries(C3_VINC).map(([k,l])=>`<option value="${k}" ${((m&&m.vinculo)||'morador')===k?'selected':''}>${l}</option>`).join('');
+  const voltar = m ? `c3FichaMorador('${m.id}')` : (chSel ? `c3FichaChacara('${chSel}')` : 'c3FecharModal()');
+  c3AbrirModal(m ? 'Editar morador' : 'Novo morador / indivíduo', `
+    <div class="c3-fsec">Dados pessoais</div>
+    ${c3Campo('Nome completo <span class="c3-req">*</span>', `<input id="c3mNome" value="${v('nome')}">`)}
+    <div class="fgrid">
+      ${c3Campo('Data de nascimento', `<input id="c3mNasc" type="date" value="${v('nascimento')}">`)}
+      ${c3Campo('CPF', `<input id="c3mCpf" inputmode="numeric" maxlength="14" value="${m&&m.cpf?esc(c3FmtCpf(m.cpf)):''}" placeholder="Somente se houver finalidade legítima" oninput="this.value=c3FmtCpf(this.value)">`)}
+      ${c3Campo('Telefones', `<input id="c3mTel" inputmode="tel" value="${v('telefones')}" placeholder="Separe vários por vírgula">`)}
+      ${c3Campo('Vínculo com a propriedade', `<select id="c3mVinc">${vOpts}</select>`)}
+    </div>
+    <div class="c3-fsec">Residência</div>
+    ${c3Campo('Chácara onde reside', `<select id="c3mCh">${chOpts}</select>`)}
+    ${c3Campo('Endereço', `<input id="c3mEnd" value="${v('endereco')}" placeholder="Se vazio, vale o endereço da chácara">`)}
+    <div class="fgrid">
+      ${c3Campo('Latitude (opcional)', `<input id="c3mLat" inputmode="decimal" value="${m?(m.lat??''):''}" placeholder="Se vazio, usa a da chácara">`)}
+      ${c3Campo('Longitude (opcional)', `<input id="c3mLng" inputmode="decimal" value="${m?(m.lng??''):''}">`)}
+    </div>
+    <div class="c3-fsec">Observações</div>
+    ${c3Campo('Observações pertinentes ao serviço', `<textarea id="c3mObs" placeholder="Somente fatos verificáveis. Evite rótulos e suposições.">${v('observacoes')}</textarea>`)}
+    <div class="c3-mfoot">
+      <button class="btn btn-outline" onclick="${voltar}">Cancelar</button>
+      <button class="btn btn-primary" id="c3mSalvar" onclick="c3SalvarMorador(${m?`'${m.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+    </div>`);
+}
+
+async function c3SalvarMorador(id){
+  if(!c3ExigeEditar()) return;
+  const nome = c3Val('c3mNome'); if(!nome){ toast('Informe o nome completo.','error'); return; }
+  const cpf = c3Dig(c3Val('c3mCpf'));
+  if(cpf && !c3CpfValido(cpf)){ toast('CPF inválido. Confira os números ou deixe em branco.','error'); return; }
+  if(cpf){ const dup = C3.mo.find(x=>x.cpf===cpf && x.id!==id); if(dup && !confirm(`Já existe "${dup.nome}" com este CPF. Salvar mesmo assim?`)) return; }
+  const lat=c3Num(c3Val('c3mLat')), lng=c3Num(c3Val('c3mLng'));
+  if((lat==null)!==(lng==null)){ toast('Preencha latitude E longitude, ou deixe as duas vazias.','error'); return; }
+  const dados = {
+    nome, nascimento:c3OuNull(c3Val('c3mNasc')), cpf:cpf||null, telefones:c3OuNull(c3Val('c3mTel')), vinculo:c3Val('c3mVinc')||'morador',
+    chacara_id:c3OuNull(c3Val('c3mCh')), endereco:c3OuNull(c3Val('c3mEnd')), lat, lng, observacoes:c3OuNull(c3Val('c3mObs'))
+  };
+  const btn=document.getElementById('c3mSalvar'); btn.disabled=true;
+  try {
+    let mid = id;
+    if(id){ await sbFetch('PATCH','c3_moradores',dados,`id=eq.${enc(id)}`); logAudit('c3_morador_editar','c3_moradores',id,{nome}); }
+    else { dados.criado_por_nome = CU.nome; const r = await sbFetch('POST','c3_moradores',dados); mid=(Array.isArray(r)?r[0]:r).id; logAudit('c3_morador_criar','c3_moradores',mid,{nome}); }
+    toast(id?'Cadastro atualizado.':'Morador cadastrado.','success');
+    await c3Carregar(); c3RenderTudo(); c3FichaMorador(mid, null, true);
+  } catch(e){ toast('Erro ao salvar: '+e.message,'error'); btn.disabled=false; }
+}
+
+async function c3ExcluirMorador(id){
+  if(!c3PodeExcluir()){ toast('Apenas administrador ou supervisor pode excluir.','error'); return; }
+  const m=c3Mo(id); if(!m) return;
+  const n = C3.pa.filter(p=>p.morador_id===id).length + C3.oc.filter(o=>o.morador_id===id).length;
+  if(!confirm(`Excluir o cadastro de "${m.nome}"?${n?`\n\nATENÇÃO: ${n} registro(s) de passagens/ocorrências desta pessoa também serão apagados.`:''}`)) return;
+  try {
+    const anexos = C3.oc.filter(o=>o.morador_id===id).flatMap(o=>(o.anexos||[]).map(a=>a.path));
+    await sbFetch('DELETE','c3_moradores',null,`id=eq.${enc(id)}`);
+    if(anexos.length) await supabase.storage.from(C3_BUCKET).remove(anexos).catch(()=>{});
+    logAudit('c3_morador_excluir','c3_moradores',id,{nome:m.nome});
+    toast('Cadastro excluído.','success'); c3FecharModal(); await c3Carregar(); c3RenderTudo();
+  } catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+// ── MORADOR: ficha individual ──
+function c3FichaMorador(id, sub, semLog){
+  const m = c3Mo(id); if(!m){ c3FecharModal(); return; }
+  if(sub) c3FichaSub = sub;
+  if(!semLog) logAudit('c3_ficha_consultar','c3_moradores',id,{nome:m.nome});
+  if(c3MiniInst){ c3MiniInst.remove(); c3MiniInst=null; c3MiniMk=null; }
+  const ch = c3Ch(m.chacara_id); const idade = c3Idade(m.nascimento); const geo = c3GeoMorador(m);
+  const outros = ch ? c3MoDaCh(ch.id).filter(x=>x.id!==m.id) : [];
+  const nPa = C3.pa.filter(p=>p.morador_id===id).length, nOc = C3.oc.filter(o=>o.morador_id===id).length;
+  const tels = String(m.telefones||'').split(/[,;/]/).map(t=>t.trim()).filter(Boolean);
+  c3AbrirModal(`<span style="display:flex;align-items:center;gap:12px"><span class="c3-av" style="background:var(--brand-navy);width:38px;height:38px;font-size:14px">${esc(c3Iniciais(m.nome))}</span><span>${esc(m.nome)}<div style="font-size:12px;color:var(--neutral-500);font-weight:500;margin-top:2px">${C3_VINC[m.vinculo]||'Morador'}${idade!=null?` · ${idade} anos`:''}</div></span></span>`, `
+    <div class="c3-dgrid">
+      ${c3Info('Nascimento', m.nascimento?`${c3Data(m.nascimento)}${idade!=null?` (${idade} anos)`:''}`:'')}
+      ${c3Info('CPF', m.cpf?esc(c3FmtCpf(m.cpf)):'')}
+      ${c3Info('Telefones', tels.length?tels.map(t=>`<a href="tel:${c3Dig(t)}" style="color:var(--brand-accent-dark)">${esc(t)}</a>`).join('<br>'):'')}
+      ${c3Info('Chácara', ch?`<a href="#" onclick="event.preventDefault();c3FichaChacara('${ch.id}')" style="color:var(--brand-accent-dark);font-weight:600">${esc(ch.nome)}</a>${ch.identificacao?' · '+esc(ch.identificacao):''}`:'<i>sem vínculo</i>')}
+      ${c3Info('Endereço', esc(m.endereco || (ch&&ch.endereco) || ''))}
+      ${c3Info('Localização', geo?`${(+geo.lat).toFixed(5)}, ${(+geo.lng).toFixed(5)} <span style="color:var(--neutral-400)">(${geo.origem})</span><br><a href="https://www.google.com/maps?q=${geo.lat},${geo.lng}" target="_blank" rel="noopener" style="color:var(--brand-accent-dark);font-size:12.5px">Abrir no Google Maps ↗</a>`:'')}
+      ${m.observacoes?c3Info('Observações', esc(m.observacoes), 'full'):''}
+      ${c3Info('Cadastro', `${c3Data(m.criado_em)} · ${esc(m.criado_por_nome||'—')}`, 'full')}
+    </div>
+    ${outros.length?`<div class="c3-fsec" style="margin-top:var(--sp-5)">Outros moradores da propriedade</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${outros.map(o=>`<button class="btn btn-outline btn-sm" onclick="c3FichaMorador('${o.id}')">${esc(o.nome)} <span style="color:var(--neutral-400);font-weight:500">· ${C3_VINC[o.vinculo]||''}</span></button>`).join('')}</div>`:''}
+
+    <div class="c3-subtabs">
+      <button class="c3-subtab ${c3FichaSub==='pa'?'active':''}" onclick="c3FichaSub='pa';c3FichaMorador('${id}',null,true)">Passagens (${nPa})</button>
+      <button class="c3-subtab ${c3FichaSub==='oc'?'active':''}" onclick="c3FichaSub='oc';c3FichaMorador('${id}',null,true)">Ocorrências (${nOc})</button>
+    </div>
+    ${c3RenderRegs(id)}
+    <div class="c3-note" style="margin-top:var(--sp-3)">${ICON('shield',{size:15})}<span>Registre apenas informações com origem identificável (nº de BO, procedimento ou sistema oficial). Não use classificações sem respaldo documental.</span></div>
+
+    <div class="c3-mfoot">
+      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirMorador('${m.id}')">${ICON('excluir',{size:15})} Excluir</button>`:''}
+      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormMorador('${m.id}')">${ICON('editar',{size:15})} Editar dados</button>`:''}
+    </div>`);
+}
+
+function c3RenderRegs(mid){
+  const pode = c3PodeEditar(), podeDel = c3PodeExcluir();
+  if(c3FichaSub==='oc'){
+    const l = C3.oc.filter(o=>o.morador_id===mid);
+    return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormOcorrencia('${mid}')">${ICON('novo',{size:14})} Registrar ocorrência</button>`:'') +
+      (l.length ? l.map(o=>{ const s=C3_SIT[o.situacao]||C3_SIT.registrada; const anx=o.anexos||[]; return `
+      <div class="c3-reg oc">
+        <div class="c3-reg-h"><div><div class="c3-reg-t">${esc(o.natureza)}${o.numero?` · nº ${esc(o.numero)}`:''}</div>
+          <div class="c3-reg-m">${c3DataHora(o.data_hora)}${o.local?' · '+esc(o.local):''}</div></div>
+          <div style="display:flex;gap:6px;align-items:center"><span class="c3-tag ${s[0]}">${s[1]}</span>
+          <div class="c3-reg-act">${pode?`<button title="Editar" onclick="c3FormOcorrencia('${mid}','${o.id}')">${ICON('editar',{size:14})}</button>`:''}${podeDel?`<button class="del" title="Excluir" onclick="c3ExcluirReg('oc','${o.id}','${mid}')">${ICON('excluir',{size:14})}</button>`:''}</div></div></div>
+        ${o.pessoas_relacionadas?`<div class="c3-reg-d"><b>Pessoas relacionadas:</b> ${esc(o.pessoas_relacionadas)}</div>`:''}
+        ${o.descricao?`<div class="c3-reg-d">${esc(o.descricao)}</div>`:''}
+        ${anx.length?`<div class="c3-anx">${anx.map(a=>`<button onclick="c3AbrirAnexo('${esc(a.path)}','${o.id}')">${ICON('anexo',{size:12})} ${esc(a.nome)}</button>`).join('')}</div>`:''}
+        <div class="c3-reg-o">${ICON('shield',{size:12})} <b>Origem:</b> ${esc(o.fonte)} · registrado por ${esc(o.registrado_por_nome||'—')} em ${c3Data(o.criado_em)}</div>
+      </div>`; }).join('') : '<div class="c3-empty">Nenhuma ocorrência registrada.</div>');
+  }
+  const l = C3.pa.filter(p=>p.morador_id===mid);
+  return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormPassagem('${mid}')">${ICON('novo',{size:14})} Registrar passagem</button>`:'') +
+    (l.length ? l.map(p=>`
+    <div class="c3-reg">
+      <div class="c3-reg-h"><div><div class="c3-reg-t">${esc(p.natureza)}${p.numero?` · nº ${esc(p.numero)}`:''}</div>
+        <div class="c3-reg-m">${c3Data(p.data)}${p.unidade?' · '+esc(p.unidade):''}</div></div>
+        <div class="c3-reg-act">${pode?`<button title="Editar" onclick="c3FormPassagem('${mid}','${p.id}')">${ICON('editar',{size:14})}</button>`:''}${podeDel?`<button class="del" title="Excluir" onclick="c3ExcluirReg('pa','${p.id}','${mid}')">${ICON('excluir',{size:14})}</button>`:''}</div></div>
+      ${p.observacoes?`<div class="c3-reg-d">${esc(p.observacoes)}</div>`:''}
+      <div class="c3-reg-o">${ICON('shield',{size:12})} <b>Origem:</b> ${esc(p.fonte)} · registrado por ${esc(p.registrado_por_nome||'—')} em ${c3Data(p.criado_em)}</div>
+    </div>`).join('') : '<div class="c3-empty">Nenhuma passagem registrada.</div>');
+}
+
+function c3FonteCampo(val){
+  return c3Campo('Origem da informação <span class="c3-req">*</span>', `<input id="c3rFonte" list="c3FontesDL" value="${esc(val||'')}" placeholder="Ex.: BO nº 1234/2026 – 18ª DP"><datalist id="c3FontesDL">${C3_FONTES.map(f=>`<option value="${f}">`).join('')}</datalist>`);
+}
+
+// ── PASSAGEM ──
+function c3FormPassagem(mid, id){
+  if(!c3ExigeEditar()) return;
+  const p = id ? C3.pa.find(x=>x.id===id) : null; const m = c3Mo(mid);
+  const v = k => esc(p ? (p[k]??'') : '');
+  c3AbrirModal(`${p?'Editar':'Registrar'} passagem <div style="font-size:12px;color:var(--neutral-500);font-weight:500">${esc(m?m.nome:'')}</div>`, `
+    <div class="fgrid">
+      ${c3Campo('Data', `<input id="c3rData" type="date" value="${v('data')}">`)}
+      ${c3Campo('Nº do registro / procedimento', `<input id="c3rNum" value="${v('numero')}">`)}
+      ${c3Campo('Natureza <span class="c3-req">*</span>', `<input id="c3rNat" value="${v('natureza')}" placeholder="Ex.: Furto, Ameaça…">`)}
+      ${c3Campo('Unidade responsável', `<input id="c3rUni" value="${v('unidade')}" placeholder="Ex.: 18ª DP, 16º BPM">`)}
+    </div>
+    ${c3FonteCampo(p&&p.fonte)}
+    ${c3Campo('Observações', `<textarea id="c3rObs">${v('observacoes')}</textarea>`)}
+    <div class="c3-mfoot">
+      <button class="btn btn-outline" onclick="c3FichaMorador('${mid}','pa',true)">Cancelar</button>
+      <button class="btn btn-primary" id="c3rSalvar" onclick="c3SalvarPassagem('${mid}',${p?`'${p.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+    </div>`);
+}
+async function c3SalvarPassagem(mid, id){
+  if(!c3ExigeEditar()) return;
+  const natureza=c3Val('c3rNat'), fonte=c3Val('c3rFonte');
+  if(!natureza){ toast('Informe a natureza.','error'); return; }
+  if(!fonte){ toast('Informe a origem da informação.','error'); return; }
+  const dados = { morador_id:mid, data:c3OuNull(c3Val('c3rData')), numero:c3OuNull(c3Val('c3rNum')), natureza, unidade:c3OuNull(c3Val('c3rUni')), fonte, observacoes:c3OuNull(c3Val('c3rObs')) };
+  const btn=document.getElementById('c3rSalvar'); btn.disabled=true;
+  try {
+    if(id){ await sbFetch('PATCH','c3_passagens',dados,`id=eq.${enc(id)}`); logAudit('c3_passagem_editar','c3_passagens',id,{morador_id:mid}); }
+    else { dados.registrado_por_nome=CU.nome; const r=await sbFetch('POST','c3_passagens',dados); logAudit('c3_passagem_criar','c3_passagens',(Array.isArray(r)?r[0]:r).id,{morador_id:mid}); }
+    toast('Passagem salva.','success'); await c3Carregar(); c3RenderTudo(); c3FichaMorador(mid,'pa',true);
+  } catch(e){ toast('Erro: '+e.message,'error'); btn.disabled=false; }
+}
+
+// ── OCORRÊNCIA ──
+function c3FormOcorrencia(mid, id){
+  if(!c3ExigeEditar()) return;
+  const o = id ? C3.oc.find(x=>x.id===id) : null; const m = c3Mo(mid); const ch = m ? c3Ch(m.chacara_id) : null;
+  const v = k => esc(o ? (o[k]??'') : '');
+  c3AnexosRemover = [];
+  const sitOpts = Object.entries(C3_SIT).map(([k,s])=>`<option value="${k}" ${((o&&o.situacao)||'registrada')===k?'selected':''}>${s[1]}</option>`).join('');
+  const anx = o ? (o.anexos||[]) : [];
+  c3AbrirModal(`${o?'Editar':'Registrar'} ocorrência <div style="font-size:12px;color:var(--neutral-500);font-weight:500">${esc(m?m.nome:'')}</div>`, `
+    <div class="fgrid">
+      ${c3Campo('Nº da ocorrência', `<input id="c3oNum" value="${v('numero')}">`)}
+      ${c3Campo('Data e horário', `<input id="c3oDH" type="datetime-local" value="${o?c3ParaInputDT(o.data_hora):''}">`)}
+      ${c3Campo('Natureza <span class="c3-req">*</span>', `<input id="c3oNat" value="${v('natureza')}">`)}
+      ${c3Campo('Situação do registro', `<select id="c3oSit">${sitOpts}</select>`)}
+    </div>
+    ${c3Campo('Local', `<input id="c3oLocal" value="${o?v('local'):esc(ch?ch.nome+(ch.endereco?' – '+ch.endereco:''):'')}">`)}
+    ${c3Campo('Pessoas relacionadas', `<input id="c3oPess" value="${v('pessoas_relacionadas')}" placeholder="Nomes e papel (vítima, testemunha, autor…)">`)}
+    ${c3Campo('Histórico e descrição', `<textarea id="c3oDesc" style="min-height:120px">${v('descricao')}</textarea>`)}
+    ${c3FonteCampo(o&&o.fonte)}
+    <div class="c3-fsec">Anexos</div>
+    ${anx.length?`<div class="c3-anx" id="c3oAnxExist" style="margin-bottom:10px">${anx.map((a,i)=>`<button type="button" data-path="${esc(a.path)}" onclick="c3AbrirAnexo('${esc(a.path)}','${o.id}')">${ICON('anexo',{size:12})} ${esc(a.nome)}</button>${c3PodeExcluir()?`<button type="button" title="Remover anexo" style="color:var(--danger)" onclick="c3MarcarRemoverAnexo(this,'${esc(a.path)}')">✕</button>`:''}`).join('')}</div>`:''}
+    ${c3Campo('Anexar documentos (PDF ou imagem, até 10 MB cada)', `<input id="c3oArq" type="file" multiple accept=".pdf,image/*" style="height:auto;padding:10px">`)}
+    <div style="font-size:11.5px;color:var(--neutral-500);margin:-6px 0 var(--sp-3)">Anexe apenas documentos cujo uso esteja autorizado. Arquivos ficam em área privada e só abrem por link temporário.</div>
+    <div class="c3-mfoot">
+      <button class="btn btn-outline" onclick="c3FichaMorador('${mid}','oc',true)">Cancelar</button>
+      <button class="btn btn-primary" id="c3oSalvar" onclick="c3SalvarOcorrencia('${mid}',${o?`'${o.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+    </div>`);
+}
+function c3MarcarRemoverAnexo(btn, path){
+  c3AnexosRemover.push(path);
+  const prev = btn.previousElementSibling; if(prev) prev.remove(); btn.remove();
+  toast('Anexo será removido ao salvar.','info');
+}
+async function c3SalvarOcorrencia(mid, id){
+  if(!c3ExigeEditar()) return;
+  const natureza=c3Val('c3oNat'), fonte=c3Val('c3rFonte');
+  if(!natureza){ toast('Informe a natureza da ocorrência.','error'); return; }
+  if(!fonte){ toast('Informe a origem da informação.','error'); return; }
+  const arqs = Array.from(document.getElementById('c3oArq').files||[]);
+  const grande = arqs.find(f=>f.size>10*1024*1024); if(grande){ toast(`"${grande.name}" passa de 10 MB.`,'error'); return; }
+  const m = c3Mo(mid); const dh = c3Val('c3oDH');
+  const dados = {
+    morador_id:mid, chacara_id:m?m.chacara_id:null, numero:c3OuNull(c3Val('c3oNum')), data_hora: dh?new Date(dh).toISOString():null,
+    natureza, situacao:c3Val('c3oSit')||'registrada', local:c3OuNull(c3Val('c3oLocal')), pessoas_relacionadas:c3OuNull(c3Val('c3oPess')),
+    descricao:c3OuNull(c3Val('c3oDesc')), fonte
+  };
+  const btn=document.getElementById('c3oSalvar'); btn.disabled=true; btn.textContent='Salvando…';
+  try {
+    let oid = id; let anexos = id ? [...((C3.oc.find(x=>x.id===id)||{}).anexos||[])] : [];
+    if(id){ await sbFetch('PATCH','c3_ocorrencias',dados,`id=eq.${enc(id)}`); logAudit('c3_ocorrencia_editar','c3_ocorrencias',id,{morador_id:mid}); }
+    else { dados.registrado_por_nome=CU.nome; const r=await sbFetch('POST','c3_ocorrencias',dados); oid=(Array.isArray(r)?r[0]:r).id; logAudit('c3_ocorrencia_criar','c3_ocorrencias',oid,{morador_id:mid}); }
+    // remoções
+    if(c3AnexosRemover.length){
+      const { error } = await supabase.storage.from(C3_BUCKET).remove(c3AnexosRemover);
+      if(error) toast('Falha ao remover anexo: '+error.message,'error');
+      else { anexos = anexos.filter(a=>!c3AnexosRemover.includes(a.path)); logAudit('c3_anexo_remover','c3_ocorrencias',oid,{arquivos:c3AnexosRemover}); }
+    }
+    // uploads
+    let falhas = 0;
+    for(const f of arqs){
+      const nomeSeguro = f.name.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w.\-]+/g,'_').slice(-80);
+      const path = `${oid}/${Date.now()}_${nomeSeguro}`;
+      const { error } = await supabase.storage.from(C3_BUCKET).upload(path, f, {upsert:false, contentType:f.type||undefined});
+      if(error){ falhas++; console.warn('[c3 upload]', error); continue; }
+      anexos.push({path, nome:f.name, tamanho:f.size, tipo:f.type||null, por:CU.nome, em:new Date().toISOString()});
+    }
+    if(arqs.length || c3AnexosRemover.length){
+      await sbFetch('PATCH','c3_ocorrencias',{anexos},`id=eq.${enc(oid)}`);
+      if(arqs.length-falhas>0) logAudit('c3_anexo_enviar','c3_ocorrencias',oid,{qtd:arqs.length-falhas});
+    }
+    c3AnexosRemover = [];
+    toast(falhas?`Ocorrência salva, mas ${falhas} anexo(s) falharam.`:'Ocorrência salva.', falhas?'error':'success');
+    await c3Carregar(); c3RenderTudo(); c3FichaMorador(mid,'oc',true);
+  } catch(e){ toast('Erro: '+e.message,'error'); btn.disabled=false; btn.textContent='Salvar'; }
+}
+async function c3AbrirAnexo(path, oid){
+  try {
+    const { data, error } = await supabase.storage.from(C3_BUCKET).createSignedUrl(path, 300);
+    if(error) throw error;
+    logAudit('c3_anexo_abrir','c3_ocorrencias',oid,{arquivo:path});
+    window.open(data.signedUrl, '_blank', 'noopener');
+  } catch(e){ toast('Não foi possível abrir o anexo: '+(e.message||e),'error'); }
+}
+
+async function c3ExcluirReg(tipo, id, mid){
+  if(!c3PodeExcluir()){ toast('Apenas administrador ou supervisor pode excluir.','error'); return; }
+  if(!confirm(`Excluir este registro de ${tipo==='oc'?'ocorrência':'passagem'}? A exclusão fica registrada na auditoria.`)) return;
+  try {
+    if(tipo==='oc'){
+      const o = C3.oc.find(x=>x.id===id); const paths = (o&&o.anexos||[]).map(a=>a.path);
+      await sbFetch('DELETE','c3_ocorrencias',null,`id=eq.${enc(id)}`);
+      if(paths.length) await supabase.storage.from(C3_BUCKET).remove(paths).catch(()=>{});
+    } else {
+      await sbFetch('DELETE','c3_passagens',null,`id=eq.${enc(id)}`);
+    }
+    logAudit(tipo==='oc'?'c3_ocorrencia_excluir':'c3_passagem_excluir', tipo==='oc'?'c3_ocorrencias':'c3_passagens', id, {morador_id:mid});
+    toast('Registro excluído.','success'); await c3Carregar(); c3RenderTudo(); c3FichaMorador(mid, tipo, true);
+  } catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && document.getElementById('c3Modal').classList.contains('open')) c3FecharModal(); });
 </script>
 </body>
 </html>
