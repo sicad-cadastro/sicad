@@ -994,10 +994,10 @@ body.no-didatico .field-hint{display:none}
 #c3MiniMap{height:240px;border-radius:var(--radius);border:1px solid var(--neutral-300);margin-bottom:var(--sp-2);z-index:1}
 .c3-geo-msg{font-size:12px;margin:-6px 0 var(--sp-3);min-height:16px}
 .c3-geo-msg.ok{color:var(--success)}.c3-geo-msg.err{color:var(--danger)}.c3-geo-msg.warn{color:var(--warning)}
-.c3-mrow{display:grid;grid-template-columns:1.6fr 1fr 1fr 34px;gap:8px;margin-bottom:8px}
+.c3-mrow{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 34px;gap:8px;margin-bottom:8px}
 .c3-mrow input,.c3-mrow select{height:40px;border:1px solid var(--neutral-300);border-radius:var(--radius);padding:0 10px;font-size:14px;font-family:var(--font-sans);width:100%;min-width:0}
 .c3-mrow button{border:1px solid var(--neutral-300);background:#fff;border-radius:var(--radius);cursor:pointer;color:var(--danger)}
-@media(max-width:560px){.c3-mrow{grid-template-columns:1fr 1fr 34px}.c3-mrow .c3-mr-nasc{display:none}}
+@media(max-width:560px){.c3-mrow{grid-template-columns:1fr 1fr 34px;padding-bottom:8px;border-bottom:1px dashed var(--neutral-200)}.c3-mrow .c3-mr-nome{grid-column:1/-1}.c3-mrow .c3-mr-nasc{display:none}}
 .c3-dgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 16px}
 @media(min-width:600px){.c3-dgrid{grid-template-columns:repeat(3,1fr)}}
 .c3-dgrid .full{grid-column:1/-1}
@@ -6667,7 +6667,7 @@ function c3FormChacara(id, preset){
 function c3AddMRow(){
   const box = document.getElementById('c3fMRows'); if(!box) return;
   const div = document.createElement('div'); div.className='c3-mrow';
-  div.innerHTML = `<input class="c3-mr-nome" placeholder="Nome completo do morador"><input class="c3-mr-tel" inputmode="tel" placeholder="Telefone"><input class="c3-mr-nasc" type="date" title="Data de nascimento (opcional)"><button type="button" title="Remover" onclick="this.parentNode.remove()">✕</button>`;
+  div.innerHTML = `<input class="c3-mr-nome" placeholder="Nome completo do morador"><input class="c3-mr-cpf" inputmode="numeric" maxlength="14" placeholder="CPF" oninput="this.value=c3FmtCpf(this.value)"><input class="c3-mr-tel" inputmode="tel" placeholder="Telefone"><input class="c3-mr-nasc" type="date" title="Data de nascimento (opcional)"><button type="button" title="Remover" onclick="this.parentNode.remove()">✕</button>`;
   box.appendChild(div);
 }
 
@@ -6737,8 +6737,16 @@ async function c3SalvarChacara(id){
     qtd_moradores: qtd===''?null:Math.max(0,parseInt(qtd,10)||0), observacoes:c3OuNull(c3Val('c3fObs')), data_cadastro:c3Val('c3fData')||c3Hoje()
   };
   const novosMor = Array.from(document.querySelectorAll('#c3fMRows .c3-mrow')).map(r=>({
-    nome:r.querySelector('.c3-mr-nome').value.trim(), telefones:c3OuNull(r.querySelector('.c3-mr-tel').value.trim()), nascimento:c3OuNull(r.querySelector('.c3-mr-nasc').value)
+    nome:r.querySelector('.c3-mr-nome').value.trim(), cpf:c3Dig(r.querySelector('.c3-mr-cpf').value)||null, telefones:c3OuNull(r.querySelector('.c3-mr-tel').value.trim()), nascimento:c3OuNull(r.querySelector('.c3-mr-nasc').value)
   })).filter(m=>m.nome);
+  const cpfRuim = novosMor.find(m=>m.cpf && !c3CpfValido(m.cpf));
+  if(cpfRuim){ toast(`CPF inválido para ${cpfRuim.nome}. Confira os números ou deixe em branco.`,'error'); return; }
+  for(const m of novosMor){
+    if(!m.cpf) continue;
+    if(novosMor.filter(x=>x.cpf===m.cpf).length>1){ toast(`CPF repetido na lista de moradores (${m.nome}).`,'error'); return; }
+    const dup = C3.mo.find(x=>x.cpf===m.cpf);
+    if(dup && !confirm(`Já existe "${dup.nome}" cadastrado com o CPF de ${m.nome}. Salvar mesmo assim?`)) return;
+  }
   const btn = document.getElementById('c3fSalvar'); btn.disabled = true;
   try {
     let chId = id;
