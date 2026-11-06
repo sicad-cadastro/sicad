@@ -6430,8 +6430,8 @@ function c3RenderPainel(){
 // ── MAPA ──
 function c3InitMapa(){
   if(c3MapInst) return;
-  const sat  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'Imagens © Esri, Maxar, Earthstar Geographics'});
-  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'});
+  const sat  = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxNativeZoom:17, maxZoom:20, attribution:'Imagens © Esri, Maxar, Earthstar Geographics'});
+  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxNativeZoom:19, maxZoom:20, attribution:'© OpenStreetMap contributors'});
   c3MapInst = L.map('c3Map', {center:C3_CENTRO, zoom:14, layers:[sat], scrollWheelZoom:true});
   L.control.layers({'Satélite':sat,'Ruas':ruas}, null, {position:'topright'}).addTo(c3MapInst);
   c3Layer = L.layerGroup().addTo(c3MapInst);
@@ -6675,8 +6675,8 @@ function c3InitMini(){
   if(c3MiniInst){ c3MiniInst.remove(); c3MiniInst=null; c3MiniMk=null; }
   const el = document.getElementById('c3MiniMap'); if(!el) return;
   const lat = c3Num(c3Val('c3fLat')), lng = c3Num(c3Val('c3fLng'));
-  const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'© Esri'});
-  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OSM'});
+  const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxNativeZoom:17, maxZoom:20, attribution:'© Esri'});
+  const ruas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxNativeZoom:19, maxZoom:20, attribution:'© OSM'});
   const temPonto = lat!=null && lng!=null;
   let centro = C3_CENTRO, zoom = 14;
   if(temPonto){ centro=[lat,lng]; zoom=17; }
