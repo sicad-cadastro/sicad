@@ -230,6 +230,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
   transition:var(--transition);outline:none;-webkit-appearance:none;appearance:none;
   font-weight:400;letter-spacing:-0.005em;
 }
+.fg input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:18px!important;height:18px;padding:0;flex-shrink:0;accent-color:var(--brand-navy);cursor:pointer;box-shadow:none}
 .fg textarea{height:auto;min-height:88px;padding:var(--sp-3) var(--sp-4);resize:vertical;line-height:1.5}
 .fg input:hover,.fg select:hover,.fg textarea:hover{border-color:var(--neutral-400)}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--brand-navy);box-shadow:0 0 0 3px rgba(30,58,138,.12)}
@@ -1426,7 +1427,7 @@ body.no-didatico .field-hint{display:none}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap">
         <div class="rcnt" id="rcnt"></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div id="dedupBtns" style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-family:'IBM Plex Mono',monospace;font-weight:700" title="Mostra os grupos antes de remover">🧹 REVISAR DUPLICATAS</button>
           <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">🤖 LIMPAR AUTOMÁTICO</button>
         </div>
@@ -1446,7 +1447,9 @@ body.no-didatico .field-hint{display:none}
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
           <input id="uFilterSearch" placeholder="🔍 Buscar nome ou e-mail" oninput="renderUsersList()" style="flex:2;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text)">
           <select id="uFilterRole" onchange="renderUsersList()" style="flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
-            <option value="">Todas as funções</option>
+            <option value="">Todos os perfis</option>
+            <option value="gtop">GTOP</option>
+            <option value="rp">RP</option>
             <option value="admin">Administrador</option>
             <option value="supervisor">Supervisor</option>
             <option value="operator">Operador</option>
@@ -2035,13 +2038,28 @@ body.no-didatico .field-hint{display:none}
       <div class="fg"><label>Nome Completo *</label><input type="text" id="uNome" placeholder="Nome completo" autocomplete="off"></div>
       <div class="fg"><label>Matrícula / RG funcional</label><input type="text" id="uMatricula" placeholder="Ex: 12345-X" autocomplete="off"></div>
       <div class="fg" id="uSenhaWrap"><label>Senha provisória *</label><input type="password" id="uSenha" placeholder="Mínimo 6 caracteres — o usuário poderá trocar depois"></div>
-      <div class="fg"><label>Função</label>
-        <select id="uRole">
-          <option value="operator">Operador (cadastra/consulta)</option>
-          <option value="supervisor">Supervisor (edita/aprova)</option>
-          <option value="admin">Administrador (acesso total)</option>
-          <option value="auditor">Auditor (só leitura + logs)</option>
+      <div class="fg"><label>Perfil de acesso</label>
+        <select id="uRole" onchange="atualizarDicaPerfil()">
+          <optgroup label="Perfis operacionais">
+            <option value="gtop">GTOP — acesso total (cadastra, edita, consulta)</option>
+            <option value="rp">RP — somente consulta (Capãozinho 3, Face, Pesquisas, Consultar)</option>
+          </optgroup>
+          <optgroup label="Administração">
+            <option value="admin">Administrador — acesso total + gestão de usuários</option>
+          </optgroup>
+          <optgroup label="Perfis anteriores">
+            <option value="supervisor">Supervisor (edita/aprova)</option>
+            <option value="operator">Operador (cadastra/consulta)</option>
+            <option value="auditor">Auditor (só leitura + logs)</option>
+          </optgroup>
         </select>
+        <div id="uRoleDica" style="font-size:12px;color:var(--neutral-500);margin-top:6px;line-height:1.45"></div>
+      </div>
+      <div class="fg" id="uPodeExcluirWrap" style="display:none">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="uPodeExcluir" style="width:auto;margin:0">
+          <span>Autorizar este GTOP a <b>excluir</b> registros</span>
+        </label>
       </div>
       <div class="fg" id="uAtivoWrap" style="display:none">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -2209,18 +2227,15 @@ function abrirMenuMais(){
   sheet.id = 'menuMaisSheet';
   sheet.className = 'more-sheet-backdrop';
   sheet.onclick = (e)=>{ if(e.target===sheet) sheet.remove(); };
-  const podeUsuarios = CU && (CU.role==='admin' || CU.role==='supervisor');
+  const itensMais = [['capaozinho3','chacara','Capãozinho 3'],['foragidos','foragidos','Foragidos'],['face','face','Face'],['tatuagens','tatuagens','Tatuagens'],['pesquisa','pesquisa','Pesquisa'],['usuarios','usuarios','Usuários']]
+    .filter(([r]) => rotaPermitida(r))
+    .map(([r,ic,l]) => `<button class="more-btn" onclick="abrirMenuMais();go('${r}')"><span data-icon="${ic}" data-size="22"></span><span>${l}</span></button>`).join('');
   sheet.innerHTML = `
     <div class="more-sheet">
       <div class="more-sheet-handle"></div>
       <div class="more-sheet-title">Navegar</div>
       <div class="more-sheet-grid">
-        <button class="more-btn" onclick="abrirMenuMais();go('capaozinho3')"><span data-icon="chacara" data-size="22"></span><span>Capãozinho 3</span></button>
-        <button class="more-btn" onclick="abrirMenuMais();go('foragidos')"><span data-icon="foragidos" data-size="22"></span><span>Foragidos</span></button>
-        <button class="more-btn" onclick="abrirMenuMais();go('face')"><span data-icon="face" data-size="22"></span><span>Face</span></button>
-        <button class="more-btn" onclick="abrirMenuMais();go('tatuagens')"><span data-icon="tatuagens" data-size="22"></span><span>Tatuagens</span></button>
-        <button class="more-btn" onclick="abrirMenuMais();go('pesquisa')"><span data-icon="pesquisa" data-size="22"></span><span>Pesquisa</span></button>
-        ${podeUsuarios ? '<button class="more-btn" onclick="abrirMenuMais();go(\'usuarios\')"><span data-icon="usuarios" data-size="22"></span><span>Usuários</span></button>' : ''}
+        ${itensMais}
         <button class="more-btn" onclick="abrirMenuMais();logout()"><span data-icon="logout" data-size="22"></span><span>Sair</span></button>
       </div>
     </div>`;
@@ -2349,7 +2364,7 @@ const HELP_BANNERS = {
   },
   usuarios: {
     titulo: 'Gerenciar equipe',
-    corpo: 'Aprove novos cadastros pendentes, altere permissões (admin/supervisor/operador) ou desative contas. Só quem tem role admin vê essa aba.'
+    corpo: 'Aprove cadastros pendentes, defina o perfil de cada um (GTOP = acesso total · RP = só consulta), desative contas e veja o histórico (🕘). Só administradores veem esta aba.'
   }
 };
 
@@ -2619,7 +2634,7 @@ function _talvezIniciarTour(){
     setTimeout(_talvezIniciarTour, 800);
     return;
   }
-  setTimeout(iniciarTour, 1200);
+  setTimeout(()=>{ if(!isRP()) iniciarTour(); }, 1200); // tour aponta abas que o RP não vê
 }
 document.addEventListener('DOMContentLoaded', ()=> setTimeout(_talvezIniciarTour, 1200));
 
@@ -2725,31 +2740,54 @@ async function aplicarPerfilLogado(user){
     nome: profile.nome,
     role: profile.role,
     matricula: profile.matricula || null,
+    pode_excluir: !!profile.pode_excluir,
     usuario: user.email,
     login: user.email,
   };
 
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('shell').style.display='block';
-  document.getElementById('userChip').innerHTML=`${esc(CU.nome)} <b>${(CU.role||'operator').toUpperCase()}</b>`;
+  document.getElementById('userChip').innerHTML=`${esc(CU.nome)} <b>${PERFIL_LABEL[CU.role]||(CU.role||'operator').toUpperCase()}</b>`;
 
   // UI baseado em role
   aplicarUIporRole();
   await logAudit('login', 'auth', user.id);
   // Respeita a rota do hash — permite deep-linking (ex: /#mapa abre no mapa direto)
   const rotaInicial = (location.hash || '').replace('#','');
-  go((rotaInicial && SICAD_ROTAS.includes(rotaInicial)) ? rotaInicial : 'dashboard');
+  go((rotaInicial && SICAD_ROTAS.includes(rotaInicial) && rotaPermitida(rotaInicial)) ? rotaInicial : rotaInicialPerfil());
 }
+
+// ═══════════════ PERFIS DE ACESSO ═══════════════
+// GTOP = acesso total (exclusão só se o admin liberar) · RP = somente consulta em 4 abas.
+// A regra de verdade está no banco (migration_v5_perfis_gtop_rp.sql); aqui só espelhamos na tela.
+const PERFIL_LABEL = { admin:'ADMIN', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
+const RP_ROTAS = ['consultar','capaozinho3','face','pesquisa'];
+function isRP(){ return CU?.role === 'rp'; }
+function rotaPermitida(n){
+  if(!CU) return true;
+  if(isRP()) return RP_ROTAS.includes(n);
+  if(n === 'usuarios') return CU.role === 'admin';
+  return true;
+}
+function rotaInicialPerfil(){ return isRP() ? 'consultar' : 'dashboard'; }
+function podeCadastrarSICAD(){ return ['admin','gtop','supervisor','operator'].includes(CU?.role); }
+function podeExcluirSICAD(){ return CU?.role === 'admin' || (CU?.role === 'gtop' && !!CU.pode_excluir); }
 
 // Mostra/esconde elementos conforme role
 function aplicarUIporRole(){
+  // Navegação (topo + barra inferior): some tudo que o perfil não pode abrir
+  document.querySelectorAll('.tnav-btn[data-p], .bnav-btn[data-p]').forEach(el => {
+    el.style.display = rotaPermitida(el.dataset.p) ? '' : 'none';
+  });
   const isAdmin = CU?.role === 'admin';
-  const isSuperOrAdmin = ['admin','supervisor'].includes(CU?.role);
-  const usuariosBtns = ['bnUsuarios','tnUsuarios'];
-  usuariosBtns.forEach(id => {
+  ['bnUsuarios','tnUsuarios'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = isAdmin ? '' : 'none';
   });
+  // Botão "Dashboard" do cabeçalho e ferramentas de exclusão em massa
+  const dedup = document.getElementById('dedupBtns');
+  if (dedup) dedup.style.display = isRP() ? 'none' : 'flex';
+  document.body.classList.toggle('perfil-rp', isRP());
 }
 
 function errLg(m){const e=document.getElementById('loginErr');e.textContent=m;e.style.display='block';e.style.color='';e.style.background='';e.style.borderColor='';}
@@ -2842,7 +2880,16 @@ const SICAD_ROTAS = ['dashboard','cadastrar','consultar','capaozinho3','usuarios
 
 function go(n, _fromPop){
   // Fallback: rota desconhecida cai no dashboard
-  if(!SICAD_ROTAS.includes(n)) n = 'dashboard';
+  if(!SICAD_ROTAS.includes(n)) n = rotaInicialPerfil();
+  // Bloqueio por perfil (vale também pra URL digitada e botão voltar do navegador)
+  if(!rotaPermitida(n)){
+    const pedida = n;
+    n = rotaInicialPerfil();
+    if(pedida !== 'dashboard') toast('Seu perfil não tem acesso a esta área.','error');
+    logAudit('acesso_negado','rota',pedida);
+    try { history.replaceState({pagina:n}, '', '#'+n); } catch(e){}
+    _fromPop = true;
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+n).classList.add('active');
@@ -2858,7 +2905,7 @@ function go(n, _fromPop){
   }
   // Mostrar botão voltar quando não estiver no dashboard
   const backBtn = document.getElementById('backDashBtn');
-  if(backBtn) backBtn.style.display = n!=='dashboard' ? 'flex' : 'none';
+  if(backBtn) backBtn.style.display = (n!=='dashboard' && rotaPermitida('dashboard')) ? 'flex' : 'none';
   if(n==='dashboard')loadDash();
   if(n==='consultar')loadPersons();
   if(n==='capaozinho3')c3Abrir();
@@ -3099,6 +3146,7 @@ async function _hashSenha(txt){
 }
 
 async function savePerson(){
+  if(!podeCadastrarSICAD()){ toast('Seu perfil é somente consulta.','error'); return; }
   const nome=document.getElementById('fNome').value.trim();
   if(!nome){toast('Nome completo é obrigatório.','error');return;}
   const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> SALVANDO...';
@@ -3194,8 +3242,8 @@ async function viewPerson(id){
       const legendaHtml = legenda ? `<div style="font-size:9.5px;color:var(--text-mid);margin-top:2px;line-height:1.25">${esc(legenda.substring(0,40))}${legenda.length>40?'…':''}</div>` : '';
       return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><img class="d-photo" src="${t.img}" onclick="lbOpen('${t.img}')" loading="lazy">${legendaHtml}${tagsHtml}</div>`;
     }).join('')}</div></div>`:'';
-    const canEdit=true; // todos podem editar
-    const canDelete=CU.role==='admin';
+    const canEdit=!isRP(); // RP é somente consulta
+    const canDelete=podeExcluirSICAD();
     document.getElementById('personBody').innerHTML=`
       <div class="d-hero">${av}
         <div><div class="d-name">${esc(p.nome)}</div>
@@ -3228,13 +3276,14 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button><button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>':''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
 }
 function closePersonModal(){document.getElementById('personModal').classList.remove('open');if(!editMode)editId=null;}
 async function editPerson(){
+  if(isRP()){ toast('Seu perfil é somente consulta.','error'); return; }
   const idSalvo=editId; // salva ANTES de fechar o modal
   const p=allP.find(x=>x.id===idSalvo)||await DB.getPerson(idSalvo);if(!p)return;
   closePersonModal();
@@ -3274,6 +3323,7 @@ async function editPerson(){
   renderTats();
 }
 async function deletePerson(){
+  if(!podeExcluirSICAD()){ toast('Seu perfil não pode excluir cadastros.','error'); return; }
   if(!confirm('Excluir este cadastro?'))return;
   const _id = editId;
   const _nome = (allP.find(x => x.id === _id)||{}).nome;
@@ -3448,13 +3498,14 @@ async function loadUsers(){
 function renderUsersStats(){
   const ativos = _allUsers.filter(u => u.ativo).length;
   const pendentes = _allUsers.filter(u => !u.ativo).length;
-  const admins = _allUsers.filter(u => u.role === 'admin' && u.ativo).length;
+  const nGtop = _allUsers.filter(u => u.role === 'gtop' && u.ativo).length;
+  const nRp = _allUsers.filter(u => u.role === 'rp' && u.ativo).length;
   const pendStyle = pendentes > 0 ? 'cursor:pointer;border-color:var(--accent2);box-shadow:0 0 0 2px rgba(232,93,32,.2)' : '';
   document.getElementById('userStats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${_allUsers.length}</div><div class="stat-lbl">TOTAL</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--success)">${ativos}</div><div class="stat-lbl">ATIVOS</div></div>
     <div class="stat-card" style="${pendStyle}" onclick="${pendentes>0?'filtrarPendentes()':''}"><div class="stat-num" style="color:${pendentes>0?'var(--accent2)':'var(--text-dim)'}">${pendentes}</div><div class="stat-lbl">${pendentes>0?'⏳ AGUARDANDO':'PENDENTES'}</div></div>
-    <div class="stat-card"><div class="stat-num">${admins}</div><div class="stat-lbl">ADMINS</div></div>
+    <div class="stat-card"><div class="stat-num">${nGtop}<span style="color:var(--neutral-300);font-weight:500"> · </span>${nRp}</div><div class="stat-lbl">GTOP · RP ATIVOS</div></div>
   `;
 }
 function filtrarPendentes(){
@@ -3477,9 +3528,11 @@ function renderUsersList(){
 
   document.getElementById('uListCount').textContent = `${filtered.length} de ${_allUsers.length} usuários`;
 
-  const roleLabels = { admin:'ADMIN', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
+  const roleLabels = PERFIL_LABEL;
   const roleBadgeStyle = {
     admin:'background:#fee2e2;color:#991b1b;border:1px solid #fecaca',
+    gtop:'background:#1E3A8A;color:#fff;border:1px solid #1E3A8A',
+    rp:'background:#ECFEFF;color:#0E7490;border:1px solid #A5F3FC',
     supervisor:'background:#fef3c7;color:#92400e;border:1px solid #fde68a',
     operator:'background:#e0f2fe;color:#075985;border:1px solid #bae6fd',
     auditor:'background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff',
@@ -3497,6 +3550,7 @@ function renderUsersList(){
           <div class="ulogin" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span>${esc(u.nome)}</span>
             <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
+            ${u.role==='gtop'&&u.pode_excluir?'<span class="badge" style="background:#FEF2F2;color:#DC2626;font-size:9px;padding:3px 7px;border:1px solid #FECACA">PODE EXCLUIR</span>':''}
             ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">⏳ AGUARDANDO APROVAÇÃO</span>':''}
             ${isMe?'<span style="font-size:9px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace">VOCÊ</span>':''}
           </div>
@@ -3504,7 +3558,8 @@ function renderUsersList(){
         </div>
         <div class="uactions">
           ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
-          <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar">✏️</button>
+          <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações">🕘</button>
+          <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil">✏️</button>
           ${!isMe ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
         </div>
       </div>`;
@@ -3512,29 +3567,65 @@ function renderUsersList(){
 }
 
 // Aprovar usuário pendente
-async function aprovarUsuario(id, nome){
-  if (!confirm(`Aprovar acesso do(a) ${nome}?\n\nO usuário poderá logar imediatamente como Operador. Pra mudar o nível de acesso, use o botão "Editar" depois.`)) return;
-  showOv('APROVANDO...');
+// Aprovar = abrir a edição já com "ativo" marcado, obrigando a escolher GTOP ou RP
+function aprovarUsuario(id, nome){
+  const u = _allUsers.find(x => x.id === id); if (!u) return;
+  openUserModal({ ...u, ativo: true, role: ['gtop','rp','admin'].includes(u.role) ? u.role : 'rp' }, true);
+  toast(`Escolha o perfil de ${nome} e clique em SALVAR para liberar o acesso.`, 'info');
+}
+
+function atualizarDicaPerfil(){
+  const r = document.getElementById('uRole').value;
+  const dicas = {
+    gtop: 'Acessa todas as abas. Cadastra, edita e consulta. Exclusão só se autorizada abaixo.',
+    rp: 'Vê somente Capãozinho 3, Face, Pesquisas e Consultar. Não cadastra, não edita e não exclui nada.',
+    admin: 'Acesso total, inclusive exclusão e gestão de usuários.',
+    supervisor: 'Perfil anterior: cadastra e edita.', operator: 'Perfil anterior: cadastra e consulta.', auditor: 'Perfil anterior: só leitura.'
+  };
+  document.getElementById('uRoleDica').textContent = dicas[r] || '';
+  document.getElementById('uPodeExcluirWrap').style.display = r === 'gtop' ? 'block' : 'none';
+}
+
+// Histórico de acessos e alterações de um usuário (ações dele + mudanças feitas no perfil dele)
+async function verHistoricoUsuario(id){
+  const u = _allUsers.find(x => x.id === id);
+  showOv('CARREGANDO HISTÓRICO...');
   try {
-    await DB.updUser(id, { ativo: true });
-    await logAudit('approve_user', 'sicad_perfis', id, { nome });
-    await loadUsers();
-    toast(`✅ ${nome} aprovado(a)! Já pode logar.`, 'success');
-  } catch(e) { toast('Erro: '+e.message, 'error'); }
+    const rows = await sbFetch('GET','sicad_audit',null,`or=(user_id.eq.${id},recurso_id.eq.${id})&order=created_at.desc&limit=200&select=created_at,acao,recurso,recurso_id,detalhes,user_email,user_id`);
+    const nomeAcao = { login:'Entrou no sistema', view_person:'Consultou ficha', c3_ficha_consultar:'Consultou ficha (Capãozinho 3)', update_user:'Perfil alterado', create_user:'Usuário criado', approve_user:'Acesso aprovado', delete_person:'Excluiu cadastro', acesso_negado:'Tentou abrir área bloqueada', face_web_search:'Busca facial na web' };
+    const lista = (rows||[]).map(r => {
+      const sobre = r.user_id !== id ? ` <span style="color:var(--neutral-400)">por ${esc(r.user_email||'—')}</span>` : '';
+      let det = '';
+      if (r.detalhes && typeof r.detalhes === 'object') {
+        const d = r.detalhes;
+        det = d.nome ? esc(d.nome) : (d.de || d.para ? `${esc(PERFIL_LABEL[d.de]||d.de||'—')} → ${esc(PERFIL_LABEL[d.para]||d.para||'—')}` : '');
+      } else if (r.acao === 'acesso_negado') det = esc(r.recurso_id||'');
+      return `<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--neutral-100);font-size:13px">
+        <div style="color:var(--neutral-500);font-variant-numeric:tabular-nums">${new Date(r.created_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div>
+        <div><b style="color:var(--neutral-800)">${esc(nomeAcao[r.acao] || r.acao)}</b>${sobre}${det?`<div style="color:var(--neutral-500);font-size:12px;margin-top:1px">${det}</div>`:''}</div></div>`;
+    }).join('');
+    c3AbrirModal(`Histórico · ${esc(u ? u.nome : '')}`, `
+      <div style="font-size:12px;color:var(--neutral-500);margin-bottom:10px">Últimos ${(rows||[]).length} registros: acessos, consultas e alterações de perfil.</div>
+      ${lista || '<div class="c3-empty">Nenhum registro encontrado.</div>'}`);
+  } catch(e) { toast('Erro ao carregar histórico: '+e.message,'error'); }
   finally { hideOv(); }
 }
 
 let euId=null;
-function openUserModal(u){
+let _euOrig = null;
+function openUserModal(u, aprovando){
   euId = u ? u.id : null;
+  _euOrig = u ? { ...(_allUsers.find(x=>x.id===u.id) || u) } : null;
   const isEdit = !!u;
-  document.getElementById('userModalTitle').textContent = isEdit ? 'EDITAR USUÁRIO' : 'NOVO USUÁRIO';
+  document.getElementById('userModalTitle').textContent = aprovando ? 'APROVAR ACESSO' : (isEdit ? 'EDITAR USUÁRIO' : 'NOVO USUÁRIO');
   document.getElementById('uLogin').value = u?.email || '';
   document.getElementById('uLogin').disabled = isEdit; // e-mail não muda em edição
   document.getElementById('uNome').value = u?.nome || '';
   document.getElementById('uMatricula').value = u?.matricula || '';
   document.getElementById('uSenha').value = '';
-  document.getElementById('uRole').value = u?.role || 'operator';
+  document.getElementById('uRole').value = u?.role || 'rp';
+  document.getElementById('uPodeExcluir').checked = !!u?.pode_excluir;
+  atualizarDicaPerfil();
   document.getElementById('uAtivo').checked = isEdit ? !!u.ativo : true;
   document.getElementById('uAtivoWrap').style.display = isEdit ? 'block' : 'none';
   document.getElementById('uSenhaWrap').style.display = isEdit ? 'none' : 'block';
@@ -3554,16 +3645,25 @@ async function saveUser(){
   const senha = document.getElementById('uSenha').value;
   const role = document.getElementById('uRole').value;
   const ativo = document.getElementById('uAtivo').checked;
+  const pode_excluir = role === 'gtop' && document.getElementById('uPodeExcluir').checked;
   if (!email || !nome) { toast('E-mail e nome são obrigatórios.','error'); return; }
+  if (euId && euId === CU.id && role !== 'admin') { toast('Você não pode tirar o seu próprio perfil de administrador.','error'); return; }
 
   const btn = document.getElementById('saveUserBtn');
   btn.disabled = true; btn.innerHTML = '<span class="ld"></span>';
   try {
     if (euId) {
       // EDITAR perfil
-      const upd = { nome, role, matricula, ativo, updated_at: new Date().toISOString() };
-      await DB.updUser(euId, upd);
-      await logAudit('update_user', 'sicad_perfis', euId, { nome, role, ativo });
+      const upd = { nome, role, matricula, ativo, pode_excluir, updated_at: new Date().toISOString() };
+      try { await DB.updUser(euId, upd); }
+      catch(err) {
+        // Banco ainda sem a migration v5: salva sem o campo novo
+        if (!/pode_excluir/i.test(err.message||'')) throw err;
+        delete upd.pode_excluir; await DB.updUser(euId, upd);
+      }
+      const o = _euOrig || {};
+      await logAudit(o.ativo === false && ativo ? 'approve_user' : 'update_user', 'sicad_perfis', euId,
+        { nome, de: o.role || null, para: role, ativo_antes: o.ativo, ativo, pode_excluir });
       toast('Usuário atualizado.','success');
     } else {
       // CRIAR novo: signUp (trigger cria perfil auto com ativo=false) + PATCH pra ajustar role/ativo
@@ -3578,8 +3678,8 @@ async function saveUser(){
       // Aguarda 300ms o trigger inserir o perfil
       await new Promise(r => setTimeout(r, 400));
       // PATCH com os valores do admin (criado já como ativo)
-      await sbFetch('PATCH', 'sicad_perfis', { nome, role, matricula, ativo: true }, `id=eq.${uid}`);
-      await logAudit('create_user', 'sicad_perfis', uid, { email, nome, role });
+      await sbFetch('PATCH', 'sicad_perfis', { nome, role, matricula, ativo: true, pode_excluir }, `id=eq.${uid}`);
+      await logAudit('create_user', 'sicad_perfis', uid, { email, nome, para: role });
       toast('Usuário criado e ativado! Pode logar com a senha provisória.','success');
     }
     closeUserModal();
@@ -3633,7 +3733,7 @@ async function importUsersCSV(file){
     if (cols.length < 3) continue;
     const [nome, email, role, matricula] = cols;
     if (!nome || !email || !email.includes('@')) continue;
-    toCreate.push({ nome, email, role: ['admin','supervisor','operator','auditor'].includes((role||'').toLowerCase()) ? role.toLowerCase() : 'operator', matricula: matricula || null });
+    toCreate.push({ nome, email, role: ['admin','gtop','rp','supervisor','operator','auditor'].includes((role||'').toLowerCase()) ? role.toLowerCase() : 'rp', matricula: matricula || null });
   }
   if (!toCreate.length) { toast('Nenhuma linha válida no CSV.','warn'); return; }
   if (!confirm(`Importar ${toCreate.length} usuários?\n\nCada um receberá senha temporária "SICAD2026!" (devem trocar no 1º login).`)) return;
@@ -3922,6 +4022,7 @@ function _dedupEncontrarGrupos(pessoas){
 }
 
 async function dedupAbrir(){
+  if(isRP()){ toast('Seu perfil é somente consulta.','error'); return; }
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
@@ -3985,6 +4086,7 @@ async function dedupAbrir(){
 
 // MODO AUTOMÁTICO — detecta e remove sem mostrar review
 async function dedupAuto(){
+  if(isRP()){ toast('Seu perfil é somente consulta.','error'); return; }
   if (!Array.isArray(allP) || !allP.length){
     toast('Carregue a lista primeiro (CONSULTAR)', 'warn'); return;
   }
@@ -4743,7 +4845,7 @@ function renderAlertas() {
           · por ${esc(a.criado_por||'—')}
         </div>
       </div>
-      ${CU.role==='admin'?`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex-shrink:0;padding:8px 10px">🗑</button>`:''}
+      ${podeExcluirSICAD()?`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex-shrink:0;padding:8px 10px">🗑</button>`:''}
     </div>`;
   }).join('');
 }
@@ -4834,6 +4936,7 @@ function onAlertaFoto(inp) {
 }
 
 async function saveAlerta() {
+  if(!podeCadastrarSICAD()){ toast('Seu perfil é somente consulta.','error'); return; }
   if (!alertaTipo) { toast('Selecione o tipo de alerta.','error'); return; }
   if (!alertaPerig) { toast('Selecione o nível de periculosidade.','error'); return; }
   if (alertaTipo==='existente' && !alertaPessoaId) { toast('Selecione uma pessoa do sistema.','error'); return; }
@@ -6151,8 +6254,8 @@ let c3MiniInst = null, c3MiniMk = null;
 let c3BuscaT = null, c3FichaSub = 'pa', c3AnexosRemover = [];
 
 // ── utilitários ──
-const c3PodeEditar  = () => !!CU && ['admin','supervisor','operator'].includes(CU.role);
-const c3PodeExcluir = () => !!CU && ['admin','supervisor'].includes(CU.role);
+const c3PodeEditar  = () => !!CU && ['admin','gtop','supervisor','operator'].includes(CU.role);
+const c3PodeExcluir = () => !!CU && (['admin','supervisor'].includes(CU.role) || (CU.role==='gtop' && !!CU.pode_excluir));
 function c3NormCh(c){ return c.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
 function c3Norm(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
 function c3Dig(s){ return String(s||'').replace(/\D/g,''); }
