@@ -4755,9 +4755,9 @@ async function loadMapa() {
     initMapa();
     // pequeno delay pra container renderizar dimensão antes de invalidar
     setTimeout(() => mapaInst && mapaInst.invalidateSize(), 100);
-    await renderMapMarkers(allP);
     updateMapStats(allP);
     renderMapLegend();
+    renderMapMarkers(allP);
     hideOv();
   } catch(e) { toast('Erro ao carregar mapa: '+e.message,'error'); hideOv(); }
 }
@@ -4804,8 +4804,8 @@ async function atualizarHeatmap(persons){
   const alertIds = new Set((allAlertas||[]).filter(a => a.pessoa_id).map(a => a.pessoa_id));
   const points = [];
   for (const p of persons) {
-    if (!p.bairro && !p.endereco) continue;
-    const coords = await getCoords(p);
+    if (!p.bairro && !p.endereco && (p.lat == null || p.lng == null)) continue;
+    const coords = getCoordsRapido(p).c;
     if (!_validCoord(coords)) continue;
     // Intensidade maior pra alertas/foragidos
     const intensity = alertIds.has(p.id) ? 1.0 : 0.5;
@@ -4836,8 +4836,22 @@ async function geocodeAddress(endereco, bairro) {
   return null;
 }
 
-// Cache de geocodificação
-const _geocache = {};
+// Cache de geocodificação (memória + aparelho: não repete consulta a cada abertura)
+const _geocache = (() => { try { return JSON.parse(localStorage.getItem('sicad_geo_v1') || '{}') || {}; } catch(_) { return {}; } })();
+function _salvarGeocache(){ try { localStorage.setItem('sicad_geo_v1', JSON.stringify(_geocache)); } catch(_){} }
+const _geoFalhou = new Set(); // endereços que não acharam nada nesta sessão
+function _geoKey(p){ return ((p.endereco||'')+'|'+(p.bairro||'')+'|'+(p.cep||'')).toUpperCase(); }
+
+// Posição imediata (sem internet): salva → cache → aproximada pelo bairro
+function getCoordsRapido(p){
+  if (p.lat != null && p.lng != null) {
+    const c = { lat: parseFloat(p.lat), lng: parseFloat(p.lng) };
+    if (_validCoord(c)) return { c, exata: true };
+  }
+  const k = _geoKey(p);
+  if (_geocache[k] && _validCoord(_geocache[k])) return { c: _geocache[k], exata: true };
+  return { c: _coordBairro(p), exata: false };
+}
 
 // Hash determinístico simples (mesma string → mesmo offset)
 function _hashCode(str){
@@ -4865,8 +4879,9 @@ async function getCoords(p) {
     const c = { lat: parseFloat(p.lat), lng: parseFloat(p.lng) };
     if (_validCoord(c)) return c;
   }
-  const key = (p.endereco||'')+(p.bairro||'')+(p.cep||'');
+  const key = _geoKey(p);
   if (_geocache[key] && _validCoord(_geocache[key])) return _geocache[key];
+  if (_geoFalhou.has(key)) return _coordBairro(p);
 
   // 2) Tenta geocodificar endereço real via CEP (mais preciso)
   if (p.cep && p.cep.replace(/\D/g,'').length === 8) {
@@ -4876,7 +4891,7 @@ async function getCoords(p) {
         const j = await r.json();
         if (j.location && j.location.coordinates) {
           const c = { lat: parseFloat(j.location.coordinates.latitude), lng: parseFloat(j.location.coordinates.longitude) };
-          if (_validCoord(c)) { _geocache[key] = c; return c; }
+          if (_validCoord(c)) { _geocache[key] = c; _salvarGeocache(); return c; }
         }
       }
     } catch(e){}
@@ -4885,9 +4900,13 @@ async function getCoords(p) {
   // 3) Geocodifica endereço textual via Nominatim
   if (p.endereco && p.bairro) {
     const coords = await geocodeAddress(p.endereco, p.bairro);
-    if (_validCoord(coords)) { _geocache[key] = coords; return coords; }
+    if (_validCoord(coords)) { _geocache[key] = coords; _salvarGeocache(); return coords; }
   }
+  _geoFalhou.add(key);
+  return _coordBairro(p);
+}
 
+function _coordBairro(p){
   // 4) Fallback: coordenada do bairro + offset DETERMINÍSTICO pelo nome (não muda a cada render)
   const BAIRRO_COORDS = {
     "SETOR NORTE":    [-15.6680, -48.1890],
@@ -4903,17 +4922,19 @@ async function getCoords(p) {
     "PADRE LUCIO":    [-15.6760, -48.1980],
     "OUTROS":         [-15.6760, -48.1870],
   };
-  const base = BAIRRO_COORDS[(p.bairro||'').toUpperCase()] || [-15.6760, -48.1870];
-  const off = _hashOffset((p.nome||p.id||key));
-  const coords = { lat: base[0] + off[0], lng: base[1] + off[1] };
-  _geocache[key] = coords;
-  return coords;
+  const bn = (p.bairro||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const base = BAIRRO_COORDS[(p.bairro||'').toUpperCase()] || BAIRRO_COORDS[bn] || [-15.6760, -48.1870];
+  const off = _hashOffset((p.nome||p.id||''));
+  return { lat: base[0] + off[0], lng: base[1] + off[1] };
 }
 
+let _mapaRenderId = 0;
 async function renderMapMarkers(persons) {
+  const meuRender = ++_mapaRenderId;
   // Remove marcadores antigos
   mapaMarkers.forEach(m => mapaInst && mapaInst.removeLayer(m));
   mapaMarkers = [];
+  const pendentes = []; // [pessoa, marcador] com posição aproximada
 
   const alertIds = new Set(allAlertas.filter(a=>a.pessoa_id).map(a=>a.pessoa_id));
   const alertNames = new Set(allAlertas.map(a=>(a.nome||'').toLowerCase()));
@@ -4922,7 +4943,8 @@ async function renderMapMarkers(persons) {
     // Mostra se tem coordenada salva OU bairro/endereço pra geocodificar
     const temCoord = (p.lat != null && p.lng != null);
     if (!temCoord && !p.bairro && !p.endereco) continue;
-    const coords = await getCoords(p);
+    const rap = getCoordsRapido(p);
+    const coords = rap.c;
     if (!_validCoord(coords)) { console.warn('[mapa] coord inválida pra', p.nome); continue; }
     const isAlert = alertIds.has(p.id) || alertNames.has((p.nome||'').toLowerCase());
     const color = isAlert ? '#ff3d3d' : (BAIRRO_COLORS[(p.bairro||'').toUpperCase()] || '#b0bec5');
@@ -4963,7 +4985,18 @@ async function renderMapMarkers(persons) {
       </div>`;
 
     marker.bindPopup(content);
+    if (!rap.exata) { marker.setOpacity(0.55); if ((p.endereco || p.cep) && !_geoFalhou.has(_geoKey(p))) pendentes.push([p, marker]); }
     mapaMarkers.push(marker);
+  }
+
+  // Segundo plano: localiza endereços (1 por segundo — limite do serviço gratuito) e move o pino
+  for (const [p, marker] of pendentes) {
+    if (meuRender !== _mapaRenderId) return; // filtro mudou: abandona esta fila
+    if (document.body.dataset.pagina !== 'mapa') return; // saiu do mapa
+    const c = await getCoords(p);
+    if (meuRender !== _mapaRenderId) return;
+    if (getCoordsRapido(p).exata && _validCoord(c)) { marker.setLatLng([c.lat, c.lng]); marker.setOpacity(1); }
+    await new Promise(r => setTimeout(r, 1100));
   }
 }
 
