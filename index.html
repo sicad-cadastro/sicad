@@ -1046,6 +1046,9 @@ body.no-didatico .field-hint{display:none}
   input,select,textarea{font-size:16px !important}
   /* Barra inferior: a área do "risquinho" do iPhone não espreme os ícones */
   .bottom-nav{height:calc(64px + env(safe-area-inset-bottom,0px))}
+  /* Barra inferior presa na tela (fixed): sticky "andava" junto ao rolar */
+  .bottom-nav{position:fixed !important;left:0;right:0;bottom:0;width:100%;transform:translateZ(0);-webkit-transform:translateZ(0)}
+  .content{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
   /* Dicas recolhidas: só o título; toque para abrir */
   .help-banner{cursor:pointer;padding:10px 40px 10px 12px;align-items:center}
   .help-banner .help-banner-body{padding-top:0}
