@@ -2676,6 +2676,57 @@ async function init() {
 
 // ── DB ──
 const enc = s => encodeURIComponent(s||'');
+let _listaLeveOK = null;   // null = ainda não testou a view leve; false = view não existe (usa tabela completa)
+
+// Completa registros da lista leve com foto + tatuagens (em lotes, mutando os próprios objetos de allP)
+async function hidratarPessoas(lista, soFoto){
+  const falta = (lista||[]).filter(p => p && p._leve && (p.foto === undefined || (!soFoto && p.tatuagens === undefined)));
+  const cols = soFoto ? 'id,foto' : 'id,foto,tatuagens';
+  for (let i = 0; i < falta.length; i += 40) {
+    const lote = falta.slice(i, i + 40);
+    const r = await sbFetch('GET','sicad_pessoas',null,`select=${cols}&id=in.(${lote.map(p=>p.id).join(',')})`);
+    const m = new Map((r||[]).map(x => [x.id, x]));
+    lote.forEach(p => {
+      const x = m.get(p.id) || {};
+      p.foto = x.foto || null;
+      if (!soFoto) { p.tatuagens = x.tatuagens ?? null; p._leve = false; }
+    });
+  }
+  return lista;
+}
+
+// Fotos dos cartões: só baixa quando o cartão aparece na tela
+let _fotoObs = null, _fotoFila = new Set(), _fotoTimer = null;
+function _fotoCarregarFila(){
+  const ids = [..._fotoFila]; _fotoFila.clear();
+  const ps = ids.map(id => allP.find(p => p.id === id)).filter(Boolean);
+  hidratarPessoas(ps, true).then(() => {
+    ps.forEach(p => {
+      if (!p.foto) return;
+      document.querySelectorAll(`[data-foto-pid="${p.id}"]`).forEach(el => {
+        el.removeAttribute('data-foto-pid');
+        el.style.fontSize = ''; el.textContent = '';
+        const img = document.createElement('img'); img.src = p.foto; img.alt = '';
+        el.appendChild(img);
+      });
+    });
+  }).catch(e => console.warn('[fotos]', e));
+}
+function observarFotosPendentes(){
+  const els = document.querySelectorAll('[data-foto-pid]:not([data-foto-obs])');
+  if (!els.length) return;
+  if (!_fotoObs) {
+    _fotoObs = new IntersectionObserver(ents => {
+      ents.forEach(en => {
+        if (!en.isIntersecting) return;
+        _fotoObs.unobserve(en.target);
+        _fotoFila.add(en.target.getAttribute('data-foto-pid'));
+      });
+      clearTimeout(_fotoTimer); _fotoTimer = setTimeout(_fotoCarregarFila, 120);
+    }, { rootMargin: '300px' });
+  }
+  els.forEach(el => { el.setAttribute('data-foto-obs','1'); _fotoObs.observe(el); });
+}
 const DB = {
   // Usuários agora vivem em sicad_perfis (vinculados a auth.users)
   async getUsers(){return await sbFetch('GET','sicad_perfis',null,'order=created_at.asc&select=*');},
@@ -2684,10 +2735,23 @@ const DB = {
   async getPersons(f={}){
     if(window._L){let l=lsG('p');if(f.n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(f.n)));if(f.b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(f.b));if(f.q)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(f.q));return[...l].reverse();}
     let qs='order=criado_em.desc';if(f.n){const n=enc(f.n);qs+=`&or=(nome.ilike.*${n}*,apelido.ilike.*${n}*,mae.ilike.*${n}*)`;}if(f.b)qs+=`&bairro=ilike.*${enc(f.b)}*`;if(f.q)qs+=`&quadra=ilike.*${enc(f.q)}*`;
+    // Lista LEVE (sem foto/tatuagens) — view sicad_pessoas_lista (migration v6).
+    // Foto carrega sob demanda (cartão visível / ficha aberta). Sem a view, cai na tabela completa.
+    if (_listaLeveOK !== false) {
+      try {
+        const r = await sbFetch('GET','sicad_pessoas_lista',null,qs);
+        _listaLeveOK = true;
+        (r||[]).forEach(p => { p._leve = true; });
+        return r;
+      } catch(e) {
+        if (/sicad_pessoas_lista|PGRST205|schema cache|does not exist/i.test(e.message||'')) _listaLeveOK = false;
+        else throw e;
+      }
+    }
     return await sbFetch('GET','sicad_pessoas',null,qs);
   },
-  // Versão completa (alias pra dedup) — mesma coisa de getPersons agora
-  async getPersonsFull(){ return await this.getPersons(); },
+  // Versão completa (dedup) — inclui foto e tatuagens
+  async getPersonsFull(){ if(window._L) return this.getPersons(); return await sbFetch('GET','sicad_pessoas',null,'order=criado_em.desc'); },
   async getPerson(id){if(window._L)return lsG('p').find(x=>x.id===id)||null;const r=await sbFetch('GET','sicad_pessoas',null,`id=eq.${id}`);return r[0]||null;},
   async addPerson(d){if(window._L){const p=lsG('p');p.push(d);lsS('p',p);return d;}const r=await sbFetch('POST','sicad_pessoas',d);return Array.isArray(r)?r[0]:r;},
   async updPerson(id,d){
@@ -2724,8 +2788,13 @@ async function aplicarPerfilLogado(user){
   } catch(e) { console.warn('[perfil]', e); }
 
   if (!profile) {
+    // Usuário excluído que voltou a entrar: reabre o pedido de acesso (fica pendente)
+    let r = null;
+    try { const { data, error } = await supabase.rpc('sicad_resolicitar_acesso', { p_nome: null }); if (!error) r = data; } catch(_){}
     await supabase.auth.signOut();
-    errLg('Perfil não cadastrado. Solicite ao administrador.');
+    errLg(r === 'criado'
+      ? '✅ Seu pedido de acesso foi reenviado. Aguarde um administrador aprovar.'
+      : 'Perfil não cadastrado. Solicite ao administrador.');
     return;
   }
   if (!profile.ativo) {
@@ -2803,6 +2872,19 @@ function toggleSignup(show){
 // Signup público — cria conta em auth.users. Um trigger no banco (handle_new_user)
 // insere automaticamente em sicad_perfis com ativo=false → conta fica PENDENTE
 // esperando aprovação de admin (Users → toggle Ativo).
+// Conta de login existe mas o perfil foi excluído → recria pedido PENDENTE (admin aprova).
+// Retorna 'criado' | 'existe' | 'senha' (senha não confere) | 'erro'
+async function resolicitarAcessoContaExistente(email, senha, nome){
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
+    if (error) return 'senha';
+    const { data, error: e2 } = await supabase.rpc('sicad_resolicitar_acesso', { p_nome: nome || null });
+    await supabase.auth.signOut();
+    if (e2) { console.warn('[resolicitar]', e2); return 'erro'; }
+    return data;
+  } catch(e) { console.warn('[resolicitar]', e); try { await supabase.auth.signOut(); } catch(_){} return 'erro'; }
+}
+
 async function signup(){
   const nome = document.getElementById('suNome').value.trim();
   const email = document.getElementById('suEmail').value.trim();
@@ -2818,6 +2900,17 @@ async function signup(){
       email, password: senha,
       options: { data: { nome } }
     });
+    // E-mail que já tem conta (ex.: usuário excluído que pede acesso de novo):
+    // o Supabase devolve erro "already registered" ou um usuário sem identities.
+    const jaExiste = (error && /already|registered|exists/i.test(error.message)) ||
+                     (!error && data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0);
+    if (jaExiste) {
+      const r = await resolicitarAcessoContaExistente(email, senha, nome);
+      if (r === 'criado')  { okLg('✅ Solicitação reenviada! Aguarde um administrador aprovar sua conta.'); setTimeout(() => toggleSignup(false), 4000); return; }
+      if (r === 'existe')  { errLg('Este e-mail já tem cadastro no SICAD. Faça login normalmente ou aguarde a aprovação do administrador.'); return; }
+      errLg('Este e-mail já tem conta no SICAD, mas a senha não confere. Volte ao login, digite o e-mail e clique em "Esqueci minha senha". Depois de criar a nova senha, entre com ela que o pedido de acesso é reenviado automaticamente.');
+      return;
+    }
     if (error) throw new Error(error.message);
     // Trigger no banco criou perfil com ativo=false. Assina out pra não deixar sessão pendente logada.
     await supabase.auth.signOut();
@@ -2943,6 +3036,7 @@ async function loadTatuagensSearch(){
     try { allP = await DB.getPersons(); } catch(e) {}
     hideOv();
   }
+  if (allP.some(p => p._leve)) { showOv('CARREGANDO TATUAGENS...'); try { await hidratarPessoas(allP); } catch(e){ console.warn(e); } hideOv(); }
   // Popula select de locais
   const sel = document.getElementById('tatBuscaLocal');
   sel.innerHTML = '<option value="">Qualquer local</option>' + LOCAIS_CORPO.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -3047,18 +3141,19 @@ async function loadDash(){
       <div class="stat-card"><div class="stat-num">${ps.length}</div><div class="stat-lbl">CADASTRADOS</div></div>
       <div class="stat-card"><div class="stat-num">${bairros.length}</div><div class="stat-lbl">BAIRROS</div></div>
       <div class="stat-card"><div class="stat-num">${quadras.length}</div><div class="stat-lbl">QUADRAS</div></div>
-      <div class="stat-card"><div class="stat-num">${ps.filter(p=>p.foto).length}</div><div class="stat-lbl">COM FOTO</div></div>`;
+      <div class="stat-card"><div class="stat-num">${ps.filter(p=>p.foto||p.tem_foto).length}</div><div class="stat-lbl">COM FOTO</div></div>`;
     const rec=ps.slice(0,6);
     document.getElementById('recentList').innerHTML=rec.length
       ?`<div class="pgrid">${rec.map(pCard).join('')}</div>`
       :`<div class="empty"><div class="ei">📋</div><p>Nenhum cadastro.<br><a href="#" onclick="go('cadastrar')" style="color:var(--accent)">Adicionar o primeiro →</a></p></div>`;
+    observarFotosPendentes();
   }catch(e){toast('Erro ao carregar.','error');}
   finally{hideOv();}
 }
 
 function pCard(p){
   const iniciais = (p.nome||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
-  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''};font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:1px">${esc(iniciais)}</div>`;
+  const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''};font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:1px"${(p.tem_foto&&p.foto===undefined)?` data-foto-pid="${p.id}"`:''}>${esc(iniciais)}</div>`;
   const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">🚨 FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
   const cardStyle = p.faccionado?'border-left:3px solid #ff4444;background:linear-gradient(90deg,rgba(255,30,30,.06) 0%,var(--surface) 60%)':'';
   return `<div class="pcard" onclick="viewPerson('${p.id}')" style="${cardStyle}">
@@ -3103,6 +3198,7 @@ function _renderMaisPagina(){
   if (btnVelho) btnVelho.remove();
   // Append em chunk
   grid.insertAdjacentHTML('beforeend', slice.map(pCard).join(''));
+  observarFotosPendentes();
   _listaRenderizada = fim;
   // Adiciona botão "carregar mais" se sobrou
   if (fim < _listaFiltrada.length){
@@ -3286,6 +3382,7 @@ async function editPerson(){
   if(isRP()){ toast('Seu perfil é somente consulta.','error'); return; }
   const idSalvo=editId; // salva ANTES de fechar o modal
   const p=allP.find(x=>x.id===idSalvo)||await DB.getPerson(idSalvo);if(!p)return;
+  if(p._leve){ showOv('CARREGANDO...'); try{ await hidratarPessoas([p]); }catch(e){ hideOv(); toast('Falha ao carregar o cadastro completo: '+e.message,'error'); return; } hideOv(); }
   closePersonModal();
   editId=idSalvo; // restaura após closePersonModal zerá-lo
   editMode=true;
@@ -3693,7 +3790,7 @@ async function saveUser(){
 
 async function delUser(id, nome){
   if (id === CU.id) { toast('Não pode excluir a si próprio.','warn'); return; }
-  if (!confirm('Excluir o usuário "' + nome + '"?\n\nIsso também remove a conta de autenticação. Ação irreversível.')) return;
+  if (!confirm('Excluir o usuário "' + nome + '"?\n\nEle perde o acesso na hora. O histórico de auditoria é mantido.\nSe quiser só bloquear temporariamente, use DESATIVAR no ✏️.\nSe a pessoa pedir acesso de novo com o mesmo e-mail, o pedido volta como PENDENTE para aprovação.')) return;
   showOv('REMOVENDO...');
   try {
     // Delete perfil (auth.users tem cascade deletando o perfil; aqui só removemos perfil e desativamos)
@@ -4900,6 +4997,9 @@ function buscaPessoaAlerta() {
   const res = document.getElementById('aBuscaResultados');
   if (!v) { res.style.display='none'; return; }
   const found = allP.filter(p => (p.nome||'').toLowerCase().includes(v) || (p.apelido||'').toLowerCase().includes(v));
+  // Miniaturas: busca as fotos dos 6 primeiros e redesenha se a busca não mudou
+  const semFoto = found.slice(0,6).filter(p => p._leve && p.tem_foto && p.foto === undefined);
+  if (semFoto.length) hidratarPessoas(semFoto, true).then(() => { if (document.getElementById('aBuscaPessoa').value.trim().toLowerCase() === v) buscaPessoaAlerta(); }).catch(()=>{});
   if (!found.length) { res.innerHTML=`<div style="padding:12px;font-size:13px;color:var(--text-dim);text-align:center">Nenhum resultado</div>`; res.style.display='block'; return; }
   res.style.display = 'block';
   res.innerHTML = found.slice(0,6).map(p => `
@@ -4909,9 +5009,10 @@ function buscaPessoaAlerta() {
     </div>`).join('');
 }
 
-function selecionarPessoa(id) {
+async function selecionarPessoa(id) {
   const p = allP.find(x => x.id===id);
   if (!p) return;
+  if (p._leve && p.foto === undefined) { try { await hidratarPessoas([p], true); } catch(e){} }
   alertaPessoaId = id;
   alertaFotoD = p.foto || null;
   document.getElementById('aBuscaResultados').style.display = 'none';
@@ -4989,6 +5090,7 @@ async function loadForagidos() {
 function renderForagidos(l) {
   document.getElementById('foragidoEmpty').style.display = l.length ? 'none' : 'block';
   document.getElementById('foragidoGrid').innerHTML = l.map(pCard).join('');
+  observarFotosPendentes();
 }
 function filterForagidos() {
   const n = document.getElementById('sForagido').value.trim().toLowerCase();
@@ -5007,6 +5109,7 @@ async function exportPDF(){
   const id=editId;if(!id)return;
   const p=allP.find(x=>x.id===id)||await DB.getPerson(id);
   if(!p){toast('Cadastro não encontrado.','error');return;}
+  if(p._leve){ try{ await hidratarPessoas([p]); }catch(e){ toast('Falha ao carregar o cadastro completo.','error'); return; } }
   logAudit('export_pdf','sicad_pessoas',id,{ nome: p.nome });
   toast('Gerando PDF...','info');
   const {jsPDF}=window.jspdf;
@@ -5519,10 +5622,10 @@ function resetFaceWeb(){
   document.getElementById('faceWebStatus').style.display='none';
   document.getElementById('faceWebLinks').style.display='none';
 }
-function usarFotoDoBancoNaWeb(){
+async function usarFotoDoBancoNaWeb(){
   // pega lista de pessoas com foto e deixa escolher
   if(!Array.isArray(allP) || !allP.length){ toast('Nenhuma pessoa cadastrada.','error'); return; }
-  const comFoto = allP.filter(p => p.foto);
+  const comFoto = allP.filter(p => p.foto || p.tem_foto);
   if(!comFoto.length){ toast('Nenhuma pessoa com foto cadastrada.','error'); return; }
   const nome = prompt('Digite o nome (ou apelido) da pessoa cadastrada:');
   if(!nome) return;
@@ -5531,6 +5634,8 @@ function usarFotoDoBancoNaWeb(){
     (p.apelido||'').toLowerCase().includes(nome.toLowerCase())
   );
   if(!alvo){ toast('Pessoa não encontrada.','error'); return; }
+  try { await hidratarPessoas([alvo], true); } catch(e){}
+  if(!alvo.foto){ toast('Não foi possível carregar a foto.','error'); return; }
   _faceWebData = alvo.foto;
   const img = document.getElementById('faceImgWeb');
   img.src = _faceWebData; img.style.display = 'block';
@@ -6137,6 +6242,7 @@ async function computePersonDescriptor(p){
 async function searchFaceInDB(){
   if (!_faceData.Q) { toast('Carregue uma foto antes.','warn'); return; }
   if (!allP || !allP.length) { allP = await DB.getPersons(); }
+  if (allP.some(p => p._leve && p.tem_foto && p.foto === undefined)) { showOv('CARREGANDO FOTOS DO BANCO...'); try { await hidratarPessoas(allP.filter(p => p.tem_foto), true); } catch(e){ console.warn(e); } hideOv(); }
   const comFoto = allP.filter(p => p.foto && p.foto.length > 100);
   if (!comFoto.length) { toast('Nenhum cadastro com foto no banco.','warn'); return; }
 
