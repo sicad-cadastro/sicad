@@ -1064,6 +1064,7 @@ body.no-didatico .field-hint{display:none}
   /* Botão "?" não cobre o Salvar do cadastro */
   body[data-pagina="cadastrar"] .help-fab{bottom:150px}
   /* Resposta ao toque */
+  .fg-acoes .btn{white-space:nowrap;font-size:12px;padding:0 6px;min-width:0}
   .pcard:active,.c3-item:active,.hi-card:active{transform:scale(.985);transition:transform .08s}
 }
 
@@ -1146,7 +1147,7 @@ body.no-didatico .field-hint{display:none}
         <div class="hi-icon"><span data-icon="foragidos" data-size="22"></span></div>
         <div class="hi-body">
           <div class="hi-title">Foragidos</div>
-          <div class="hi-sub">Alertas ativos e lista oficial PPDF</div>
+          <div class="hi-sub">Foragidos de Brazlândia e lista oficial PPDF</div>
         </div>
         <div class="hi-arrow"></div>
       </div>
@@ -1653,7 +1654,7 @@ body.no-didatico .field-hint{display:none}
       <!-- Banner alerta -->
       <div style="background:rgba(255,61,61,.12);border:2px solid var(--danger);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;animation:pulseRed 2s infinite">
         <div style="font-size:36px;margin-bottom:8px">🚨</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">ATENÇÃO — FORAGIDOS</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">FORAGIDOS DE BRAZLÂNDIA</div>
         <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">⚠️ VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
         <a href="https://seape.df.gov.br/foragidos/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--danger);color:white;padding:13px 24px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 20px rgba(255,61,61,.5)">
           🔴 LISTA OFICIAL DE FORAGIDOS PPDF
@@ -1662,20 +1663,24 @@ body.no-didatico .field-hint{display:none}
 
       <!-- Tabs internas -->
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">🚨 ALERTAS CADASTRADOS</button>
+        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">🚨 PROCURADOS</button>
         <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">👥 NO SISTEMA</button>
       </div>
 
       <!-- Tab alertas -->
       <div id="tabAlertas">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-          <div class="sec-title" style="color:var(--danger);margin-bottom:0">ALERTAS ATIVOS</div>
-          <button class="btn btn-danger btn-sm" onclick="openAlertaModal()">+ NOVO ALERTA</button>
+          <div class="sec-title" style="color:var(--danger);margin-bottom:0">PROCURADOS EM BRAZLÂNDIA</div>
+          <button class="btn btn-danger btn-sm" id="btnNovoForagido" onclick="openAlertaModal()">+ NOVO FORAGIDO</button>
         </div>
         <div id="alertasList"></div>
         <div id="alertasEmpty" class="empty" style="display:none">
           <div class="ei">🚨</div>
-          <p>Nenhum alerta cadastrado.<br>Clique em <strong>+ NOVO ALERTA</strong> para adicionar.</p>
+          <p>Nenhum foragido procurado no momento.<br>Clique em <strong>+ NOVO FORAGIDO</strong> para adicionar.</p>
+        </div>
+        <div id="presosWrap" style="display:none;margin-top:22px">
+          <div class="sec-title" style="color:var(--success)">PRESOS <span id="presosCount" style="font-weight:600;color:var(--text-dim)"></span></div>
+          <div id="presosList"></div>
         </div>
       </div>
 
@@ -2012,15 +2017,15 @@ body.no-didatico .field-hint{display:none}
     <div class="mhandle"></div>
     <div class="mi">
       <div class="mhdr">
-        <div class="mtitle" id="alertaModalTitle">🚨 NOVO ALERTA</div>
+        <div class="mtitle" id="alertaModalTitle">🚨 NOVO FORAGIDO</div>
         <div class="mclose" onclick="closeAlertaModal()">✕</div>
       </div>
 
       <!-- Tipo de alerta -->
       <div class="fg">
-        <label>TIPO DE ALERTA</label>
+        <label>O FORAGIDO JÁ TEM CADASTRO NO SICAD?</label>
         <div style="display:flex;gap:8px;margin-bottom:4px">
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">👥 PESSOA DO SISTEMA</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">👥 JÁ CADASTRADO NO SICAD</button>
           <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">➕ NOVO FORAGIDO</button>
         </div>
       </div>
@@ -2050,6 +2055,22 @@ body.no-didatico .field-hint{display:none}
 
       <!-- Campos comuns -->
       <div id="aCamposComuns" style="display:none">
+        <div class="fg"><label>CPF</label><input type="text" id="aCpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="off" oninput="this.value=c3FmtCpf(this.value)"></div>
+        <div class="fg"><label>ENDEREÇO</label><input type="text" id="aEndereco" placeholder="Quadra, conjunto, casa / chácara, ponto de referência" autocomplete="off"></div>
+        <div class="fg">
+          <label>LOCALIZAÇÃO DO ENDEREÇO (SE TIVER)</label>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="aLink" placeholder="Cole o link do Google Maps ou 'lat, lng'" autocomplete="off" style="flex:1;min-width:0" onchange="aLerLink()">
+            <button type="button" class="btn btn-outline btn-sm" onclick="aLerLink()" style="flex-shrink:0">Ler</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input type="text" id="aLat" placeholder="Latitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
+            <input type="text" id="aLng" placeholder="Longitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="aUsarGPS()" style="margin-top:8px;width:100%">📍 USAR MINHA LOCALIZAÇÃO ATUAL</button>
+          <div id="aLocInfo" style="font-size:11px;color:var(--text-dim);margin-top:4px"></div>
+        </div>
+        <div class="fg"><label>Nº DO PROCESSO</label><input type="text" id="aProcesso" placeholder="Ex.: 0712345-67.2026.8.07.0002" autocomplete="off"></div>
         <div class="fg">
           <label>NÍVEL DE PERICULOSIDADE</label>
           <div style="display:flex;gap:8px">
@@ -2063,7 +2084,7 @@ body.no-didatico .field-hint{display:none}
 
       <div class="row-btns" style="margin-top:8px">
         <button class="btn btn-outline" onclick="closeAlertaModal()">CANCELAR</button>
-        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">🚨 SALVAR ALERTA</button>
+        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">🚨 SALVAR FORAGIDO</button>
       </div>
     </div>
   </div>
@@ -2401,8 +2422,8 @@ const HELP_BANNERS = {
     corpo: 'Três modos: <strong>Comparar 2 fotos</strong> (1×1), <strong>Buscar no banco</strong> (acha semelhantes já cadastrados) e <strong>Buscar na web</strong> (Yandex, Google Lens). IA roda no seu celular — nada sobe pra servidor externo.'
   },
   foragidos: {
-    titulo: 'Alertas de foragidos',
-    corpo: 'Registre alertas de pessoas foragidas com foto e nível de periculosidade. Aparece pra toda a equipe. A aba "Sistema" traz a lista oficial da Polícia Penal (PPDF).'
+    titulo: 'Foragidos de Brazlândia',
+    corpo: 'Cadastre os foragidos de Brazlândia com foto, CPF, endereço, localização e nº do processo. Quem prender toca em <strong>🚔 PRESO</strong>: ele sai da lista de procurados e fica registrado quem prendeu e quando.'
   },
   tatuagens: {
     titulo: 'Busca reversa de tatuagens',
@@ -4934,7 +4955,8 @@ function renderMapLegend() {
 }
 
 // ── ALERTAS DE FORAGIDOS ──
-let allAlertas = [];
+let allAlertas = [];        // só PROCURADOS (presos ficam em alertasPresos)
+let alertasPresos = [];
 let alertaEditId = null;
 let alertaTipo = null;
 let alertaPerig = null;
@@ -4959,7 +4981,9 @@ const DBA = {
 async function loadAlertas() {
   showOv('CARREGANDO ALERTAS...');
   try {
-    allAlertas = await DBA.get();
+    const todos = await DBA.get();
+    allAlertas = (todos||[]).filter(a => a.status !== 'preso');
+    alertasPresos = (todos||[]).filter(a => a.status === 'preso');
     renderAlertas();
   } catch(e) { toast('Erro ao carregar alertas.','error'); }
   finally { hideOv(); }
@@ -4971,38 +4995,131 @@ const perigInfo = {
   3: { label:'EXTREMO', icon:'🔴', cls:'perig-3' }
 };
 
+function _linkMapaForagido(a){
+  if (a.lat != null && a.lng != null) return 'https://www.google.com/maps/search/?api=1&query=' + a.lat + ',' + a.lng;
+  if (a.gmaps_link && /^https?:/i.test(a.gmaps_link)) return a.gmaps_link;
+  if (a.endereco) return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a.endereco + ', Brazlândia - DF');
+  return null;
+}
+function _cardForagido(a, preso){
+  const pi = perigInfo[a.periculosidade] || perigInfo[1];
+  const cor = preso ? 'rgba(16,185,129,.55)' : 'rgba(255,61,61,.5)';
+  const av = a.foto ? `<div class="pavatar" style="width:64px;height:64px;border:2px solid ${cor};flex-shrink:0;${preso?'filter:grayscale(1)':''}"><img src="${a.foto}" style="width:100%;height:100%;object-fit:cover" onclick="event.stopPropagation();lbOpen('${a.foto}')"></div>`
+                    : `<div class="pavatar" style="width:64px;height:64px;border:2px solid ${cor};flex-shrink:0;font-size:28px">👤</div>`;
+  const mapa = _linkMapaForagido(a);
+  const linha = (rot, v) => v ? `<div style="font-size:12px;color:var(--text-mid);margin-top:2px"><b style="color:var(--text-dim);font-weight:600">${rot}</b> ${esc(v)}</div>` : '';
+  const acoes = [];
+  if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">📍 ${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
+  if (!preso && podeCadastrarSICAD()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">🚔 PRESO</button>`);
+  if (preso && ['admin','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
+  if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0">🗑</button>`);
+  return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
+    ${av}
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+        <span style="font-weight:700;font-size:15px;color:var(--text)">${esc(a.nome)}</span>
+        ${preso ? '<span class="perig-badge" style="background:rgba(16,185,129,.15);color:var(--success);border-color:rgba(16,185,129,.4)">✅ PRESO</span>' : `<span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>`}
+      </div>
+      ${linha('CPF', a.cpf)}
+      ${linha('Processo', a.processo)}
+      ${linha('Endereço', a.endereco)}
+      ${a.obs?`<div style="font-size:12px;color:var(--text-mid);margin-top:2px">${esc(a.obs)}</div>`:''}
+      ${preso ? `<div style="font-size:11px;color:var(--success);margin-top:6px;font-weight:600">🚔 Preso em ${a.preso_em?new Date(a.preso_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—'} por ${esc(a.preso_por_nome||'—')}${a.preso_obs?' · '+esc(a.preso_obs):''}</div>` : ''}
+      <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:6px">
+        ${a.tipo==='existente'?'<span style="color:var(--accent)">📋 CADASTRADO NO SICAD</span>':'<span style="color:#ff8080">➕ NOVO</span>'}
+        · ${a.criado_em ? new Date(a.criado_em).toLocaleDateString('pt-BR') : ''}
+        · por ${esc(a.criado_por||'—')}
+      </div>
+    </div>
+    ${acoes.length ? `<div class="fg-acoes" style="display:flex;gap:8px;width:100%;margin-top:10px">${acoes.join('')}</div>` : ''}
+  </div>`;
+}
+
 function renderAlertas() {
   const el = document.getElementById('alertasList');
   const empty = document.getElementById('alertasEmpty');
-  if (!allAlertas.length) { el.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  el.innerHTML = allAlertas.map(a => {
-    const pi = perigInfo[a.periculosidade] || perigInfo[1];
-    const av = a.foto ? `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0"><img src="${a.foto}" style="width:100%;height:100%;object-fit:cover"></div>`
-                      : `<div class="pavatar" style="width:60px;height:60px;border:2px solid rgba(255,61,61,.5);flex-shrink:0;font-size:28px">👤</div>`;
-    return `<div class="fcard" style="margin-bottom:12px">
-      ${av}
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-          <span style="font-weight:700;font-size:15px;color:var(--text)">${esc(a.nome)}</span>
-          <span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>
-        </div>
-        ${a.obs?`<div style="font-size:12px;color:var(--text-mid);margin-top:2px">${esc(a.obs)}</div>`:''}
-        <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:6px">
-          ${a.tipo==='existente'?'<span style="color:var(--accent)">📋 DO SISTEMA</span>':'<span style="color:#ff8080">➕ NOVO</span>'}
-          · ${a.criado_em ? new Date(a.criado_em).toLocaleDateString('pt-BR') : ''}
-          · por ${esc(a.criado_por||'—')}
-        </div>
-      </div>
-      ${podeExcluirSICAD()?`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex-shrink:0;padding:8px 10px">🗑</button>`:''}
-    </div>`;
-  }).join('');
+  const btnNovo = document.getElementById('btnNovoForagido');
+  if (btnNovo) btnNovo.style.display = podeCadastrarSICAD() ? '' : 'none';
+  empty.style.display = allAlertas.length ? 'none' : 'block';
+  el.innerHTML = allAlertas.map(a => _cardForagido(a, false)).join('');
+  const pw = document.getElementById('presosWrap');
+  if (pw) {
+    pw.style.display = alertasPresos.length ? '' : 'none';
+    document.getElementById('presosCount').textContent = '(' + alertasPresos.length + ')';
+    document.getElementById('presosList').innerHTML = alertasPresos
+      .slice().sort((a,b) => String(b.preso_em||'').localeCompare(String(a.preso_em||'')))
+      .map(a => _cardForagido(a, true)).join('');
+  }
+}
+
+async function marcarPreso(id) {
+  const a = allAlertas.find(x => x.id === id); if (!a) return;
+  if (!confirm('Confirmar a PRISÃO de ' + a.nome + '?\n\nEle sai da lista de procurados. Fica registrado quem marcou e quando.')) return;
+  const obs = prompt('Observação da prisão (opcional) — ex.: local, nº da ocorrência:', '') ;
+  if (obs === null) return;
+  showOv('REGISTRANDO PRISÃO...');
+  try {
+    const { error } = await supabase.rpc('sicad_marcar_preso', { p_id: id, p_obs: obs || null });
+    if (error) throw new Error(error.message);
+    Object.assign(a, { status:'preso', preso_em:new Date().toISOString(), preso_por_nome:CU.nome, preso_obs:obs||null });
+    allAlertas = allAlertas.filter(x => x.id !== id);
+    alertasPresos.unshift(a);
+    renderAlertas();
+    toast('🚔 ' + a.nome + ' marcado como PRESO.','success');
+  } catch(e) {
+    toast(/sicad_marcar_preso|function/i.test(e.message) ? 'Banco sem a função de prisão. Rode a migration_v8_foragidos_brazlandia.sql.' : 'Erro: ' + e.message, 'error');
+  } finally { hideOv(); }
+}
+
+async function desfazerPreso(id) {
+  const a = alertasPresos.find(x => x.id === id); if (!a) return;
+  if (!confirm('Desfazer a prisão de ' + a.nome + '? Ele volta para a lista de procurados.')) return;
+  showOv('DESFAZENDO...');
+  try {
+    const { error } = await supabase.rpc('sicad_desfazer_preso', { p_id: id });
+    if (error) throw new Error(error.message);
+    Object.assign(a, { status:'foragido', preso_em:null, preso_por_nome:null, preso_obs:null });
+    alertasPresos = alertasPresos.filter(x => x.id !== id);
+    allAlertas.unshift(a);
+    renderAlertas();
+    toast('Prisão desfeita.','info');
+  } catch(e) { toast('Erro: ' + e.message, 'error'); } finally { hideOv(); }
+}
+
+function aLerLink() {
+  const v = document.getElementById('aLink').value.trim();
+  const info = document.getElementById('aLocInfo');
+  if (!v) { info.textContent = ''; return; }
+  const r = c3ParseGmaps(v);
+  if (r && r.lat != null) {
+    document.getElementById('aLat').value = r.lat.toFixed(6);
+    document.getElementById('aLng').value = r.lng.toFixed(6);
+    info.textContent = '✅ Localização lida do link.'; info.style.color = 'var(--success)';
+  } else {
+    info.style.color = 'var(--accent2)';
+    info.textContent = r && r.erro === 'curto'
+      ? 'Link curto (maps.app.goo.gl) não traz coordenadas. Abra o link, copie o endereço completo da barra do navegador e cole aqui — ou use "minha localização".'
+      : 'Não achei coordenadas nesse texto. Cole o link completo do Google Maps ou "lat, lng".';
+  }
+}
+
+function aUsarGPS() {
+  const info = document.getElementById('aLocInfo');
+  if (!navigator.geolocation) { info.textContent = 'Este aparelho não fornece localização.'; return; }
+  info.style.color = 'var(--text-dim)'; info.textContent = '📡 Obtendo localização...';
+  navigator.geolocation.getCurrentPosition(p => {
+    document.getElementById('aLat').value = p.coords.latitude.toFixed(6);
+    document.getElementById('aLng').value = p.coords.longitude.toFixed(6);
+    info.style.color = 'var(--success)'; info.textContent = '✅ Localização atual registrada (precisão ~' + Math.round(p.coords.accuracy) + ' m).';
+  }, () => { info.style.color = 'var(--danger)'; info.textContent = 'Não foi possível obter a localização. Verifique a permissão de GPS.'; }, { enableHighAccuracy: true, timeout: 15000 });
 }
 
 function openAlertaModal(editData) {
   alertaEditId = editData ? editData.id : null;
   alertaTipo = null; alertaPerig = null; alertaPessoaId = null; alertaFotoD = null;
-  document.getElementById('alertaModalTitle').textContent = '🚨 NOVO ALERTA DE FORAGIDO';
+  document.getElementById('alertaModalTitle').textContent = '🚨 NOVO FORAGIDO DE BRAZLÂNDIA';
+  ['aCpf','aEndereco','aLink','aLat','aLng','aProcesso'].forEach(i => { const e = document.getElementById(i); if (e) e.value = ''; });
+  document.getElementById('aLocInfo').textContent = '';
   document.getElementById('aTipoExist').className = 'btn btn-outline btn-sm';
   document.getElementById('aTipoNovo').className = 'btn btn-outline btn-sm';
   document.getElementById('aExistente').style.display = 'none';
@@ -5067,6 +5184,10 @@ async function selecionarPessoa(id) {
   if (p._leve && p.foto === undefined) { try { await hidratarPessoas([p], true); } catch(e){} }
   alertaPessoaId = id;
   alertaFotoD = p.foto || null;
+  const _set = (i, v) => { const e = document.getElementById(i); if (e && !e.value && v != null && v !== '') e.value = v; };
+  _set('aCpf', p.cpf ? c3FmtCpf(p.cpf) : '');
+  _set('aEndereco', [p.endereco, p.quadra ? 'Q ' + p.quadra : '', p.bairro].filter(Boolean).join(' · '));
+  if (p.lat != null && p.lng != null) { _set('aLat', p.lat); _set('aLng', p.lng); }
   document.getElementById('aBuscaResultados').style.display = 'none';
   document.getElementById('aBuscaPessoa').value = p.nome;
   document.getElementById('aPessoaSelecionada').style.display = 'block';
@@ -5098,6 +5219,13 @@ async function saveAlerta() {
     : document.getElementById('aNovoNome').value.trim();
   if (alertaTipo==='novo' && !nome) { toast('Informe o nome do foragido.','error'); return; }
 
+  const _cpf = document.getElementById('aCpf').value.replace(/\D/g,'');
+  if (_cpf && !validarCPF(_cpf)) { toast('CPF inválido. Confira ou deixe em branco.','error'); return; }
+  const _lat = parseFloat(String(document.getElementById('aLat').value).replace(',','.'));
+  const _lng = parseFloat(String(document.getElementById('aLng').value).replace(',','.'));
+  const _temLoc = !isNaN(_lat) && !isNaN(_lng);
+  if ((document.getElementById('aLat').value || document.getElementById('aLng').value) && (!_temLoc || Math.abs(_lat) > 90 || Math.abs(_lng) > 180)) { toast('Latitude/longitude inválidas.','error'); return; }
+
   const btn = document.getElementById('saveAlertaBtn');
   btn.disabled=true; btn.innerHTML='<span class="ld"></span> SALVANDO...';
   try {
@@ -5110,6 +5238,12 @@ async function saveAlerta() {
       foto: alertaFotoD||null,
       periculosidade: alertaPerig,
       obs: document.getElementById('aObs').value.trim()||null,
+      cpf: _cpf ? c3FmtCpf(_cpf) : null,
+      endereco: document.getElementById('aEndereco').value.trim()||null,
+      lat: _temLoc ? _lat : null, lng: _temLoc ? _lng : null,
+      gmaps_link: document.getElementById('aLink').value.trim()||null,
+      processo: document.getElementById('aProcesso').value.trim()||null,
+      status: 'foragido',
       criado_por: CU.usuario,
       criado_em: new Date().toISOString()
     };
@@ -5117,9 +5251,13 @@ async function saveAlerta() {
     allAlertas.unshift(d);
     renderAlertas();
     closeAlertaModal();
-    toast('⚠️ Alerta de foragido cadastrado!','error');
-  } catch(e) { toast('Erro: '+e.message,'error'); }
-  finally { btn.disabled=false; btn.innerHTML='🚨 SALVAR ALERTA'; }
+    logAudit('foragido_criar','sicad_alertas',d.id,{nome});
+    toast('🚨 Foragido cadastrado!','error');
+  } catch(e) {
+    if (/column|processo|status|endereco|cpf/i.test(e.message||'')) toast('Banco ainda sem os campos novos. Peça ao administrador para rodar a migration_v8_foragidos_brazlandia.sql.','error');
+    else toast('Erro: '+e.message,'error');
+  }
+  finally { btn.disabled=false; btn.innerHTML='🚨 SALVAR FORAGIDO'; }
 }
 
 async function delAlerta(id) {
