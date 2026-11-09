@@ -2107,7 +2107,7 @@ body.no-didatico .field-hint{display:none}
         <select id="uRole" onchange="atualizarDicaPerfil()">
           <optgroup label="Perfis operacionais">
             <option value="gtop">GTOP — acesso total (cadastra, edita, consulta)</option>
-            <option value="rp">RP — somente consulta (Capãozinho 3, Face, Pesquisas, Consultar)</option>
+            <option value="rp">RP — somente consulta (Consultar, Capãozinho 3, Face, Foragidos)</option>
           </optgroup>
           <optgroup label="Administração">
             <option value="admin">Administrador — acesso total + gestão de usuários</option>
@@ -2902,7 +2902,9 @@ async function aplicarPerfilLogado(user){
 // GTOP = acesso total (exclusão só se o admin liberar) · RP = somente consulta em 4 abas.
 // A regra de verdade está no banco (migration_v5_perfis_gtop_rp.sql); aqui só espelhamos na tela.
 const PERFIL_LABEL = { admin:'ADMIN', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
-const RP_ROTAS = ['consultar','capaozinho3','face','pesquisa'];
+const RP_ROTAS = ['consultar','capaozinho3','face','foragidos'];
+// Marcar foragido como PRESO: quem cadastra + RP (migration v9)
+function podeMarcarPreso(){ return podeCadastrarSICAD() || isRP(); }
 function isRP(){ return CU?.role === 'rp'; }
 function rotaPermitida(n){
   if(!CU) return true;
@@ -3748,7 +3750,7 @@ function atualizarDicaPerfil(){
   const r = document.getElementById('uRole').value;
   const dicas = {
     gtop: 'Acessa todas as abas. Cadastra, edita e consulta. Exclusão só se autorizada abaixo.',
-    rp: 'Vê somente Capãozinho 3, Face, Pesquisas e Consultar. Não cadastra, não edita e não exclui nada.',
+    rp: 'Vê somente Consultar, Capãozinho 3, Face e Foragidos. Em Foragidos pode marcar PRESO. Não cadastra, não edita e não exclui nada.',
     admin: 'Acesso total, inclusive exclusão e gestão de usuários.',
     supervisor: 'Perfil anterior: cadastra e edita.', operator: 'Perfil anterior: cadastra e consulta.', auditor: 'Perfil anterior: só leitura.'
   };
@@ -5010,7 +5012,7 @@ function _cardForagido(a, preso){
   const linha = (rot, v) => v ? `<div style="font-size:12px;color:var(--text-mid);margin-top:2px"><b style="color:var(--text-dim);font-weight:600">${rot}</b> ${esc(v)}</div>` : '';
   const acoes = [];
   if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">📍 ${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
-  if (!preso && podeCadastrarSICAD()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">🚔 PRESO</button>`);
+  if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">🚔 PRESO</button>`);
   if (preso && ['admin','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
   if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0">🗑</button>`);
   return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
@@ -5247,12 +5249,39 @@ async function saveAlerta() {
       criado_por: CU.usuario,
       criado_em: new Date().toISOString()
     };
+
+    // Foragido NOVO também vira cadastro de pessoa no SICAD (aparece no Consultar, Mapa e Face).
+    // Se o CPF já existe no banco, oferece vincular ao cadastro existente em vez de duplicar.
+    let pessoaCriada = null;
+    if (alertaTipo === 'novo') {
+      if (!allP.length) { try { allP = await DB.getPersons(); } catch(_){} }
+      const dupCpf = _cpf ? allP.find(p => String(p.cpf||'').replace(/\D/g,'') === _cpf) : null;
+      if (dupCpf && confirm('Já existe "' + dupCpf.nome + '" cadastrado no SICAD com este CPF.\n\nOK = vincular o foragido a esse cadastro (não duplica)\nCancelar = criar um cadastro novo mesmo assim')) {
+        d.pessoa_id = dupCpf.id;
+      } else {
+        const agora = new Date().toISOString();
+        const pessoa = {
+          id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID()
+              : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}),
+          nome, cpf: d.cpf, endereco: d.endereco, lat: d.lat, lng: d.lng, foto: d.foto,
+          observacoes: ['🚨 FORAGIDO (cadastrado pelo módulo Foragidos)', d.processo ? 'Processo nº ' + d.processo : null, d.obs].filter(Boolean).join(' · '),
+          tatuagens: '[]', faccionado: false,
+          criado_por: CU.usuario || 'admin', criado_em: agora, atualizado_em: agora
+        };
+        const salvo = await DB.addPerson(pessoa);
+        pessoaCriada = salvo && salvo.id ? salvo : pessoa;
+        d.pessoa_id = pessoaCriada.id;
+        allP.unshift(pessoaCriada);
+        logAudit('create_person', 'sicad_pessoas', pessoaCriada.id, { nome, origem: 'foragidos' });
+      }
+    }
+
     await DBA.add(d);
     allAlertas.unshift(d);
     renderAlertas();
     closeAlertaModal();
     logAudit('foragido_criar','sicad_alertas',d.id,{nome});
-    toast('🚨 Foragido cadastrado!','error');
+    toast(pessoaCriada ? '🚨 Foragido cadastrado — e incluído no banco de pessoas do SICAD.' : (d.pessoa_id ? '🚨 Foragido cadastrado e vinculado ao cadastro existente.' : '🚨 Foragido cadastrado!'),'error');
   } catch(e) {
     if (/column|processo|status|endereco|cpf/i.test(e.message||'')) toast('Banco ainda sem os campos novos. Peça ao administrador para rodar a migration_v8_foragidos_brazlandia.sql.','error');
     else toast('Erro: '+e.message,'error');
