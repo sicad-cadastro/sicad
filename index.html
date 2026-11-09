@@ -1200,6 +1200,7 @@ body.no-didatico .field-hint{display:none}
     <!-- CADASTRAR -->
     <div class="page" id="page-cadastrar">
       <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
+      <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">🚨 ADICIONAR COMO FORAGIDO</button>
       <!-- OCR de documento (RG/CPF/CNH) -->
       <div class="card" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:1px solid rgba(124,58,237,.35);margin-bottom:16px;padding:14px">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
@@ -3393,6 +3394,7 @@ function cadClear(){
   editMode=false;editId=null;
   _tipoSenha=null;window._tipoSenha=null;
   document.getElementById('cadTitle').textContent='NOVO CADASTRO';
+  { const b = document.getElementById('btnCadForagido'); if (b) b.style.display = 'none'; }
 }
 
 
@@ -3447,7 +3449,7 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>':''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">🚨 FORAGIDO</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
@@ -3463,6 +3465,7 @@ async function editPerson(){
   editMode=true;
   go('cadastrar');
   document.getElementById('cadTitle').textContent='EDITAR CADASTRO';
+  _atualizarBtnCadForagido(idSalvo);
   document.getElementById('fNome').value=p.nome||'';document.getElementById('fMae').value=p.mae||'';
   document.getElementById('fApelido').value=p.apelido||'';document.getElementById('fNasc').value=p.nascimento||'';
   document.getElementById('fCpf').value=p.cpf||'';
@@ -5052,6 +5055,44 @@ function renderAlertas() {
       .slice().sort((a,b) => String(b.preso_em||'').localeCompare(String(a.preso_em||'')))
       .map(a => _cardForagido(a, true)).join('');
   }
+}
+
+// ── Cadastro → Foragido ──
+// Botão do formulário de edição: some se a pessoa já está na lista de procurados
+async function _atualizarBtnCadForagido(pid){
+  const b = document.getElementById('btnCadForagido'); if (!b) return;
+  b.style.display = podeCadastrarSICAD() ? '' : 'none';
+  b.textContent = '🚨 ADICIONAR COMO FORAGIDO';
+  try {
+    const r = await sbFetch('GET','sicad_alertas',null,`select=id&pessoa_id=eq.${pid}&status=neq.preso&limit=1`);
+    if (r && r.length) b.textContent = '🚨 JÁ É FORAGIDO: VER NA ABA FORAGIDOS';
+  } catch(_){}
+}
+
+// Abre Foragidos com o formulário já preenchido com esta pessoa
+async function marcarComoForagido(pid, daEdicao){
+  if (!pid) return;
+  if (!podeCadastrarSICAD()) { toast('Seu perfil não pode cadastrar foragido.','error'); return; }
+  if (daEdicao && !confirm('Ir para FORAGIDOS agora?\n\nSe alterou algo nesta edição e ainda não salvou, salve antes. As alterações não salvas serão perdidas.')) return;
+  showOv('ABRINDO FORAGIDOS...');
+  try {
+    let p = allP.find(x => x.id === pid);
+    if (!p) { p = await DB.getPerson(pid); if (p) allP.unshift(p); }
+    if (!p) { toast('Cadastro não encontrado.','error'); return; }
+    let jaAtivo = null;
+    try { const r = await sbFetch('GET','sicad_alertas',null,`select=id&pessoa_id=eq.${pid}&status=neq.preso&limit=1`); jaAtivo = r && r[0]; } catch(_){}
+    if (typeof closePersonModal === 'function') closePersonModal();
+    if (daEdicao) cadClear();
+    hideOv();
+    go('foragidos');
+    if (jaAtivo) { toast(p.nome + ' já está na lista de foragidos.','info'); return; }
+    await new Promise(r => setTimeout(r, 400));
+    openAlertaModal();
+    setAlertaTipo('existente');
+    await selecionarPessoa(pid);
+    toast('Complete periculosidade e nº do processo e toque em SALVAR FORAGIDO.','info');
+  } catch(e) { toast('Erro: ' + e.message,'error'); }
+  finally { hideOv(); }
 }
 
 async function marcarPreso(id) {
