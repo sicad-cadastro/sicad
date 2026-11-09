@@ -3736,7 +3736,8 @@ function renderUsersList(){
   document.getElementById('ulist').innerHTML = filtered.length ? filtered.map(u => {
     const isMe = u.id === CU.id;
     const pendente = !u.ativo;
-    const bloqueado = isInteligencia() && u.role === 'admin'; // inteligência não mexe em admin
+    // Inteligência não mexe em admin; usuário protegido (dono) só ele mesmo edita (migration v12)
+    const bloqueado = (isInteligencia() && u.role === 'admin') || (u.protegido && !isMe);
     const cardStyle = pendente
       ? 'opacity:1;border:2px solid var(--accent2);background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);box-shadow:0 4px 12px rgba(232,93,32,.15)'
       : '';
@@ -3748,6 +3749,7 @@ function renderUsersList(){
             <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
             ${u.role==='gtop'&&u.pode_excluir?'<span class="badge" style="background:#FEF2F2;color:#DC2626;font-size:9px;padding:3px 7px;border:1px solid #FECACA">PODE EXCLUIR</span>':''}
             ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">⏳ AGUARDANDO APROVAÇÃO</span>':''}
+            ${u.protegido?'<span class="badge" style="background:#FEF9C3;color:#854D0E;font-size:9px;padding:3px 7px;border:1px solid #FDE047">🔒 PROTEGIDO</span>':''}
             ${isMe?'<span style="font-size:9px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace">VOCÊ</span>':''}
           </div>
           <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?'Solicitou em '+new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
@@ -3756,7 +3758,7 @@ function renderUsersList(){
           ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
           <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações">🕘</button>
           ${!bloqueado ? `<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil">✏️</button>` : ''}
-          ${!isMe && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
+          ${!isMe && !u.protegido && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
         </div>
       </div>`;
   }).join('') : '<div class="empty"><div class="ei">🔍</div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
@@ -3846,6 +3848,8 @@ async function saveUser(){
   const pode_excluir = role === 'gtop' && document.getElementById('uPodeExcluir').checked;
   if (!email || !nome) { toast('E-mail e nome são obrigatórios.','error'); return; }
   if (euId && euId === CU.id && role !== CU.role) { toast('Você não pode trocar o seu próprio perfil.','error'); return; }
+  if (euId && euId === CU.id && !ativo) { toast('Você não pode desativar o seu próprio acesso.','error'); return; }
+  if (euId && (_euOrig||{}).protegido && euId !== CU.id) { toast('Este usuário é protegido e não pode ser alterado.','error'); return; }
   if (isInteligencia() && role === 'admin') { toast('Perfil Inteligência não pode criar ou promover administrador.','error'); return; }
 
   const btn = document.getElementById('saveUserBtn');
@@ -3892,6 +3896,7 @@ async function saveUser(){
 
 async function delUser(id, nome){
   if (id === CU.id) { toast('Não pode excluir a si próprio.','warn'); return; }
+  if ((_allUsers.find(x => x.id === id) || {}).protegido) { toast('Este usuário é protegido e não pode ser excluído.','error'); return; }
   if (!confirm('Excluir o usuário "' + nome + '"?\n\nEle perde o acesso na hora. O histórico de auditoria é mantido.\nSe quiser só bloquear temporariamente, use DESATIVAR no ✏️.\nSe a pessoa pedir acesso de novo com o mesmo e-mail, o pedido volta como PENDENTE para aprovação.')) return;
   showOv('REMOVENDO...');
   try {
