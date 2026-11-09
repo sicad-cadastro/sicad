@@ -1499,6 +1499,7 @@ body.no-didatico .field-hint{display:none}
             <option value="">Todos os perfis</option>
             <option value="gtop">GTOP</option>
             <option value="rp">RP</option>
+            <option value="inteligencia">Inteligência</option>
             <option value="admin">Administrador</option>
             <option value="supervisor">Supervisor</option>
             <option value="operator">Operador</option>
@@ -2124,7 +2125,8 @@ body.no-didatico .field-hint{display:none}
             <option value="rp">RP — somente consulta (Consultar, Capãozinho 3, Face, Foragidos)</option>
           </optgroup>
           <optgroup label="Administração">
-            <option value="admin">Administrador — acesso total + gestão de usuários</option>
+            <option value="inteligencia">Inteligência — tudo, menos excluir membros</option>
+            <option value="admin" id="uRoleOptAdmin">Administrador — acesso total + gestão de usuários</option>
           </optgroup>
           <optgroup label="Perfis anteriores">
             <option value="supervisor">Supervisor (edita/aprova)</option>
@@ -2915,7 +2917,7 @@ async function aplicarPerfilLogado(user){
 // ═══════════════ PERFIS DE ACESSO ═══════════════
 // GTOP = acesso total (exclusão só se o admin liberar) · RP = somente consulta em 4 abas.
 // A regra de verdade está no banco (migration_v5_perfis_gtop_rp.sql); aqui só espelhamos na tela.
-const PERFIL_LABEL = { admin:'ADMIN', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
+const PERFIL_LABEL = { admin:'ADMIN', inteligencia:'INTELIGÊNCIA', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
 const RP_ROTAS = ['consultar','capaozinho3','face','foragidos'];
 // Marcar foragido como PRESO: quem cadastra + RP (migration v9)
 function podeMarcarPreso(){ return podeCadastrarSICAD() || isRP(); }
@@ -2923,12 +2925,16 @@ function isRP(){ return CU?.role === 'rp'; }
 function rotaPermitida(n){
   if(!CU) return true;
   if(isRP()) return RP_ROTAS.includes(n);
-  if(n === 'usuarios') return CU.role === 'admin';
+  if(n === 'usuarios') return podeGerirUsuarios();
   return true;
 }
 function rotaInicialPerfil(){ return isRP() ? 'consultar' : 'dashboard'; }
-function podeCadastrarSICAD(){ return ['admin','gtop','supervisor','operator'].includes(CU?.role); }
-function podeExcluirSICAD(){ return CU?.role === 'admin' || (CU?.role === 'gtop' && !!CU.pode_excluir); }
+function podeCadastrarSICAD(){ return ['admin','inteligencia','gtop','supervisor','operator'].includes(CU?.role); }
+function podeExcluirSICAD(){ return ['admin','inteligencia'].includes(CU?.role) || (CU?.role === 'gtop' && !!CU.pode_excluir); }
+// INTELIGÊNCIA: tudo, menos excluir membros e mexer em administradores (migration v11)
+function isInteligencia(){ return CU?.role === 'inteligencia'; }
+function podeGerirUsuarios(){ return ['admin','inteligencia'].includes(CU?.role); }
+function podeExcluirMembro(){ return CU?.role === 'admin'; }
 
 // Mostra/esconde elementos conforme role
 function aplicarUIporRole(){
@@ -2936,7 +2942,7 @@ function aplicarUIporRole(){
   document.querySelectorAll('.tnav-btn[data-p], .bnav-btn[data-p]').forEach(el => {
     el.style.display = rotaPermitida(el.dataset.p) ? '' : 'none';
   });
-  const isAdmin = CU?.role === 'admin';
+  const isAdmin = podeGerirUsuarios();
   ['bnUsuarios','tnUsuarios'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = isAdmin ? '' : 'none';
@@ -3673,7 +3679,7 @@ function camClose(t){if(camStr){camStr.getTracks().forEach(x=>x.stop());camStr=n
 let _allUsers = [];
 
 async function loadUsers(){
-  if(CU.role!=='admin'){document.getElementById('noAdmin').style.display='block';document.getElementById('adminPanel').style.display='none';return;}
+  if(!podeGerirUsuarios()){document.getElementById('noAdmin').style.display='block';document.getElementById('adminPanel').style.display='none';return;}
   document.getElementById('noAdmin').style.display='none';document.getElementById('adminPanel').style.display='block';
   showOv('CARREGANDO USUÁRIOS...');
   try{
@@ -3719,6 +3725,7 @@ function renderUsersList(){
   const roleLabels = PERFIL_LABEL;
   const roleBadgeStyle = {
     admin:'background:#fee2e2;color:#991b1b;border:1px solid #fecaca',
+    inteligencia:'background:#111827;color:#fff;border:1px solid #111827',
     gtop:'background:#1E3A8A;color:#fff;border:1px solid #1E3A8A',
     rp:'background:#ECFEFF;color:#0E7490;border:1px solid #A5F3FC',
     supervisor:'background:#fef3c7;color:#92400e;border:1px solid #fde68a',
@@ -3729,6 +3736,7 @@ function renderUsersList(){
   document.getElementById('ulist').innerHTML = filtered.length ? filtered.map(u => {
     const isMe = u.id === CU.id;
     const pendente = !u.ativo;
+    const bloqueado = isInteligencia() && u.role === 'admin'; // inteligência não mexe em admin
     const cardStyle = pendente
       ? 'opacity:1;border:2px solid var(--accent2);background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);box-shadow:0 4px 12px rgba(232,93,32,.15)'
       : '';
@@ -3747,8 +3755,8 @@ function renderUsersList(){
         <div class="uactions">
           ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
           <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações">🕘</button>
-          <button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil">✏️</button>
-          ${!isMe ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
+          ${!bloqueado ? `<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil">✏️</button>` : ''}
+          ${!isMe && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
         </div>
       </div>`;
   }).join('') : '<div class="empty"><div class="ei">🔍</div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
@@ -3758,7 +3766,7 @@ function renderUsersList(){
 // Aprovar = abrir a edição já com "ativo" marcado, obrigando a escolher GTOP ou RP
 function aprovarUsuario(id, nome){
   const u = _allUsers.find(x => x.id === id); if (!u) return;
-  openUserModal({ ...u, ativo: true, role: ['gtop','rp','admin'].includes(u.role) ? u.role : 'rp' }, true);
+  openUserModal({ ...u, ativo: true, role: ['gtop','rp','inteligencia','admin'].includes(u.role) ? u.role : 'rp' }, true);
   toast(`Escolha o perfil de ${nome} e clique em SALVAR para liberar o acesso.`, 'info');
 }
 
@@ -3767,6 +3775,7 @@ function atualizarDicaPerfil(){
   const dicas = {
     gtop: 'Acessa todas as abas. Cadastra, edita e consulta. Exclusão só se autorizada abaixo.',
     rp: 'Vê somente Consultar, Capãozinho 3, Face e Foragidos. Em Foragidos pode marcar PRESO. Não cadastra, não edita e não exclui nada.',
+    inteligencia: 'Acessa tudo: cadastra, edita, exclui registros, vê auditoria e aprova/edita usuários. NÃO exclui membros e não mexe em administradores.',
     admin: 'Acesso total, inclusive exclusão e gestão de usuários.',
     supervisor: 'Perfil anterior: cadastra e edita.', operator: 'Perfil anterior: cadastra e consulta.', auditor: 'Perfil anterior: só leitura.'
   };
@@ -3811,6 +3820,7 @@ function openUserModal(u, aprovando){
   document.getElementById('uNome').value = u?.nome || '';
   document.getElementById('uMatricula').value = u?.matricula || '';
   document.getElementById('uSenha').value = '';
+  { const oa = document.getElementById('uRoleOptAdmin'); if (oa) oa.disabled = isInteligencia(); }
   document.getElementById('uRole').value = u?.role || 'rp';
   document.getElementById('uPodeExcluir').checked = !!u?.pode_excluir;
   atualizarDicaPerfil();
@@ -3835,7 +3845,8 @@ async function saveUser(){
   const ativo = document.getElementById('uAtivo').checked;
   const pode_excluir = role === 'gtop' && document.getElementById('uPodeExcluir').checked;
   if (!email || !nome) { toast('E-mail e nome são obrigatórios.','error'); return; }
-  if (euId && euId === CU.id && role !== 'admin') { toast('Você não pode tirar o seu próprio perfil de administrador.','error'); return; }
+  if (euId && euId === CU.id && role !== CU.role) { toast('Você não pode trocar o seu próprio perfil.','error'); return; }
+  if (isInteligencia() && role === 'admin') { toast('Perfil Inteligência não pode criar ou promover administrador.','error'); return; }
 
   const btn = document.getElementById('saveUserBtn');
   btn.disabled = true; btn.innerHTML = '<span class="ld"></span>';
@@ -3921,7 +3932,7 @@ async function importUsersCSV(file){
     if (cols.length < 3) continue;
     const [nome, email, role, matricula] = cols;
     if (!nome || !email || !email.includes('@')) continue;
-    toCreate.push({ nome, email, role: ['admin','gtop','rp','supervisor','operator','auditor'].includes((role||'').toLowerCase()) ? role.toLowerCase() : 'rp', matricula: matricula || null });
+    toCreate.push({ nome, email, role: ['admin','inteligencia','gtop','rp','supervisor','operator','auditor'].includes((role||'').toLowerCase()) ? role.toLowerCase() : 'rp', matricula: matricula || null });
   }
   if (!toCreate.length) { toast('Nenhuma linha válida no CSV.','warn'); return; }
   if (!confirm(`Importar ${toCreate.length} usuários?\n\nCada um receberá senha temporária "SICAD2026!" (devem trocar no 1º login).`)) return;
@@ -5029,7 +5040,7 @@ function _cardForagido(a, preso){
   const acoes = [];
   if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">📍 ${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
   if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">🚔 PRESO</button>`);
-  if (preso && ['admin','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
+  if (preso && ['admin','inteligencia','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
   if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0">🗑</button>`);
   return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
     ${av}
@@ -6642,8 +6653,8 @@ let c3MiniInst = null, c3MiniMk = null;
 let c3BuscaT = null, c3FichaSub = 'pa', c3AnexosRemover = [];
 
 // ── utilitários ──
-const c3PodeEditar  = () => !!CU && ['admin','gtop','supervisor','operator'].includes(CU.role);
-const c3PodeExcluir = () => !!CU && (['admin','supervisor'].includes(CU.role) || (CU.role==='gtop' && !!CU.pode_excluir));
+const c3PodeEditar  = () => !!CU && ['admin','inteligencia','gtop','supervisor','operator'].includes(CU.role);
+const c3PodeExcluir = () => !!CU && (['admin','inteligencia','supervisor'].includes(CU.role) || (CU.role==='gtop' && !!CU.pode_excluir));
 function c3NormCh(c){ return c.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
 function c3Norm(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
 function c3Dig(s){ return String(s||'').replace(/\D/g,''); }
