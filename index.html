@@ -725,7 +725,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 
 /* ── PATCHES DEFENSIVOS ── evita overflow horizontal em toda a app ── */
 @media(max-width:767px){
-  body,html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+  /* clip (não hidden): hidden transformava o body em área de rolagem e quebrava cabeçalho/barra inferior fixos */
+  html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+  body{overflow-x:clip;-webkit-text-size-adjust:100%}
   img,video,canvas{max-width:100%;height:auto}
   pre,code{white-space:pre-wrap;word-break:break-word}
   .card{padding:var(--sp-4);border-radius:12px}
@@ -1038,6 +1040,31 @@ body.no-didatico .field-hint{display:none}
   .help-fab{width:40px;height:40px;font-size:17px;right:10px;bottom:76px;opacity:.85}
   /* Respiro no fim da página pra barra inferior não cobrir o último item */
   .page{padding-bottom:96px}
+
+  /* ── USABILIDADE MOBILE ── */
+  /* iPhone: campo com fonte < 16px dá zoom automático ao tocar */
+  input,select,textarea{font-size:16px !important}
+  /* Barra inferior: a área do "risquinho" do iPhone não espreme os ícones */
+  .bottom-nav{height:calc(64px + env(safe-area-inset-bottom,0px))}
+  /* Dicas recolhidas: só o título; toque para abrir */
+  .help-banner{cursor:pointer;padding:10px 40px 10px 12px;align-items:center}
+  .help-banner .help-banner-body{padding-top:0}
+  .help-banner .help-banner-body p{display:none}
+  .help-banner.aberto .help-banner-body p{display:block;margin-top:4px}
+  .help-banner .help-banner-title{margin:0;font-size:13px}
+  .help-banner .help-banner-title::after{content:'  ·  toque para ver';font-weight:500;color:var(--neutral-500);font-size:11.5px}
+  .help-banner.aberto .help-banner-title::after{content:''}
+  .help-banner .help-banner-icon{width:24px;height:24px;font-size:12px}
+  /* Consultar: busca fica presa no topo enquanto rola a lista */
+  #page-consultar .search-box{position:sticky;top:52px;z-index:150;background:var(--bg);margin:0 -12px var(--sp-3);padding:8px 12px;box-shadow:0 6px 10px -8px rgba(15,23,42,.25)}
+  /* Cadastrar: Limpar/Salvar sempre visíveis acima da barra inferior */
+  #cadSaveBar{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:150;background:var(--neutral-0);margin:8px -12px 0 !important;padding:10px 12px;border-top:1px solid var(--neutral-200);box-shadow:0 -6px 12px -8px rgba(15,23,42,.25)}
+  /* Ao rolar a lista, a busca presa mostra só o campo de nome */
+  #page-consultar .search-box.compacta .s-filters{display:none !important}
+  /* Botão "?" não cobre o Salvar do cadastro */
+  body[data-pagina="cadastrar"] .help-fab{bottom:150px}
+  /* Resposta ao toque */
+  .pcard:active,.c3-item:active,.hi-card:active{transform:scale(.985);transition:transform .08s}
 }
 
 </style>
@@ -1407,7 +1434,7 @@ body.no-didatico .field-hint{display:none}
           <textarea id="fObs" placeholder="Informações adicionais, histórico, comportamento, vínculos, etc..." rows="4" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif;resize:vertical;min-height:100px;line-height:1.5;box-sizing:border-box"></textarea>
         </div>
 
-        <div class="row-btns" style="margin-top:8px">
+        <div class="row-btns" id="cadSaveBar" style="margin-top:8px">
           <button class="btn btn-outline" onclick="cadClear()">LIMPAR</button>
           <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">💾 SALVAR CADASTRO</button>
         </div>
@@ -2345,6 +2372,12 @@ function sicadDidaticoToggle(){
   if(!sicadDidaticoLigado()) document.body.classList.add('no-didatico');
 })();
 
+// Mobile: busca do Consultar fica compacta quando a lista rola
+window.addEventListener('scroll', () => {
+  const sb = document.querySelector('#page-consultar .search-box');
+  if (sb) sb.classList.toggle('compacta', window.scrollY > 260 && innerWidth < 768 && document.activeElement?.id !== 'sQuadra' && document.activeElement?.id !== 'sBairro');
+}, { passive: true });
+
 // ─── BANNERS POR TELA ───────────────────────────────────────
 const HELP_BANNERS = {
   dashboard: {
@@ -2403,8 +2436,9 @@ function _injetarBanner(pagina){
       <div class="help-banner-title">${info.titulo}</div>
       <p>${info.corpo}</p>
     </div>
-    <button class="help-banner-close" title="Não mostrar de novo" onclick="_fecharBanner('${pagina}',this)">×</button>
+    <button class="help-banner-close" title="Não mostrar de novo" onclick="event.stopPropagation();_fecharBanner('${pagina}',this)">×</button>
   `;
+  banner.addEventListener('click', () => banner.classList.toggle('aberto'));
   pageEl.insertBefore(banner, pageEl.firstChild);
 }
 function _fecharBanner(pagina, btn){
@@ -2991,6 +3025,7 @@ const SICAD_ROTAS = ['dashboard','cadastrar','consultar','capaozinho3','usuarios
 function go(n, _fromPop){
   // Fallback: rota desconhecida cai no dashboard
   if(!SICAD_ROTAS.includes(n)) n = rotaInicialPerfil();
+  setTimeout(() => { document.body.dataset.pagina = (location.hash||'').replace('#','') || n; }, 0);
   // Bloqueio por perfil (vale também pra URL digitada e botão voltar do navegador)
   if(!rotaPermitida(n)){
     const pedida = n;
