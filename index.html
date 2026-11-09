@@ -5611,10 +5611,11 @@ async function exportPDF(){
 function validarCPF(cpf){
   cpf=cpf.replace(/[^\d]/g,'');
   if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;
+  // Dígito verificador: resto da divisão por 11; resto < 2 → 0, senão 11 − resto
   let s=0;for(let i=0;i<9;i++)s+=+cpf[i]*(10-i);
-  let r=11-(s%11);let d1=(r<2?0:r);if(d1!==+cpf[9])return false;
+  let r=s%11;let d1=(r<2?0:11-r);if(d1!==+cpf[9])return false;
   s=0;for(let i=0;i<10;i++)s+=+cpf[i]*(11-i);
-  r=11-(s%11);let d2=(r<2?0:r);return d2===+cpf[10];
+  r=s%11;let d2=(r<2?0:11-r);return d2===+cpf[10];
 }
 function onCpfInput(el){
   // Máscara CPF
