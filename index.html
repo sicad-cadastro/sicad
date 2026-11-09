@@ -1023,6 +1023,23 @@ body.no-didatico .field-hint{display:none}
 .c3-mfoot{display:flex;gap:10px;margin-top:var(--sp-5);flex-wrap:wrap}
 .c3-mfoot .btn{flex:1;min-width:130px}
 
+/* ── AJUSTES MOBILE (2026-11-09) ── */
+@media(max-width:767px){
+  /* Ícone + texto dos botões não quebram em 2 linhas */
+  #btnTipoNum,#btnTipoAlf,#btnTipoPad{white-space:nowrap;font-size:11.5px;padding:0 6px;min-width:0}
+  .uactions .btn,.row-btns .btn{white-space:nowrap}
+  .uactions .btn-success{flex:1.4}
+  /* Consultar: bairro em cima; quadra + limpar na mesma linha */
+  .s-filters{display:grid !important;grid-template-columns:1fr 48px;gap:var(--sp-2)}
+  .s-filters select{grid-column:1/-1}
+  .s-filters #sQuadra{max-width:none !important;width:100%}
+  .s-filters .btn{height:44px;min-height:44px;padding:0 !important}
+  /* Botão de ajuda menor e discreto: não cobre botões dos cartões */
+  .help-fab{width:40px;height:40px;font-size:17px;right:10px;bottom:76px;opacity:.85}
+  /* Respiro no fim da página pra barra inferior não cobrir o último item */
+  .page{padding-bottom:96px}
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -1490,7 +1507,7 @@ body.no-didatico .field-hint{display:none}
 
       <div class="c3-search" id="c3SearchWrap">
         <span class="c3-s-ico"><span data-icon="consultar" data-size="18"></span></span>
-        <input id="c3Busca" type="search" autocomplete="off" placeholder="Pesquisar chácara, morador, telefone, CPF, endereço ou nº de ocorrência…" oninput="c3OnBusca()">
+        <input id="c3Busca" type="search" autocomplete="off" placeholder="Chácara, morador, CPF, telefone…" title="Pesquise por chácara, morador, telefone, CPF, endereço ou nº de ocorrência" oninput="c3OnBusca()">
         <button class="c3-s-x" onclick="c3LimparBusca()" title="Limpar"><span data-icon="x" data-size="14"></span></button>
       </div>
 
@@ -2820,7 +2837,7 @@ async function aplicarPerfilLogado(user){
 
   // UI baseado em role
   aplicarUIporRole();
-  await logAudit('login', 'auth', user.id);
+  logAudit('login', 'auth', user.id); // não segura a abertura da tela
   // Respeita a rota do hash — permite deep-linking (ex: /#mapa abre no mapa direto)
   const rotaInicial = (location.hash || '').replace('#','');
   go((rotaInicial && SICAD_ROTAS.includes(rotaInicial) && rotaPermitida(rotaInicial)) ? rotaInicial : rotaInicialPerfil());
@@ -5731,6 +5748,14 @@ async function loadFaceModels(){
   _faceModelsLoading = true;
   setFaceLoad('⚙️ Carregando modelos de IA HIGH-PRECISION (~18MB)... aguarde.', true);
   try {
+    // Alguns celulares não iniciam o backend padrão ("wasm has not yet been initialized").
+    // Força WebGL (GPU) e, se não houver, CPU — que funciona em qualquer aparelho.
+    const tf = faceapi.tf;
+    if (tf && tf.setBackend) {
+      for (const b of ['webgl', 'cpu']) {
+        try { if (await tf.setBackend(b)) { await tf.ready(); break; } } catch(_){}
+      }
+    }
     await Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromUri(FACE_MODELS_URL),   // detector mais preciso
       faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODELS_URL), // fallback rápido

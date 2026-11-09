@@ -68,7 +68,7 @@ BEGIN
   EXECUTE 'DROP VIEW IF EXISTS public.sicad_pessoas_lista';
   EXECUTE format(
     'CREATE VIEW public.sicad_pessoas_lista WITH (security_invoker = true) AS
-       SELECT %s, (p.foto IS NOT NULL AND length(p.foto) > 100) AS tem_foto
+       SELECT %s, (p.foto IS NOT NULL AND octet_length(p.foto) > 100) AS tem_foto
        FROM public.sicad_pessoas p', cols);
 END $$;
 
