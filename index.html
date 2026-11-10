@@ -2122,7 +2122,7 @@ body.no-didatico .field-hint{display:none}
         <select id="uRole" onchange="atualizarDicaPerfil()">
           <optgroup label="Perfis operacionais">
             <option value="gtop">GTOP — acesso total (cadastra, edita, consulta)</option>
-            <option value="rp">RP — somente consulta (Consultar, Capãozinho 3, Face, Foragidos)</option>
+            <option value="rp">RP — consulta e cadastra pessoas (Consultar, Cadastrar, Capãozinho 3, Face, Foragidos)</option>
           </optgroup>
           <optgroup label="Administração">
             <option value="inteligencia">Inteligência — tudo, menos excluir membros</option>
@@ -2918,9 +2918,11 @@ async function aplicarPerfilLogado(user){
 // GTOP = acesso total (exclusão só se o admin liberar) · RP = somente consulta em 4 abas.
 // A regra de verdade está no banco (migration_v5_perfis_gtop_rp.sql); aqui só espelhamos na tela.
 const PERFIL_LABEL = { admin:'ADMIN', inteligencia:'INTELIGÊNCIA', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
-const RP_ROTAS = ['consultar','capaozinho3','face','foragidos'];
+const RP_ROTAS = ['consultar','cadastrar','capaozinho3','face','foragidos'];
 // Marcar foragido como PRESO: quem cadastra + RP (migration v9)
 function podeMarcarPreso(){ return podeCadastrarSICAD() || isRP(); }
+// Cadastro NOVO de pessoa: quem cadastra + RP (migration v13). RP não edita.
+function podeCadastrarPessoa(){ return podeCadastrarSICAD() || isRP(); }
 function isRP(){ return CU?.role === 'rp'; }
 function rotaPermitida(n){
   if(!CU) return true;
@@ -3337,7 +3339,8 @@ async function _hashSenha(txt){
 }
 
 async function savePerson(){
-  if(!podeCadastrarSICAD()){ toast('Seu perfil é somente consulta.','error'); return; }
+  if(!podeCadastrarPessoa()){ toast('Seu perfil é somente consulta.','error'); return; }
+  if(editMode && editId && !podeCadastrarSICAD()){ toast('Seu perfil cadastra, mas não edita cadastros existentes.','error'); return; }
   const nome=document.getElementById('fNome').value.trim();
   if(!nome){toast('Nome completo é obrigatório.','error');return;}
   const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> SALVANDO...';
@@ -3776,7 +3779,7 @@ function atualizarDicaPerfil(){
   const r = document.getElementById('uRole').value;
   const dicas = {
     gtop: 'Acessa todas as abas. Cadastra, edita e consulta. Exclusão só se autorizada abaixo.',
-    rp: 'Vê somente Consultar, Capãozinho 3, Face e Foragidos. Em Foragidos pode marcar PRESO. Não cadastra, não edita e não exclui nada.',
+    rp: 'Vê Consultar, Cadastrar, Capãozinho 3, Face e Foragidos. Cadastra pessoas novas e, em Foragidos, pode marcar PRESO. Não edita e não exclui nada.',
     inteligencia: 'Acessa tudo: cadastra, edita, exclui registros, vê auditoria e aprova/edita usuários. NÃO exclui membros e não mexe em administradores.',
     admin: 'Acesso total, inclusive exclusão e gestão de usuários.',
     supervisor: 'Perfil anterior: cadastra e edita.', operator: 'Perfil anterior: cadastra e consulta.', auditor: 'Perfil anterior: só leitura.'
