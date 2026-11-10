@@ -1293,6 +1293,7 @@ body.no-didatico .field-hint{display:none}
   <option value="">Selecione o bairro...</option>
   <option value="SETOR NORTE">SETOR NORTE</option>
   <option value="SETOR SUL">SETOR SUL</option>
+  <option value="SETOR TRADICIONAL">SETOR TRADICIONAL</option>
   <option value="VILA SAO JOSE">VILA SAO JOSE</option>
   <option value="VEREDAS">VEREDAS</option>
   <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
@@ -1309,6 +1310,7 @@ body.no-didatico .field-hint{display:none}
             <input type="hidden" id="fLat">
             <input type="hidden" id="fLng">
             <div id="locStatus" style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.</div>
+            <div id="locMini" onclick="abrirMapaAjuste()" title="Toque para ajustar" style="display:none;height:170px;border-radius:10px;overflow:hidden;border:1px solid var(--neutral-200);margin-bottom:8px;cursor:pointer;position:relative;z-index:0"></div>
             <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">🎯 AJUSTAR POSIÇÃO NO MAPA</button>
           </div>
         </div>
@@ -1459,6 +1461,7 @@ body.no-didatico .field-hint{display:none}
   <option value="">Todos os bairros</option>
   <option value="SETOR NORTE">SETOR NORTE</option>
   <option value="SETOR SUL">SETOR SUL</option>
+  <option value="SETOR TRADICIONAL">SETOR TRADICIONAL</option>
   <option value="VILA SAO JOSE">VILA SAO JOSE</option>
   <option value="VEREDAS">VEREDAS</option>
   <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
@@ -1627,6 +1630,7 @@ body.no-didatico .field-hint{display:none}
           <option value="">Todos os bairros</option>
           <option value="SETOR NORTE">SETOR NORTE</option>
           <option value="SETOR SUL">SETOR SUL</option>
+          <option value="SETOR TRADICIONAL">SETOR TRADICIONAL</option>
           <option value="VILA SAO JOSE">VILA SAO JOSE</option>
           <option value="VEREDAS">VEREDAS</option>
           <option value="CAPAOZINHO 3">CAPAOZINHO 3</option>
@@ -3405,6 +3409,7 @@ function cadClear(){
   ['fNome','fMae','fApelido','fNasc','fCpf','fCep','fLat','fLng','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const cepInfo=document.getElementById('cepInfo');if(cepInfo){cepInfo.textContent='';cepInfo.className='cpf-info';}
   const locSt=document.getElementById('locStatus');if(locSt){locSt.innerHTML='Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.';locSt.style.color='var(--text-mid)';}
+  _ultimoCep='';{ const mm=document.getElementById('locMini'); if(mm) mm.style.display='none'; }
   document.getElementById('fObs').value='';
   _faccionado=false;updateFaccionadoBanner();
   document.getElementById('fFaccao').value='';
@@ -3496,6 +3501,8 @@ async function editPerson(){
   document.getElementById('fQuadra').value=p.quadra||'';document.getElementById('fBairro').value=p.bairro||'';
   document.getElementById('fLat').value=p.lat!=null?p.lat:'';
   document.getElementById('fLng').value=p.lng!=null?p.lng:'';
+  _ultimoCep=String(p.cep||'').replace(/D/g,''); // não rebusca CEP ao abrir edição
+  if(p.lat!=null&&p.lng!=null) _atualizarMiniMapa(parseFloat(p.lat),parseFloat(p.lng),false); else { const mm=document.getElementById('locMini'); if(mm) mm.style.display='none'; }
   const locSt2=document.getElementById('locStatus');
   if(locSt2){
     if(p.lat!=null && p.lng!=null){locSt2.innerHTML='📍 Coordenada salva: <b>'+Number(p.lat).toFixed(5)+', '+Number(p.lng).toFixed(5)+'</b>';locSt2.style.color='var(--success)';}
@@ -4501,7 +4508,25 @@ function onCepInput(el){
   let v = el.value.replace(/\D/g,'').substring(0,8);
   if (v.length > 5) v = v.slice(0,5)+'-'+v.slice(5);
   el.value = v;
+  if (v.replace(/\D/g,'').length === 8) buscarCep(v);
 }
+
+// Região de Brazlândia (inclui zona rural, INCRA, Capãozinho). Fora disso = coordenada genérica
+// (ex.: as bases devolvem o centro de Brasília para CEP de Brazlândia) → descarta.
+function _naRegiao(la, ln){ return _validLatLng(la, ln) && la > -15.86 && la < -15.50 && ln > -48.45 && ln < -48.02; }
+function _semAcento(s){ return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim(); }
+// Centro aproximado de cada bairro (OpenStreetMap)
+const BAIRRO_CENTRO = {
+  'SETOR TRADICIONAL':[-15.6805,-48.2033], 'VILA SAO JOSE':[-15.6635,-48.1952], 'SETOR NORTE':[-15.6783,-48.1935],
+  'SETOR SUL':[-15.6871,-48.1949], 'VEREDAS':[-15.6698,-48.2005], 'BRAZLANDIA':[-15.6809,-48.1943]
+};
+function _centroBairro(nome){
+  const n = _semAcento(nome).replace(/\(.*?\)/g,'').trim();
+  for (const k of Object.keys(BAIRRO_CENTRO)) if (n.includes(k)) return BAIRRO_CENTRO[k];
+  if (typeof BAIRRO_COORDS_MAPA !== 'undefined' && BAIRRO_COORDS_MAPA[n]) return BAIRRO_COORDS_MAPA[n];
+  return null;
+}
+let _ultimoCep = '';
 
 function _validLatLng(la, ln){
   return typeof la === 'number' && typeof ln === 'number'
@@ -4513,6 +4538,9 @@ async function buscarCep(cepRaw){
   const cep = (cepRaw||'').replace(/\D/g,'');
   const info = document.getElementById('cepInfo');
   if (cep.length !== 8) { if(info){info.textContent='';info.className='cpf-info';} return; }
+  if (cep === _ultimoCep) return; // já buscado (digitação + saída do campo)
+  _ultimoCep = cep; setTimeout(() => { if (_ultimoCep === cep) _ultimoCep = ''; }, 4000);
+  let aproximado = false;
   if(info){info.textContent='🔍 Buscando CEP em múltiplas bases...';info.className='cpf-info';info.style.color='var(--text-mid)';}
   let lat=null, lng=null, logradouro='', bairro='', cidade='', uf='';
 
@@ -4528,7 +4556,7 @@ async function buscarCep(cepRaw){
       if (j.location && j.location.coordinates) {
         const la = parseFloat(j.location.coordinates.latitude);
         const ln = parseFloat(j.location.coordinates.longitude);
-        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
+        if (_naRegiao(la, ln)) { lat = la; lng = ln; }
       }
     }
   } catch(e){}
@@ -4544,7 +4572,7 @@ async function buscarCep(cepRaw){
         cidade = cidade || j.city || '';
         uf = uf || j.state || '';
         const la = parseFloat(j.lat); const ln = parseFloat(j.lng);
-        if (lat === null && _validLatLng(la, ln)) { lat = la; lng = ln; }
+        if (lat === null && _naRegiao(la, ln)) { lat = la; lng = ln; }
       }
     } catch(e){}
   }
@@ -4572,7 +4600,7 @@ async function buscarCep(cepRaw){
       const j = await r.json();
       if (j[0]) {
         const la = parseFloat(j[0].lat); const ln = parseFloat(j[0].lon);
-        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
+        if (_naRegiao(la, ln)) { lat = la; lng = ln; }
         if (j[0].display_name && !logradouro) {
           // tenta tirar bairro/cidade do display_name
           const parts = j[0].display_name.split(',').map(s=>s.trim());
@@ -4585,28 +4613,35 @@ async function buscarCep(cepRaw){
 
   // ── Preenche endereço/bairro se encontrou ──
   const endEl = document.getElementById('fEnd');
+  logradouro = (logradouro||'').replace(/\b(Quadra|Rua|Avenida)\s+\1\b/i, '$1');
   if (endEl && !endEl.value.trim() && logradouro) endEl.value = logradouro;
   const bairroEl = document.getElementById('fBairro');
   if (bairroEl && bairro) {
-    const bUp = bairro.toUpperCase();
+    const bUp = _semAcento(bairro);
     let matched = false;
     for (const opt of bairroEl.options) {
-      if (opt.value && bUp.indexOf(opt.value) >= 0) { bairroEl.value = opt.value; matched = true; break; }
+      if (opt.value && bUp.indexOf(_semAcento(opt.value)) >= 0) { bairroEl.value = opt.value; matched = true; break; }
     }
     if (!matched && !bairroEl.value) bairroEl.value = 'OUTROS';
   }
 
   // ── Backend 5: se ainda não tem coord, geocodifica endereço textual via Nominatim ──
   if (lat === null && (logradouro || bairro)) {
-    const q = [logradouro, bairro, cidade, uf, 'Brasil'].filter(Boolean).join(', ');
+    const bairroLimpo = (bairro||'').replace(/\(.*?\)/g,'').trim();
+    const q = [logradouro, bairroLimpo, 'Brazlândia', 'DF', 'Brasil'].filter(Boolean).join(', ');
     try {
       const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
       const j = await r.json();
       if (j[0]) {
         const la = parseFloat(j[0].lat); const ln = parseFloat(j[0].lon);
-        if (_validLatLng(la, ln)) { lat = la; lng = ln; }
+        if (_naRegiao(la, ln)) { lat = la; lng = ln; }
       }
     } catch(e){}
+  }
+  // ── Último recurso: centro do bairro (aproximado — o policial ajusta no mapa)
+  if (lat === null) {
+    const c = _centroBairro(bairro) || _centroBairro(document.getElementById('fBairro')?.value) || (/BRAZL/.test(_semAcento(bairro+' '+cidade)) ? BAIRRO_CENTRO.BRAZLANDIA : null);
+    if (c) { lat = c[0]; lng = c[1]; aproximado = true; }
   }
 
   // ── Salva resultado ──
@@ -4614,8 +4649,14 @@ async function buscarCep(cepRaw){
   if (lat !== null && lng !== null) {
     document.getElementById('fLat').value = lat;
     document.getElementById('fLng').value = lng;
-    if (ls) { ls.innerHTML = '✅ Coordenada localizada: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--success)'; }
-    if(info){info.textContent='✅ CEP localizado · '+(cidade?cidade+'/'+uf:'');info.className='cpf-info cpf-ok';}
+    if (aproximado) {
+      if (ls) { ls.innerHTML = '📍 <b>Local aproximado</b> (centro do bairro). Toque no mapa para marcar a casa certa.'; ls.style.color = 'var(--accent2)'; }
+      if(info){info.textContent='✅ CEP encontrado · '+(bairro||cidade)+' · posição aproximada';info.className='cpf-info cpf-warn';}
+    } else {
+      if (ls) { ls.innerHTML = '✅ Localizado pelo CEP: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b> · confira no mapa'; ls.style.color = 'var(--success)'; }
+      if(info){info.textContent='✅ CEP localizado · '+(bairro||cidade);info.className='cpf-info cpf-ok';}
+    }
+    _atualizarMiniMapa(lat, lng, aproximado);
   } else if (logradouro || bairro) {
     if(info){info.textContent='⚠️ Endereço encontrado, mas sem coordenada precisa. Use "🎯 AJUSTAR POSIÇÃO NO MAPA".';info.className='cpf-info cpf-warn';}
     if (ls) { ls.innerHTML='⚠️ Endereço preenchido, <b>ajuste a posição no mapa abaixo</b>.'; ls.style.color='var(--accent2)'; }
@@ -4623,6 +4664,26 @@ async function buscarCep(cepRaw){
     if(info){info.textContent='❌ CEP não encontrado em nenhuma base. Preencha o endereço e use "Ajustar no mapa".';info.className='cpf-info cpf-err';}
     if (ls) { ls.innerHTML='❌ CEP não localizado. <b>Use o botão "🎯 AJUSTAR POSIÇÃO NO MAPA"</b> para marcar.'; ls.style.color='var(--danger)'; }
   }
+}
+
+// ── MINI MAPA DO FORMULÁRIO (mostra onde o CEP/ajuste colocou o pino) ──
+let _miniMap = null, _miniPin = null, _miniCirc = null;
+function _atualizarMiniMapa(lat, lng, aproximado){
+  const el = document.getElementById('locMini'); if (!el || typeof L === 'undefined') return;
+  if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  if (!_miniMap) {
+    _miniMap = L.map(el, { zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:false, tap:false });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19 }).addTo(_miniMap);
+  }
+  setTimeout(() => {
+    _miniMap.invalidateSize();
+    _miniMap.setView([lat, lng], aproximado ? 15 : 17);
+    if (_miniPin) _miniMap.removeLayer(_miniPin);
+    if (_miniCirc) { _miniMap.removeLayer(_miniCirc); _miniCirc = null; }
+    _miniPin = L.marker([lat, lng], { interactive:false }).addTo(_miniMap);
+    if (aproximado) _miniCirc = L.circle([lat, lng], { radius: 450, color:'#e85d20', fillColor:'#e85d20', fillOpacity:.08, weight:1.5, dashArray:'5,5', interactive:false }).addTo(_miniMap);
+  }, 60);
 }
 
 // ── MODAL DE AJUSTE DE POSIÇÃO NO MAPA ──
@@ -4637,7 +4698,7 @@ function abrirMapaAjuste(){
   const lngVal = parseFloat(document.getElementById('fLng').value);
   const temCoord = !isNaN(latVal) && !isNaN(lngVal);
   const init = temCoord ? [latVal, lngVal] : [-15.6760, -48.1870];
-  const zoom = temCoord ? 18 : 14;
+  const zoom = temCoord ? 17 : 14;
 
   // Aguarda o modal aparecer completamente antes de inicializar/redimensionar
   setTimeout(() => {
@@ -4714,6 +4775,7 @@ function confirmarPosicaoMapa(){
   const ls = document.getElementById('locStatus');
   if (ls) { ls.innerHTML = '🎯 Posição manual: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--accent)'; }
   fecharMapaAjuste();
+  _atualizarMiniMapa(lat, lng, false);
   toast('Posição salva! Será gravada quando confirmar o cadastro.','success');
 }
 
@@ -4722,7 +4784,7 @@ let mapaInst = null;
 let mapaMarkers = [];
 let allMapPersons = [];
 
-const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#ffd600", "CAPAOZINHO 3": "#e040fb", "MARANATA": "#ff4081", "CAPÃO DA ONÇA": "#69f0ae", "VENDINHA": "#ffab40", "PADRE BERNARDO": "#40c4ff", "AGUAS LINDAS": "#b9f6ca", "PADRE LUCIO": "#ea80fc", "OUTROS": "#b0bec5"};
+const BAIRRO_COLORS = {"SETOR NORTE": "#00d4ff", "SETOR SUL": "#00e676", "SETOR TRADICIONAL": "#2979ff", "VILA SAO JOSE": "#ff6b35", "VEREDAS": "#ffd600", "CAPAOZINHO 3": "#e040fb", "MARANATA": "#ff4081", "CAPÃO DA ONÇA": "#69f0ae", "VENDINHA": "#ffab40", "PADRE BERNARDO": "#40c4ff", "AGUAS LINDAS": "#b9f6ca", "PADRE LUCIO": "#ea80fc", "OUTROS": "#b0bec5"};
 
 function initMapa() {
   if (mapaInst) return;
@@ -4894,7 +4956,7 @@ async function getCoords(p) {
         const j = await r.json();
         if (j.location && j.location.coordinates) {
           const c = { lat: parseFloat(j.location.coordinates.latitude), lng: parseFloat(j.location.coordinates.longitude) };
-          if (_validCoord(c)) { _geocache[key] = c; _salvarGeocache(); return c; }
+          if (_naRegiao(c.lat, c.lng)) { _geocache[key] = c; _salvarGeocache(); return c; }
         }
       }
     } catch(e){}
@@ -4903,7 +4965,7 @@ async function getCoords(p) {
   // 3) Geocodifica endereço textual via Nominatim
   if (p.endereco && p.bairro) {
     const coords = await geocodeAddress(p.endereco, p.bairro);
-    if (_validCoord(coords)) { _geocache[key] = coords; _salvarGeocache(); return coords; }
+    if (coords && _naRegiao(coords.lat, coords.lng)) { _geocache[key] = coords; _salvarGeocache(); return coords; }
   }
   _geoFalhou.add(key);
   return _coordBairro(p);
@@ -4912,10 +4974,11 @@ async function getCoords(p) {
 function _coordBairro(p){
   // 4) Fallback: coordenada do bairro + offset DETERMINÍSTICO pelo nome (não muda a cada render)
   const BAIRRO_COORDS = {
-    "SETOR NORTE":    [-15.6680, -48.1890],
-    "SETOR SUL":      [-15.6830, -48.1860],
-    "VILA SAO JOSE":  [-15.6750, -48.1950],
-    "VEREDAS":        [-15.6710, -48.1820],
+    "SETOR NORTE":    [-15.6783, -48.1935],
+    "SETOR SUL":      [-15.6871, -48.1949],
+    "SETOR TRADICIONAL": [-15.6805, -48.2033],
+    "VILA SAO JOSE":  [-15.6635, -48.1952],
+    "VEREDAS":        [-15.6698, -48.2005],
     "CAPAOZINHO 3":   [-15.6790, -48.1920],
     "MARANATA":       [-15.6650, -48.1840],
     "CAPÃO DA ONÇA":  [-15.6870, -48.1780],
