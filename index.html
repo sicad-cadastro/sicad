@@ -1143,6 +1143,7 @@ body.no-didatico .field-hint{display:none}
     <button class="tnav-btn" onclick="go('face')" data-p="face"><span data-icon="face"></span>Face</button>
     <button class="tnav-btn" onclick="go('tatuagens')" data-p="tatuagens"><span data-icon="tatuagens"></span>Tatuagens</button>
     <button class="tnav-btn" onclick="go('pesquisa')" data-p="pesquisa"><span data-icon="pesquisa"></span>Pesquisa</button>
+    <button class="tnav-btn" onclick="go('inteligencia')" data-p="inteligencia"><span data-icon="shield"></span>Inteligência</button>
     <button class="tnav-btn" onclick="go('usuarios')" data-p="usuarios" id="tnUsuarios"><span data-icon="usuarios"></span>Usuários</button>
   </div>
 
@@ -2004,6 +2005,9 @@ body.no-didatico .field-hint{display:none}
       </div>
     </div>
 
+    <!-- ═══ INTELIGÊNCIA (módulo carregado sob demanda: inteligencia.js) ═══ -->
+    <div class="page" id="page-inteligencia"><div id="intRoot"></div></div>
+
   </div><!-- /content -->
 
   <!-- Bottom nav (mobile) -->
@@ -2326,7 +2330,7 @@ function abrirMenuMais(){
   sheet.id = 'menuMaisSheet';
   sheet.className = 'more-sheet-backdrop';
   sheet.onclick = (e)=>{ if(e.target===sheet) sheet.remove(); };
-  const itensMais = [['capaozinho3','chacara','Capãozinho 3'],['foragidos','foragidos','Foragidos'],['face','face','Face'],['tatuagens','tatuagens','Tatuagens'],['pesquisa','pesquisa','Pesquisa'],['usuarios','usuarios','Usuários']]
+  const itensMais = [['capaozinho3','chacara','Capãozinho 3'],['foragidos','foragidos','Foragidos'],['face','face','Face'],['tatuagens','tatuagens','Tatuagens'],['pesquisa','pesquisa','Pesquisa'],['inteligencia','shield','Inteligência'],['usuarios','usuarios','Usuários']]
     .filter(([r]) => rotaPermitida(r))
     .map(([r,ic,l]) => `<button class="more-btn" onclick="abrirMenuMais();go('${r}')"><span data-icon="${ic}" data-size="22"></span><span>${l}</span></button>`).join('');
   sheet.innerHTML = `
@@ -2949,6 +2953,8 @@ function podeCadastrarPessoa(){ return podeCadastrarSICAD() || isRP(); }
 function isRP(){ return CU?.role === 'rp'; }
 function rotaPermitida(n){
   if(!CU) return true;
+  // Módulo INTELIGÊNCIA: só perfil inteligência e admin (o banco também bloqueia — migration v14)
+  if(n === 'inteligencia') return ['admin','inteligencia'].includes(CU.role);
   if(isRP()) return RP_ROTAS.includes(n);
   if(n === 'usuarios') return podeGerirUsuarios();
   return true;
@@ -3088,7 +3094,7 @@ supabase.auth.onAuthStateChange((event, session) => {
 
 // ── NAV ──
 // ─── Rotas do SICAD: telas válidas ───
-const SICAD_ROTAS = ['dashboard','cadastrar','consultar','capaozinho3','usuarios','mapa','foragidos','face','tatuagens','pesquisa'];
+const SICAD_ROTAS = ['dashboard','cadastrar','consultar','capaozinho3','usuarios','mapa','foragidos','face','tatuagens','pesquisa','inteligencia'];
 
 function go(n, _fromPop){
   // Fallback: rota desconhecida cai no dashboard
@@ -3128,6 +3134,22 @@ function go(n, _fromPop){
   if(n==='mapa')loadMapa();
   if(n==='face') loadFaceModels(); // pré-carrega modelos ao abrir a aba
   if(n==='tatuagens') loadTatuagensSearch();
+  if(n==='inteligencia') abrirInteligencia();
+}
+
+// Módulo INTELIGÊNCIA: arquivo separado, só baixa quando um perfil autorizado abre a aba
+let _intCarregando = null;
+function abrirInteligencia(){
+  if (!rotaPermitida('inteligencia')) return;
+  if (window.INT && window.INT.abrir) return window.INT.abrir();
+  const root = document.getElementById('intRoot');
+  if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
+  if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261111a';
+    s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
+    document.head.appendChild(s);
+  });
+  _intCarregando.then(() => window.INT.abrir()).catch(e => { if (root) root.innerHTML = '<div style="padding:40px;text-align:center">'+esc(e.message)+'</div>'; });
 }
 
 // ─── Voltar/Avançar do navegador ↔ URL hash ↔ tela ativa ───
