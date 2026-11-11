@@ -189,6 +189,16 @@ function injetarCSS() {
 .int-galeria img{width:100%;height:150px;object-fit:cover;display:block;cursor:zoom-in}
 .int-galeria figcaption{font-size:11.5px;color:var(--neutral-600);padding:6px 8px}
 .int-org{height:640px;border:1px solid var(--border);border-radius:12px;background:#fff}
+.oc-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px;background:#fff;max-height:72vh;-webkit-overflow-scrolling:touch}
+.oc-in{position:relative}
+.oc-card{position:absolute;width:190px;height:76px;display:flex;gap:9px;align-items:center;background:#fff;border:2px solid #94A3B8;border-radius:12px;padding:8px;box-shadow:0 2px 6px rgba(15,23,42,.08);cursor:pointer;transition:box-shadow .15s,transform .15s}
+.oc-card:hover{box-shadow:0 6px 16px rgba(15,23,42,.16);transform:translateY(-1px)}
+.oc-card.hipotese{border-style:dashed}
+.oc-card img{width:52px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#E2E8F0}
+.oc-card div{min-width:0;display:flex;flex-direction:column;gap:1px}
+.oc-card b{font-size:12px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oc-card small{font-size:11px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oc-card span{font-size:10px;color:#94A3B8;font-family:var(--font-mono)}
 .int-trava{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.92);display:flex;align-items:center;justify-content:center;padding:20px}
 .int-trava .bx{background:#fff;border-radius:16px;padding:24px;max-width:380px;width:100%}
 .int-classif{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;font-weight:700;color:#B91C1C;border:1px solid #FECACA;background:#FEF2F2;padding:3px 8px;border-radius:6px}
@@ -740,23 +750,91 @@ VIEWS.organograma = () => {
     `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados.</div>
     <div class="int-busca"><select onchange="INT.escolherOrg(this.value)">${orgs.map(o => `<option value="${o.id}" ${o.id === S.orgId ? 'selected' : ''}>${e(o.titulo)} (${membrosDe(o.id).length})</option>`).join('') || '<option>Nenhuma organização cadastrada</option>'}</select></div>
     ${org ? `<div class="int-kpis"><div class="int-kpi"><b>${est.membros.length}</b><span>Integrantes</span></div><div class="int-kpi"><b>${est.membros.filter(m => m.v.funcao).length}</b><span>Com função definida</span></div><div class="int-kpi"><b>${est.sub.length}</b><span>Ligações de hierarquia</span></div><div class="int-kpi"><b>${est.com.length}</b><span>Comunicações lançadas</span></div></div>
-    <div id="intOrg" class="int-org"></div>
-    <div class="int-legenda"><span><i class="int-ln"></i>Hierarquia (superior → subordinado)</span><span><i class="int-ln" style="border-top:2px dotted #7C3AED"></i>Comunica-se com</span><span><i class="int-ln" style="border-top-color:#CBD5E1"></i>Integrante sem superior identificado</span></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(-1)">−</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(0)">Ajustar à tela</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(1)">+</button></div>
+    <div id="intOrg" class="oc-wrap"></div>
+    <div class="int-legenda"><span><i class="int-ln"></i>Responde a (hierarquia)</span><span><i class="int-ln" style="border-top:2px dotted #7C3AED"></i>Comunica-se com</span><span><i style="width:14px;height:14px;border:2px solid #059669;border-radius:4px;display:inline-block"></i>Documentado</span><span><i style="width:14px;height:14px;border:2px solid #2563EB;border-radius:4px;display:inline-block"></i>Informado</span><span><i style="width:14px;height:14px;border:2px dashed #D97706;border-radius:4px;display:inline-block"></i>Hipótese</span></div>
     <div id="intOrgInfo" style="margin-top:12px"></div>` : '<div class="int-vazio">Cadastre uma organização em Organizações.</div>'}`;
 };
+// Layout hierárquico: faixa por nível (função) e a cadeia "responde a" sempre desce
+const OC = { W: 190, H: 76, GX: 22, ROW: 132, LBL: 170, TOP: 92, PAD: 28 };
+function layoutOrg(org, est) {
+  const porId = {}; est.membros.forEach(m => { porId[m.x.id] = m; });
+  const supDe = {}; est.sub.forEach(v => { if (porId[v.destino_id]) supDe[v.origem_id] = v.destino_id; });
+  const niv = {};
+  const calc = (id, visto) => {
+    if (niv[id] !== undefined) return niv[id];
+    visto = visto || new Set(); if (visto.has(id)) return null; visto.add(id);
+    const m = porId[id]; let n = m.v.funcao && m.v.funcao !== 'Função não identificada' ? (m.v.nivel || FUNCOES[m.v.funcao] || 4) : null;
+    if (supDe[id]) { const ns = calc(supDe[id], visto); if (typeof ns === 'number') n = Math.max(n || 0, ns + 1); }
+    return (niv[id] = n == null ? 'sem' : Math.min(n, 9));
+  };
+  est.membros.forEach(m => calc(m.x.id));
+  const chaves = [...new Set(Object.values(niv))].sort((a, b) => (a === 'sem') - (b === 'sem') || a - b);
+  // Árvore: cada subordinado ganha sua coluna embaixo do superior; o superior fica centralizado sobre a equipe
+  const filhos = {}; const raizes = [];
+  est.membros.forEach(m => {
+    const s = supDe[m.x.id];
+    if (niv[m.x.id] !== 'sem' && s && niv[s] !== 'sem' && niv[s] < niv[m.x.id]) (filhos[s] = filhos[s] || []).push(m.x.id);
+    else if (niv[m.x.id] !== 'sem') raizes.push(m.x.id);
+  });
+  const ordem = (a, b) => niv[a] - niv[b] || porId[a].x.titulo.localeCompare(porId[b].x.titulo);
+  raizes.sort(ordem); Object.values(filhos).forEach(l => l.sort(ordem));
+  const col = {}; let slot = 0;
+  const posiciona = id => { const k = filhos[id] || []; if (!k.length) { col[id] = slot++; return; } k.forEach(posiciona); col[id] = (col[k[0]] + col[k[k.length - 1]]) / 2; };
+  raizes.forEach(posiciona);
+  const semPos = est.membros.filter(m => niv[m.x.id] === 'sem').map(m => m.x.id).sort((a, b) => porId[a].x.titulo.localeCompare(porId[b].x.titulo));
+  const larg = n => n * OC.W + Math.max(0, n - 1) * OC.GX;
+  const PORLINHA = 6, linhasSem = Math.ceil(semPos.length / PORLINHA);
+  const W = Math.max(OC.LBL + Math.max(larg(slot), larg(Math.min(semPos.length, PORLINHA))) + OC.PAD * 2, 640);
+  const area = W - OC.LBL - OC.PAD * 2;
+  const xArvore = OC.LBL + OC.PAD + (area - larg(slot)) / 2;
+  const pos = {}; const rows = [];
+  chaves.forEach((k, i) => {
+    const y = OC.TOP + i * OC.ROW;
+    rows.push({ k, y, h: k === 'sem' ? OC.ROW + (linhasSem - 1) * (OC.H + 18) : OC.ROW, rot: k === 'sem' ? 'SEM POSIÇÃO DEFINIDA' : (NIVEIS[k] || 'Nível ' + k).replace(/^\d+ — /, 'N' + k + ' · ').toUpperCase() });
+    if (k === 'sem') semPos.forEach((id, j) => { const li = Math.floor(j / PORLINHA), naLinha = Math.min(PORLINHA, semPos.length - li * PORLINHA), x0 = OC.LBL + OC.PAD + (area - larg(naLinha)) / 2; pos[id] = { x: x0 + (j % PORLINHA) * (OC.W + OC.GX), y: y + li * (OC.H + 18) }; });
+    else est.membros.filter(m => niv[m.x.id] === k).forEach(m => { pos[m.x.id] = { x: xArvore + col[m.x.id] * (OC.W + OC.GX), y }; });
+  });
+  const ult = rows[rows.length - 1];
+  return { pos, rows, W, H: ult ? ult.y - 22 + ult.h + 6 : OC.TOP + 40, supDe, niv, porId };
+}
+function caminhoHier(a, b) { const x1 = a.x + OC.W / 2, y1 = a.y + OC.H, x2 = b.x + OC.W / 2, y2 = b.y, ym = y1 + Math.min(28, (y2 - y1) / 2); return `M${x1},${y1} V${ym} H${x2} V${y2}`; }
+function caminhoCom(a, b) {
+  const ax = a.x + OC.W / 2, ay = a.y + OC.H / 2, bx = b.x + OC.W / 2, by = b.y + OC.H / 2;
+  const mx = (ax + bx) / 2, my = (ay + by) / 2 - (Math.abs(ax - bx) < 10 ? 0 : 46); const dx = Math.abs(ay - by) < 10 ? 0 : 70;
+  return { d: `M${ax},${ay} Q${mx + dx},${my} ${bx},${by}`, lx: (ax + 2 * (mx + dx) + bx) / 4, ly: (ay + 2 * my + by) / 4 };
+}
+const DASH = { documentado: '', informado: '7 5', hipotese: '2 5' };
+function htmlOrg(org, est, L) {
+  const linhas = [], cards = [];
+  L.rows.forEach((r, i) => linhas.push(`<rect x="0" y="${r.y - 22}" width="${L.W}" height="${r.h}" fill="${i % 2 ? '#FFFFFF' : '#F8FAFC'}"/><text x="14" y="${r.y + OC.H / 2 + 4}" font-size="11" font-weight="700" letter-spacing="1" fill="${r.k === 'sem' ? '#B45309' : '#64748B'}">${e(r.rot)}</text>`));
+  // título da organização
+  const tx = OC.LBL + (L.W - OC.LBL) / 2;
+  linhas.push(`<rect x="${tx - 150}" y="18" width="300" height="38" rx="8" fill="#0F172A"/><text x="${tx}" y="42" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">${e(org.titulo.length > 38 ? org.titulo.slice(0, 36) + '…' : org.titulo)}</text>`);
+  const topo = L.rows.find(r => r.k !== 'sem');
+  est.membros.forEach(m => { const p = L.pos[m.x.id]; if (topo && L.niv[m.x.id] === topo.k && !L.supDe[m.x.id]) linhas.push(`<path d="M${tx},56 V${(56 + p.y) / 2} H${p.x + OC.W / 2} V${p.y}" fill="none" stroke="#CBD5E1" stroke-width="1.5"/>`); });
+  est.sub.forEach(v => { const a = L.pos[v.destino_id], b = L.pos[v.origem_id]; if (a && b) linhas.push(`<path d="${caminhoHier(a, b)}" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="${DASH[v.situacao] || ''}"/>`); });
+  est.com.forEach(v => { const a = L.pos[v.origem_id], b = L.pos[v.destino_id]; if (!a || !b) return; const c = caminhoCom(a, b); linhas.push(`<path d="${c.d}" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"><title>${e('Comunica-se com · ' + NATUREZA[v.situacao] + ' · fonte: ' + v.fonte)}</title></path>${v.observacoes ? `<text x="${c.lx}" y="${c.ly}" font-size="10" fill="#6D28D9" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">${e(v.observacoes)}</text>` : ''}`); });
+  est.membros.forEach(m => {
+    const p = L.pos[m.x.id]; const foto = S.fotos[m.x.id] || avatarSVG(m.x.titulo, TIPOS.pessoa.cor);
+    cards.push(`<div class="oc-card ${m.v.situacao}" style="left:${p.x}px;top:${p.y}px;border-color:${SIT_COR[m.v.situacao] || '#94A3B8'}" onclick="INT.infoInt('${org.id}','${m.x.id}')" title="${e(m.x.codigo + ' · ' + NATUREZA[m.v.situacao] + ' · fonte: ' + m.v.fonte)}"><img src="${foto}" alt=""><div><b>${e(m.x.titulo)}</b><small>${e(m.v.funcao || 'Função não informada')}</small><span>${e(m.x.codigo)}${m.v.nivel || FUNCOES[m.v.funcao] ? ' · N' + (m.v.nivel || FUNCOES[m.v.funcao]) : ''}</span></div></div>`);
+  });
+  return `<div class="oc-in" style="width:${L.W}px;height:${L.H}px"><svg width="${L.W}" height="${L.H}" style="position:absolute;inset:0">${linhas.join('')}</svg>${cards.join('')}</div>`;
+}
+let _ocZoom = null;
+function aplicarZoomOrg() {
+  const w = document.getElementById('intOrg'); const inn = w && w.querySelector('.oc-in'); if (!inn) return;
+  if (_ocZoom == null) { const ajuste = (w.clientWidth - 4) / parseFloat(inn.style.width); _ocZoom = Math.max(.45, Math.min(1, ajuste)); }
+  inn.style.zoom = _ocZoom;
+}
 AFTER.organograma = async () => {
   const el = document.getElementById('intOrg'); const org = S.orgId && ent(S.orgId); if (!el || !org) return;
-  try { await carregarVis(); } catch (err) { el.innerHTML = `<div class="int-vazio">${e(err.message)}</div>`; return; }
+  if (S._ocOrg !== org.id) { _ocZoom = null; S._ocOrg = org.id; }
   const est = estruturaOrg(org.id);
-  if (!est.membros.length) { el.innerHTML = '<div class="int-vazio" style="padding-top:120px">Nenhum integrante lançado. Use "Integrante / posição".</div>'; return; }
-  const desenhar = () => {
-    if (!document.getElementById('intOrg')) return;
-    if (_org) _org.destroy();
-    _org = new vis.Network(el, { nodes: new vis.DataSet(nodesOrg(org, est, S.fotos)), edges: new vis.DataSet(edgesOrg(org, est)) }, OPC_ORG);
-    _org.on('click', p => { if (p.nodes.length && p.nodes[0] !== org.id) infoIntegrante(org.id, p.nodes[0]); });
-  };
+  if (!est.membros.length) { el.innerHTML = '<div class="int-vazio" style="padding:60px 10px">Nenhum integrante lançado. Use "Integrante / posição".</div>'; return; }
+  const desenhar = () => { const w = document.getElementById('intOrg'); if (!w) return; w.innerHTML = htmlOrg(org, est, layoutOrg(org, est)); aplicarZoomOrg(); };
   desenhar();
-  await fotosSicad(est.membros.map(m => m.x)); desenhar(); // redesenha com as fotos
+  await fotosSicad(est.membros.map(m => m.x)); desenhar();
   aud('consultar_organograma', 'int_entidades', org.id);
 };
 function infoIntegrante(orgId, pid) {
@@ -841,15 +919,30 @@ async function salvarComunicacao(orgId) {
 }
 async function imagemOrg(orgId) {
   const org = ent(orgId); const est = estruturaOrg(orgId); if (!org || !est.membros.length) return null;
-  await carregarVis(); await fotosSicad(est.membros.map(m => m.x));
-  const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-3000px;top:0;width:1200px;height:760px;background:#fff'; document.body.appendChild(box);
-  try {
-    const net = new vis.Network(box, { nodes: new vis.DataSet(nodesOrg(org, est, S.fotos)), edges: new vis.DataSet(edgesOrg(org, est)) }, OPC_ORG);
-    await new Promise(ok => setTimeout(ok, 900)); net.fit(); await new Promise(ok => setTimeout(ok, 500));
-    const cv = box.querySelector('canvas'); const out = document.createElement('canvas'); out.width = cv.width; out.height = cv.height;
-    const g = out.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, out.width, out.height); g.drawImage(cv, 0, 0); net.destroy();
-    return { url: out.toDataURL('image/jpeg', .9), w: out.width, h: out.height };
-  } catch (_) { return null; } finally { box.remove(); }
+  await fotosSicad(est.membros.map(m => m.x));
+  const L = layoutOrg(org, est); const K = 2;
+  const cv = document.createElement('canvas'); cv.width = L.W * K; cv.height = L.H * K; const g = cv.getContext('2d'); g.scale(K, K);
+  g.fillStyle = '#fff'; g.fillRect(0, 0, L.W, L.H);
+  L.rows.forEach((r, i) => { g.fillStyle = i % 2 ? '#FFFFFF' : '#F8FAFC'; g.fillRect(0, r.y - 22, L.W, r.h); g.fillStyle = r.k === 'sem' ? '#B45309' : '#64748B'; g.font = 'bold 11px Arial'; g.fillText(r.rot, 14, r.y + OC.H / 2 + 4); });
+  const tx = OC.LBL + (L.W - OC.LBL) / 2;
+  g.fillStyle = '#0F172A'; g.fillRect(tx - 150, 18, 300, 38); g.fillStyle = '#fff'; g.font = 'bold 14px Arial'; g.textAlign = 'center'; g.fillText(org.titulo.slice(0, 40), tx, 42); g.textAlign = 'left';
+  const traco = (d, cor, larg, dash) => { g.save(); g.strokeStyle = cor; g.lineWidth = larg; g.setLineDash(dash ? dash.split(' ').map(Number) : []); g.lineCap = 'round'; g.stroke(new Path2D(d)); g.restore(); };
+  const topo = L.rows.find(r => r.k !== 'sem');
+  est.membros.forEach(m => { const p = L.pos[m.x.id]; if (topo && L.niv[m.x.id] === topo.k && !L.supDe[m.x.id]) traco(`M${tx},56 V${(56 + p.y) / 2} H${p.x + OC.W / 2} V${p.y}`, '#CBD5E1', 1.5); });
+  est.sub.forEach(v => { const a = L.pos[v.destino_id], b = L.pos[v.origem_id]; if (a && b) traco(caminhoHier(a, b), '#334155', 2, DASH[v.situacao]); });
+  est.com.forEach(v => { const a = L.pos[v.origem_id], b = L.pos[v.destino_id]; if (!a || !b) return; const c = caminhoCom(a, b); traco(c.d, '#7C3AED', 2, '2 5'); if (v.observacoes) { g.font = '10px Arial'; g.fillStyle = '#6D28D9'; g.textAlign = 'center'; g.fillText(v.observacoes, c.lx, c.ly); g.textAlign = 'left'; } });
+  const carregaImg = src => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
+  for (const m of est.membros) {
+    const p = L.pos[m.x.id]; const cor = SIT_COR[m.v.situacao] || '#94A3B8';
+    g.save(); g.fillStyle = '#fff'; g.strokeStyle = cor; g.lineWidth = 2; g.setLineDash(m.v.situacao === 'hipotese' ? [5, 4] : []);
+    g.beginPath(); g.roundRect ? g.roundRect(p.x, p.y, OC.W, OC.H, 10) : g.rect(p.x, p.y, OC.W, OC.H); g.fill(); g.stroke(); g.restore();
+    const im = await carregaImg(S.fotos[m.x.id] || avatarSVG(m.x.titulo, TIPOS.pessoa.cor));
+    if (im) { g.save(); g.beginPath(); g.rect(p.x + 8, p.y + 10, 52, 56); g.clip(); const r = Math.max(52 / im.width, 56 / im.height); g.drawImage(im, p.x + 8 + (52 - im.width * r) / 2, p.y + 10 + (56 - im.height * r) / 2, im.width * r, im.height * r); g.restore(); }
+    g.fillStyle = '#0F172A'; g.font = 'bold 11.5px Arial'; let t = m.x.titulo; while (g.measureText(t).width > OC.W - 76 && t.length > 4) t = t.slice(0, -1); g.fillText(t === m.x.titulo ? t : t + '…', p.x + 68, p.y + 28);
+    g.fillStyle = '#334155'; g.font = '10.5px Arial'; let f = m.v.funcao || 'Função não informada'; while (g.measureText(f).width > OC.W - 76 && f.length > 4) f = f.slice(0, -1); g.fillText(f, p.x + 68, p.y + 44);
+    g.fillStyle = '#94A3B8'; g.font = '9.5px Arial'; g.fillText(m.x.codigo + ((m.v.nivel || FUNCOES[m.v.funcao]) ? ' · N' + (m.v.nivel || FUNCOES[m.v.funcao]) : ''), p.x + 68, p.y + 59);
+  }
+  return { url: cv.toDataURL('image/jpeg', .92), w: cv.width, h: cv.height };
 }
 
 // ── Mapa ────────────────────────────────────────────────────────────────
@@ -1416,6 +1509,8 @@ Object.assign(INT_API(), {
   formVinculo, salvarVinculo, formDossie, salvarDossie, abrirDossie, incluirExistente, confirmarInclusao, salvarAndamento,
   abaDossie: a => { S.abaDossie = a; render(); }, redeDoDossie: id => { S.filtros.rede = { dos: [id], sit: ['documentado', 'informado', 'hipotese'] }; S.view = 'vinculos'; render(); },
   formIntegrante, salvarIntegrante, formComunicacao, salvarComunicacao, escolherOrg: id => { S.orgId = id; render(); },
+  infoInt: (o, p) => infoIntegrante(o, p),
+  zoomOrg: d => { if (d === 0) _ocZoom = null; else _ocZoom = Math.max(.35, Math.min(1.6, (_ocZoom || 1) + d * .15)); aplicarZoomOrg(); },
   nivelDaFuncao: f => { const el = document.getElementById('oNiv'); if (el) el.value = String(FUNCOES[f] || 4); },
   formDoc, salvarDoc, abrirDoc, baixarDoc, formRelatorio, salvarRel, abrirRel, fluxoRel, gerarPDF, salvarPerms, pesquisar, novaLocalidade,
   destravar, sairTrava, abaAud: a => { S.abaAud = a; render(); },
