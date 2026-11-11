@@ -354,6 +354,11 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .s-filters input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
 .s-filters input:focus{border-color:var(--accent)}
 .s-filters input::placeholder{color:var(--text-dim)}
+.s-facc{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.s-facc-btn{border:1.5px solid #fecaca;background:#fff;color:#b91c1c;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;letter-spacing:.3px;cursor:pointer;min-height:38px;white-space:nowrap}
+.s-facc-btn b{font-weight:800;margin-left:2px}
+.s-facc-btn.on{background:#dc2626;border-color:#dc2626;color:#fff;box-shadow:0 2px 8px rgba(220,38,38,.3)}
+#sFaccao{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--text);min-height:38px}
 .rcnt{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:12px}
 
 /* ── MODAL ── */
@@ -1064,6 +1069,7 @@ body.no-didatico .field-hint{display:none}
   #cadSaveBar{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:150;background:var(--neutral-0);margin:8px -12px 0 !important;padding:10px 12px;border-top:1px solid var(--neutral-200);box-shadow:0 -6px 12px -8px rgba(15,23,42,.25)}
   /* Ao rolar a lista, a busca presa mostra só o campo de nome */
   #page-consultar .search-box.compacta .s-filters{display:none !important}
+  #page-consultar .search-box.compacta .s-facc:not(.ativo){display:none !important}
   /* Botão "?" não cobre o Salvar do cadastro */
   body[data-pagina="cadastrar"] .help-fab{bottom:150px}
   /* Resposta ao toque */
@@ -1100,7 +1106,8 @@ body.no-didatico .field-hint{display:none}
       </div>
       <div id="signupFields" style="display:none">
         <div class="fg"><label>Nome *</label><input type="text" id="suNome" placeholder="Seu nome" autocomplete="name"></div>
-        <div class="fg"><label>E-mail *</label><input type="email" id="suEmail" placeholder="seu@email.com" autocomplete="email"></div>
+        <div class="fg"><label>E-mail *</label><input type="email" id="suEmail" placeholder="seu@email.com" autocomplete="email">
+          <div style="font-size:12px;color:var(--neutral-500);margin-top:6px;line-height:1.4">🔑 Esse e-mail será usado para recuperação de senha.</div></div>
         <div class="fg"><label>Senha *</label><input type="password" id="suSenha" placeholder="Mínimo 6 caracteres"></div>
         <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">📨 ENVIAR SOLICITAÇÃO</button>
         <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">← Voltar ao login</button>
@@ -1475,6 +1482,10 @@ body.no-didatico .field-hint{display:none}
 </select>
           <input type="text" id="sQuadra" placeholder="Quadra" oninput="filterList()" autocomplete="off" style="max-width:110px">
           <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="min-width:44px;padding:10px">✕</button>
+        </div>
+        <div class="s-facc" id="sFaccWrap">
+          <button type="button" id="sFaccBtn" class="s-facc-btn" onclick="toggleFiltroFacc()" aria-pressed="false">🚩 SÓ FACCIONADOS <b id="sFaccN"></b></button>
+          <select id="sFaccao" onchange="filterList()" style="display:none"><option value="">Todas as facções</option></select>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap">
@@ -3281,6 +3292,7 @@ async function loadPersons(){
   finally{hideOv();}
 }
 function renderList(l){
+  atualizarContadorFacc();
   _listaFiltrada = l || [];
   _listaRenderizada = 0;
   document.getElementById('rcnt').textContent=`${_listaFiltrada.length} registro${_listaFiltrada.length!==1?'s':''} encontrado${_listaFiltrada.length!==1?'s':''}`;
@@ -3318,7 +3330,11 @@ function _filterListAgora(){
   const n=document.getElementById('sNome').value.trim().toLowerCase();
   const b=document.getElementById('sBairro').value.toLowerCase();
   const qq=document.getElementById('sQuadra').value.trim().toLowerCase();
+  const soFacc=document.getElementById('sFaccBtn')?.classList.contains('on');
+  const facc=(document.getElementById('sFaccao')?.value||'').toLowerCase();
   let l=allP;
+  if(soFacc)l=l.filter(p=>p.faccionado);
+  if(soFacc&&facc)l=l.filter(p=>(p.faccao||'').trim().toLowerCase()===facc);
   if(n)l=l.filter(p=>['nome','apelido','mae'].some(k=>(p[k]||'').toLowerCase().includes(n)));
   if(b)l=l.filter(p=>(p.bairro||'').toLowerCase().includes(b));
   if(qq)l=l.filter(p=>(p.quadra||'').toLowerCase().includes(qq));
@@ -3326,7 +3342,30 @@ function _filterListAgora(){
 }
 function clearSearch(){
   ['sNome','sBairro','sQuadra'].forEach(id=>document.getElementById(id).value='');
+  _setFiltroFacc(false);
   renderList(allP);
+}
+
+// ── Filtro: só faccionados (+ facção específica) ──
+function _setFiltroFacc(on){
+  const b=document.getElementById('sFaccBtn'), s=document.getElementById('sFaccao'), w=document.getElementById('sFaccWrap');
+  if(!b) return;
+  b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false');
+  w.classList.toggle('ativo', on);
+  if(on){
+    const nomes=[...new Set(allP.filter(p=>p.faccionado&&p.faccao).map(p=>p.faccao.trim().toUpperCase()))].sort();
+    s.innerHTML='<option value="">Todas as facções</option>'+nomes.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+    s.style.display=nomes.length?'':'none';
+  } else { s.value=''; s.style.display='none'; }
+}
+function toggleFiltroFacc(){
+  _setFiltroFacc(!document.getElementById('sFaccBtn').classList.contains('on'));
+  _filterListAgora();
+}
+function atualizarContadorFacc(){
+  const el=document.getElementById('sFaccN'); if(!el) return;
+  const n=(allP||[]).filter(p=>p.faccionado).length;
+  el.textContent=n?`(${n})`:'';
 }
 
 // ── CADASTRAR ──
