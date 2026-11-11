@@ -3145,7 +3145,7 @@ function abrirInteligencia(){
   const root = document.getElementById('intRoot');
   if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
   if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
-    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261111a';
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261111b';
     s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
     document.head.appendChild(s);
   });

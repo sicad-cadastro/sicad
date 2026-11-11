@@ -282,6 +282,7 @@ VIEWS.painel = () => {
       <div class="int-kpi" onclick="INT.ir('dossies')"><b>${ativos.length}</b><span>Dossiês ativos</span></div>
       <div class="int-kpi" onclick="INT.ir('central')"><b>${S.ents.length}</b><span>Registros no banco</span></div>
       <div class="int-kpi" onclick="INT.ir('vinculos')"><b>${S.vinculos.length}</b><span>Vínculos lançados</span></div>
+      <div class="int-kpi" onclick="INT.filtrarCentral({facc:'1'})"><b>${S.ents.filter(x => x.dados && x.dados.faccionado_sicad).length}</b><span>Faccionados (SICAD)</span></div>
       <div class="int-kpi" onclick="INT.filtrarCentral({nat:'hipotese'})"><b>${hip}</b><span>Hipóteses em análise</span></div>
       <div class="int-kpi ${pendRev + pendApr ? 'alerta' : ''}" onclick="INT.ir('relatorios')"><b>${pendRev + pendApr}</b><span>Relatórios pendentes</span></div>
       <div class="int-kpi ${vencidos.length ? 'alerta' : ''}" onclick="INT.ir('dossies')"><b>${vencidos.length}</b><span>Retenção vencida</span></div>
@@ -311,6 +312,7 @@ function viewLista(tipo) {
   let l = S.ents.filter(x => !tipo || x.tipo === tipo);
   if (f.tipo) l = l.filter(x => x.tipo === f.tipo);
   if (f.nat) l = l.filter(x => x.natureza === f.nat);
+  if (f.facc) l = l.filter(x => x.dados && x.dados.faccionado_sicad);
   if (f.dos) { const ids = new Set(S.itens.filter(i => i.dossie_id === f.dos).map(i => i.entidade_id)); l = l.filter(x => ids.has(x.id)); }
   if (f.q) { const q = norm(f.q), qd = soDig(f.q); l = l.filter(x => norm([x.titulo, x.codigo, x.fonte, x.observacoes, JSON.stringify(x.dados)].join(' ')).includes(q) || (qd.length >= 3 && (x.chave || '').includes(qd))); }
   const chave = tipo || 'central';
@@ -322,13 +324,14 @@ function viewLista(tipo) {
       <input placeholder="Buscar por nome, código, CPF, placa, número, fonte..." value="${e(f.q)}" oninput="INT.setFiltro('${chave}','q',this.value)">
       ${!tipo ? `<select onchange="INT.setFiltro('${chave}','tipo',this.value,true)">${opts(Object.fromEntries(Object.entries(TIPOS).map(([k, v]) => [k, v.rot])), f.tipo, 'Todos os tipos')}</select>` : ''}
       <select onchange="INT.setFiltro('${chave}','nat',this.value,true)">${opts(NATUREZA, f.nat, 'Toda situação')}</select>
+      ${!tipo || tipo === 'pessoa' ? `<select onchange="INT.setFiltro('${chave}','facc',this.value,true)"><option value="">Todas as pessoas</option><option value="1"${f.facc ? ' selected' : ''}>Só faccionados (SICAD)</option></select>` : ''}
       <select onchange="INT.setFiltro('${chave}','dos',this.value,true)">${opts(Object.fromEntries(S.dossies.map(d => [d.id, d.numero + ' — ' + d.titulo])), f.dos, 'Todos os dossiês')}</select>
     </div>
     <div class="int-card" style="padding:0;overflow-x:auto" id="intTabEnt">${tabelaEnts(l)}</div>`;
 }
 function tabelaEnts(l) {
   if (!l.length) return '<div class="int-vazio">Nenhum registro encontrado.</div>';
-  return `<table class="int-tab"><thead><tr><th>Código</th><th>Registro</th><th class="hm">Tipo</th><th>Situação</th><th class="hm">Conf.</th><th class="hm">Dossiês</th><th class="hm">Cadastro</th></tr></thead><tbody>${l.slice(0, 300).map(x => `<tr class="cl" onclick="INT.ficha('${x.id}')"><td class="int-cod">${e(x.codigo)}</td><td><b>${e(x.titulo)}</b>${resumoEnt(x) ? `<div style="font-size:12px;color:var(--neutral-500)">${e(resumoEnt(x))}</div>` : ''}</td><td class="hm">${tipoTag(x.tipo)}</td><td>${tagNat(x.natureza)}</td><td class="hm int-cod">${confTxt(x.conf_fonte, x.conf_info)}</td><td class="hm">${dossiesDoEnt(x.id).length}</td><td class="hm" style="font-size:12px;color:var(--neutral-500)">${dataBR(x.criado_em)}<br>${e(x.criado_por_nome || '')}</td></tr>`).join('')}</tbody></table>${l.length > 300 ? `<div class="int-vazio">Mostrando 300 de ${l.length}. Refine a busca.</div>` : ''}`;
+  return `<table class="int-tab"><thead><tr><th>Código</th><th>Registro</th><th class="hm">Tipo</th><th>Situação</th><th class="hm">Conf.</th><th class="hm">Dossiês</th><th class="hm">Cadastro</th></tr></thead><tbody>${l.slice(0, 300).map(x => `<tr class="cl" onclick="INT.ficha('${x.id}')"><td class="int-cod">${e(x.codigo)}</td><td><b>${e(x.titulo)}</b>${x.dados && x.dados.faccionado_sicad ? ` <span class="int-tag sig">Faccionado${x.dados.faccao_sicad ? ': ' + e(x.dados.faccao_sicad) : ''}</span>` : ''}${resumoEnt(x) ? `<div style="font-size:12px;color:var(--neutral-500)">${e(resumoEnt(x))}</div>` : ''}</td><td class="hm">${tipoTag(x.tipo)}</td><td>${tagNat(x.natureza)}</td><td class="hm int-cod">${confTxt(x.conf_fonte, x.conf_info)}</td><td class="hm">${dossiesDoEnt(x.id).length}</td><td class="hm" style="font-size:12px;color:var(--neutral-500)">${dataBR(x.criado_em)}<br>${e(x.criado_por_nome || '')}</td></tr>`).join('')}</tbody></table>${l.length > 300 ? `<div class="int-vazio">Mostrando 300 de ${l.length}. Refine a busca.</div>` : ''}`;
 }
 function resumoEnt(x) {
   const d = x.dados || {};
