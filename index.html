@@ -1101,17 +1101,17 @@ body.no-didatico .field-hint{display:none}
         <button class="btn btn-outline btn-full btn-sm" onclick="resetPwd()" style="margin-top:8px;font-size:11px">Esqueci minha senha</button>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">NÃO TEM CADASTRO?</div>
-          <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(true)">📝 SOLICITAR CADASTRO</button>
+          <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(true)">SOLICITAR CADASTRO</button>
         </div>
       </div>
       <div id="signupFields" style="display:none">
         <div class="fg"><label>Nome *</label><input type="text" id="suNome" placeholder="Seu nome" autocomplete="name"></div>
         <div class="fg"><label>E-mail *</label><input type="email" id="suEmail" placeholder="seu@email.com" autocomplete="email">
-          <div style="font-size:12px;color:var(--neutral-500);margin-top:6px;line-height:1.4">🔑 Esse e-mail será usado para recuperação de senha.</div></div>
+          <div style="font-size:12px;color:var(--neutral-500);margin-top:6px;line-height:1.4">Esse e-mail será usado para recuperação de senha.</div></div>
         <div class="fg"><label>Senha *</label><input type="password" id="suSenha" placeholder="Mínimo 6 caracteres"></div>
-        <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">📨 ENVIAR SOLICITAÇÃO</button>
+        <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">ENVIAR SOLICITAÇÃO</button>
         <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">← Voltar ao login</button>
-        <div style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.5;text-align:center">⚠️ Após o cadastro, um administrador precisa <b>aprovar</b> sua conta antes do primeiro acesso.</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.5;text-align:center">Após o cadastro, um administrador precisa <b>aprovar</b> sua conta antes do primeiro acesso.</div>
       </div>
     </div>
     <div class="mode-lbl" id="modeLbl"></div>
@@ -1210,22 +1210,22 @@ body.no-didatico .field-hint{display:none}
     <!-- CADASTRAR -->
     <div class="page" id="page-cadastrar">
       <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
-      <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">🚨 ADICIONAR COMO FORAGIDO</button>
+      <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">ADICIONAR COMO FORAGIDO</button>
       <!-- OCR de documento (RG/CPF/CNH) -->
       <div class="card" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:1px solid rgba(124,58,237,.35);margin-bottom:16px;padding:14px">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <div style="font-size:28px;flex-shrink:0">📄</div>
+          <div style="font-size:28px;flex-shrink:0"><span data-icon="pdf" data-size="24"></span></div>
           <div style="flex:1;min-width:180px">
             <div style="font-weight:700;font-size:13px;color:#000;margin-bottom:2px">LEITURA AUTOMÁTICA DE DOCUMENTO</div>
             <div style="font-size:11px;color:var(--text-mid)">Tire foto do RG/CPF/CNH — o sistema lê e preenche os campos.</div>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
-              🖼 GALERIA
+              GALERIA
               <input type="file" accept="image/*" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
-              📷 CÂMERA
+              CÂMERA
               <input type="file" accept="image/*" capture="environment" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
           </div>
@@ -1247,21 +1247,21 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap" id="faceBtnsWrap">
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">GALERIA</span>
               <input type="file" id="faceFileGal" accept="image/*" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">CÂMERA</span>
               <input type="file" id="faceFileCam" accept="image/*" capture="user" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px dashed var(--border);overflow:hidden;background:transparent;cursor:pointer" onclick="document.getElementById('facePasteHelper').focus()">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📋 COLAR (CTRL+V)</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">COLAR (CTRL+V)</span>
               <input type="text" id="facePasteHelper" onpaste="onFacePaste(event)" placeholder="" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;background:transparent" readonly>
             </div>
           </div>
           <div class="camwrap" id="faceCam"><video id="faceVid" autoplay playsinline muted></video></div>
           <div class="cam-btns" id="faceCamBtns" style="display:none">
-            <button class="btn btn-primary btn-sm" onclick="camCapture('face')">📸 CAPTURAR</button>
+            <button class="btn btn-primary btn-sm" onclick="camCapture('face')">CAPTURAR</button>
             <button class="btn btn-outline btn-sm" onclick="camClose('face')">✕ CANCELAR</button>
           </div>
         </div>
@@ -1270,7 +1270,7 @@ body.no-didatico .field-hint{display:none}
         <!-- Alerta Faccionado -->
         <div id="faccionadoBanner" onclick="toggleFaccionado()" style="cursor:pointer;border-radius:12px;border:2px solid var(--border);padding:14px 18px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;transition:all .3s;background:var(--surface2)" title="Clique para marcar como faccionado">
           <div style="display:flex;align-items:center;gap:10px">
-            <span id="faccionadoIcon" style="font-size:22px">⚠️</span>
+            <span id="faccionadoIcon" style="font-size:22px"><span data-icon="alerta" data-size="19"></span></span>
             <div>
               <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text)" id="faccionadoLabel">FACCIONADO</div>
               <div style="font-size:11px;color:var(--text-dim);margin-top:1px" id="faccionadoSub">Clique para ativar o alerta</div>
@@ -1313,22 +1313,22 @@ body.no-didatico .field-hint{display:none}
   <option value="OUTROS">OUTROS</option>
 </select></div>
           <div class="fg" style="grid-column:1/-1">
-            <label>📍 LOCALIZAÇÃO NO MAPA</label>
+            <label>LOCALIZAÇÃO NO MAPA</label>
             <input type="hidden" id="fLat">
             <input type="hidden" id="fLng">
             <div id="locStatus" style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.</div>
             <div id="locMini" onclick="abrirMapaAjuste()" title="Toque para ajustar" style="display:none;height:170px;border-radius:10px;overflow:hidden;border:1px solid var(--neutral-200);margin-bottom:8px;cursor:pointer;position:relative;z-index:0"></div>
-            <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">🎯 AJUSTAR POSIÇÃO NO MAPA</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">AJUSTAR POSIÇÃO NO MAPA</button>
           </div>
         </div>
 
         <!-- Redes Sociais -->
         <div class="fg" style="margin-top:4px">
-          <label>📱 REDES SOCIAIS</label>
+          <label>REDES SOCIAIS</label>
           <div style="display:flex;flex-direction:column;gap:10px">
 
             <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
+              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><span data-icon="camera" data-size="17"></span></div>
               <div style="flex:1;min-width:0">
                 <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 1</div>
                 <input type="text" id="fInsta1" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
@@ -1336,7 +1336,7 @@ body.no-didatico .field-hint{display:none}
             </div>
 
             <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📸</div>
+              <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><span data-icon="camera" data-size="17"></span></div>
               <div style="flex:1;min-width:0">
                 <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">INSTAGRAM 2</div>
                 <input type="text" id="fInsta2" placeholder="@usuario" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
@@ -1344,7 +1344,7 @@ body.no-didatico .field-hint{display:none}
             </div>
 
             <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 14px 4px 4px">
-              <div style="width:40px;height:40px;border-radius:8px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">👤</div>
+              <div style="width:40px;height:40px;border-radius:8px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0"><span data-icon="usuarios" data-size="19"></span></div>
               <div style="flex:1;min-width:0">
                 <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">FACEBOOK</div>
                 <input type="text" id="fFacebook" placeholder="nome.usuario ou link" autocomplete="off" style="width:100%;background:transparent;border:none;outline:none;font-size:15px;color:var(--text);font-family:'IBM Plex Sans',sans-serif">
@@ -1358,9 +1358,9 @@ body.no-didatico .field-hint{display:none}
         <div class="fg" style="margin-top:4px">
           <label>SENHA DO CELULAR DA PESSOA</label>
           <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">🔢 NÚMEROS</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">🔤 LETRAS+NÚM</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">⬛ PADRÃO</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">NÚMEROS</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">LETRAS+NÚM</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">PADRÃO</button>
           </div>
 
           <!-- Numérica -->
@@ -1407,50 +1407,50 @@ body.no-didatico .field-hint{display:none}
           <label>FOTOS DE TATUAGENS</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
             <div style="flex:1;min-width:130px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">🖼 GALERIA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">GALERIA</span>
               <input type="file" id="tatFileGal" accept="image/*" multiple onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">📷 CÂMERA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">CÂMERA</span>
               <input type="file" id="tatFileCam" accept="image/*" capture="environment" onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
           </div>
           <div class="thumbs" id="tatThumbs"></div>
           <div class="camwrap" id="tatCam"><video id="tatVid" autoplay playsinline muted></video></div>
           <div class="cam-btns" id="tatCamBtns" style="display:none">
-            <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">📸 CAPTURAR</button>
+            <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">CAPTURAR</button>
             <button class="btn btn-outline btn-sm" onclick="camClose('tat')">✕ CANCELAR</button>
           </div>
         </div>
 
         <!-- Veículos -->
         <div class="fg" style="margin-top:4px">
-          <label>🚗 VEÍCULOS VINCULADOS</label>
+          <label>VEÍCULOS VINCULADOS</label>
           <div style="display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">1</span>
               <input type="text" id="fVeiculo1" placeholder="Ex: Moto Honda CG 160 — Preta — ABC-1234" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            <button type="button" onclick="consultarVeiculoModal('fVeiculo1')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo1')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">SINESP</button></div>
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">2</span>
               <input type="text" id="fVeiculo2" placeholder="Ex: Carro VW Gol — Branco — DEF-5678" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            <button type="button" onclick="consultarVeiculoModal('fVeiculo2')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo2')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">SINESP</button></div>
             <div style="display:flex;gap:8px;align-items:center">
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">3</span>
               <input type="text" id="fVeiculo3" placeholder="Ex: Bicicleta — Azul" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
-            <button type="button" onclick="consultarVeiculoModal('fVeiculo3')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">🔍 SINESP</button></div>
+            <button type="button" onclick="consultarVeiculoModal('fVeiculo3')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">SINESP</button></div>
           </div>
         </div>
 
         <!-- Observações -->
         <div class="fg" style="margin-top:4px">
-          <label>📝 OBSERVAÇÕES</label>
+          <label>OBSERVAÇÕES</label>
           <textarea id="fObs" placeholder="Informações adicionais, histórico, comportamento, vínculos, etc..." rows="4" autocomplete="off" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif;resize:vertical;min-height:100px;line-height:1.5;box-sizing:border-box"></textarea>
         </div>
 
         <div class="row-btns" id="cadSaveBar" style="margin-top:8px">
           <button class="btn btn-outline" onclick="cadClear()">LIMPAR</button>
-          <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">💾 SALVAR CADASTRO</button>
+          <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">SALVAR CADASTRO</button>
         </div>
       </div>
     </div>
@@ -1460,7 +1460,7 @@ body.no-didatico .field-hint{display:none}
       <div class="sec-title">CONSULTAR</div>
       <div class="search-box">
         <div class="s-main">
-          <span class="s-ico">🔍</span>
+          <span class="s-ico"><span data-icon="consultar" data-size="18"></span></span>
           <input type="text" id="sNome" placeholder="Nome, Apelido ou Mãe..." oninput="filterList()" autocomplete="off">
         </div>
         <div class="s-filters">
@@ -1484,31 +1484,31 @@ body.no-didatico .field-hint{display:none}
           <button class="btn btn-outline btn-sm" onclick="clearSearch()" style="min-width:44px;padding:10px">✕</button>
         </div>
         <div class="s-facc" id="sFaccWrap">
-          <button type="button" id="sFaccBtn" class="s-facc-btn" onclick="toggleFiltroFacc()" aria-pressed="false">🚩 SÓ FACCIONADOS <b id="sFaccN"></b></button>
+          <button type="button" id="sFaccBtn" class="s-facc-btn" onclick="toggleFiltroFacc()" aria-pressed="false">SÓ FACCIONADOS <b id="sFaccN"></b></button>
           <select id="sFaccao" onchange="filterList()" style="display:none"><option value="">Todas as facções</option></select>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap">
         <div class="rcnt" id="rcnt"></div>
         <div id="dedupBtns" style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-family:'IBM Plex Mono',monospace;font-weight:700" title="Mostra os grupos antes de remover">🧹 REVISAR DUPLICATAS</button>
-          <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">🤖 LIMPAR AUTOMÁTICO</button>
+          <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-family:'IBM Plex Mono',monospace;font-weight:700" title="Mostra os grupos antes de remover">REVISAR DUPLICATAS</button>
+          <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">LIMPAR AUTOMÁTICO</button>
         </div>
       </div>
       <div class="pgrid" id="pgrid"></div>
-      <div id="emptyList" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum cadastro encontrado.</p></div>
+      <div id="emptyList" class="empty" style="display:none"><div class="ei"><span data-icon="consultar" data-size="18"></span></div><p>Nenhum cadastro encontrado.</p></div>
     </div>
 
     <!-- USUÁRIOS -->
     <div class="page" id="page-usuarios">
       <div class="sec-title">GESTÃO DE USUÁRIOS</div>
-      <div id="noAdmin" class="card" style="display:none"><p style="color:var(--text-dim);text-align:center;padding:8px">⚠️ Apenas administradores podem gerenciar usuários.</p></div>
+      <div id="noAdmin" class="card" style="display:none"><p style="color:var(--text-dim);text-align:center;padding:8px">Apenas administradores podem gerenciar usuários.</p></div>
       <div id="adminPanel">
         <!-- Stats -->
         <div class="stats-grid" id="userStats"></div>
         <!-- Filtros -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-          <input id="uFilterSearch" placeholder="🔍 Buscar nome ou e-mail" oninput="renderUsersList()" style="flex:2;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text)">
+          <input id="uFilterSearch" placeholder="Buscar nome ou e-mail" oninput="renderUsersList()" style="flex:2;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text)">
           <select id="uFilterRole" onchange="renderUsersList()" style="flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
             <option value="">Todos os perfis</option>
             <option value="gtop">GTOP</option>
@@ -1521,14 +1521,14 @@ body.no-didatico .field-hint{display:none}
           </select>
           <select id="uFilterStatus" onchange="renderUsersList()" style="flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
             <option value="">Todos status</option>
-            <option value="1">✅ Ativos</option>
-            <option value="0">⛔ Desativados</option>
+            <option value="1">Ativos</option>
+            <option value="0">Desativados</option>
           </select>
         </div>
         <!-- Ações em lote -->
         <div class="row-btns" style="margin-bottom:14px">
-          <button class="btn btn-primary" onclick="openUserModal()" style="flex:2">➕ NOVO USUÁRIO</button>
-          <button class="btn btn-outline" onclick="document.getElementById('csvUsersInput').click()" style="flex:1">📥 IMPORTAR CSV</button>
+          <button class="btn btn-primary" onclick="openUserModal()" style="flex:2">NOVO USUÁRIO</button>
+          <button class="btn btn-outline" onclick="document.getElementById('csvUsersInput').click()" style="flex:1">IMPORTAR CSV</button>
           <input type="file" id="csvUsersInput" accept=".csv,text/csv" style="display:none" onchange="importUsersCSV(this.files[0])">
         </div>
         <div id="uListCount" style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:10px;letter-spacing:1px"></div>
@@ -1627,7 +1627,7 @@ body.no-didatico .field-hint{display:none}
 
     <!-- MAPA -->
     <div class="page" id="page-mapa">
-      <div class="sec-title">🗺️ MAPA — BRAZLÂNDIA DF</div>
+      <div class="sec-title">MAPA — BRAZLÂNDIA DF</div>
 
       <div class="map-stat-bar" id="mapaStats">
         <div class="map-stat"><div class="map-stat-n" id="msTot">—</div><div class="map-stat-l">COM ENDEREÇO</div></div>
@@ -1654,8 +1654,8 @@ body.no-didatico .field-hint{display:none}
           <option value="OUTROS">OUTROS</option>
         </select>
         <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
-        <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px">🎯</button>
-        <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">🔥 CALOR</button>
+        <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px"><span data-icon="pin" data-size="18"></span></button>
+        <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">CALOR</button>
       </div>
 
       <div style="position:relative">
@@ -1664,7 +1664,7 @@ body.no-didatico .field-hint{display:none}
       </div>
 
       <div style="margin-top:12px;font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;text-align:center">
-        🗺️ Google Maps · Clique nos marcadores para ver a ficha
+        Google Maps · Clique nos marcadores para ver a ficha
       </div>
     </div>
 
@@ -1673,17 +1673,17 @@ body.no-didatico .field-hint{display:none}
 
       <!-- Banner alerta -->
       <div style="background:rgba(255,61,61,.12);border:2px solid var(--danger);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;animation:pulseRed 2s infinite">
-        <div style="font-size:36px;margin-bottom:8px">🚨</div>
+        <div style="font-size:36px;margin-bottom:8px;color:var(--danger)"><span data-icon="foragidos" data-size="31"></span></div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">FORAGIDOS DE BRAZLÂNDIA</div>
-        <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">⚠️ VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
+        <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
         <a href="https://seape.df.gov.br/foragidos/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--danger);color:white;padding:13px 24px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 20px rgba(255,61,61,.5)">
-          🔴 LISTA OFICIAL DE FORAGIDOS PPDF
+          LISTA OFICIAL DE FORAGIDOS PPDF
         </a>
       </div>
 
       <!-- Observação BNMP -->
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:12px 14px;margin-bottom:20px">
-        <div style="font-size:22px;line-height:1">⚖️</div>
+        <div style="font-size:22px;line-height:1;color:#b45309"><span data-icon="shield" data-size="19"></span></div>
         <div style="flex:1;min-width:180px;color:#78350f;font-size:13px;line-height:1.45">
           <strong style="font-size:14px;letter-spacing:.3px">OBSERVAÇÃO: CONFIRME NO BNMP</strong><br>
           Antes de abordar ou conduzir, confirme se o mandado de prisão continua em aberto no Banco Nacional de Medidas Penais e Prisões.
@@ -1693,8 +1693,8 @@ body.no-didatico .field-hint{display:none}
 
       <!-- Tabs internas -->
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">🚨 PROCURADOS</button>
-        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">👥 NO SISTEMA</button>
+        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">PROCURADOS</button>
+        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">NO SISTEMA</button>
       </div>
 
       <!-- Tab alertas -->
@@ -1705,7 +1705,7 @@ body.no-didatico .field-hint{display:none}
         </div>
         <div id="alertasList"></div>
         <div id="alertasEmpty" class="empty" style="display:none">
-          <div class="ei">🚨</div>
+          <div class="ei"><span data-icon="foragidos" data-size="18"></span></div>
           <p>Nenhum foragido procurado no momento.<br>Clique em <strong>+ NOVO FORAGIDO</strong> para adicionar.</p>
         </div>
         <div id="presosWrap" style="display:none;margin-top:22px">
@@ -1720,12 +1720,12 @@ body.no-didatico .field-hint{display:none}
         <p style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:14px">Consulte e verifique na lista oficial de foragidos</p>
         <div class="search-box">
           <div class="s-main">
-            <span class="s-ico">🔍</span>
+            <span class="s-ico"><span data-icon="consultar" data-size="18"></span></span>
             <input type="text" id="sForagido" placeholder="Buscar nome no sistema..." oninput="filterForagidos()" autocomplete="off">
           </div>
         </div>
         <div class="pgrid" id="foragidoGrid"></div>
-        <div id="foragidoEmpty" class="empty" style="display:none"><div class="ei">🔍</div><p>Nenhum resultado.</p></div>
+        <div id="foragidoEmpty" class="empty" style="display:none"><div class="ei"><span data-icon="consultar" data-size="18"></span></div><p>Nenhum resultado.</p></div>
       </div>
 
     </div>
@@ -1733,16 +1733,16 @@ body.no-didatico .field-hint{display:none}
     <!-- RECONHECIMENTO FACIAL -->
     <div class="page" id="page-face">
       <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:2px solid rgba(139,92,246,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px">🧬</div>
+        <div style="font-size:32px;margin-bottom:6px"><span data-icon="face" data-size="27"></span></div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">RECONHECIMENTO FACIAL</div>
         <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">COMPARAR 2 FOTOS — IA 100% OFFLINE — DADO NÃO SAI DO DISPOSITIVO</div>
       </div>
 
       <!-- TABS de modo -->
       <div class="face-tabs">
-        <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">🆚 COMPARAR 1 vs 1</button>
-        <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">🔍 BUSCAR NO BANCO</button>
-        <button class="face-tab" id="faceTabWeb" onclick="setFaceMode('web')">🌐 BUSCAR NA WEB</button>
+        <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">COMPARAR 1 vs 1</button>
+        <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">BUSCAR NO BANCO</button>
+        <button class="face-tab" id="faceTabWeb" onclick="setFaceMode('web')">BUSCAR NA WEB</button>
       </div>
 
       <!-- Status dos modelos -->
@@ -1760,7 +1760,7 @@ body.no-didatico .field-hint{display:none}
           <div class="face-slot-label">FOTO A</div>
           <div class="face-slot-frame" id="faceFrameA">
             <div class="face-empty">
-              <div style="font-size:48px;opacity:.3">👤</div>
+              <div style="font-size:48px;opacity:.3"><span data-icon="usuarios" data-size="40"></span></div>
               <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">SEM IMAGEM</div>
             </div>
             <img id="faceImgA" class="face-img" alt="">
@@ -1769,14 +1769,14 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📁 GALERIA
+              GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📷 FOTO
+              FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <button class="btn btn-outline btn-sm" onclick="startLiveCam('A')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('A')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
           </div>
         </div>
 
@@ -1785,7 +1785,7 @@ body.no-didatico .field-hint{display:none}
           <div class="face-slot-label">FOTO B</div>
           <div class="face-slot-frame" id="faceFrameB">
             <div class="face-empty">
-              <div style="font-size:48px;opacity:.3">👤</div>
+              <div style="font-size:48px;opacity:.3"><span data-icon="usuarios" data-size="40"></span></div>
               <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">SEM IMAGEM</div>
             </div>
             <img id="faceImgB" class="face-img" alt="">
@@ -1794,22 +1794,22 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📁 GALERIA
+              GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📷 FOTO
+              FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <button class="btn btn-outline btn-sm" onclick="startLiveCam('B')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('B')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
           </div>
         </div>
       </div>
 
       <!-- Ações -->
       <div class="row-btns" style="margin-bottom:16px">
-        <button class="btn btn-outline" onclick="resetFaceCompare()">🗑️ LIMPAR</button>
-        <button class="btn btn-primary" id="btnCompareFaces" onclick="compareFaces()" disabled>🧬 COMPARAR ROSTOS</button>
+        <button class="btn btn-outline" onclick="resetFaceCompare()">LIMPAR</button>
+        <button class="btn btn-primary" id="btnCompareFaces" onclick="compareFaces()" disabled>COMPARAR ROSTOS</button>
       </div>
 
       <!-- Resultado -->
@@ -1822,7 +1822,7 @@ body.no-didatico .field-hint{display:none}
           <div class="face-slot-label">FOTO PARA BUSCAR</div>
           <div class="face-slot-frame" id="faceFrameQ" style="aspect-ratio:16/10;max-width:420px;margin:0 auto 10px">
             <div class="face-empty">
-              <div style="font-size:48px;opacity:.3">🔍</div>
+              <div style="font-size:48px;opacity:.3"><span data-icon="consultar" data-size="40"></span></div>
               <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">CARREGUE UMA FOTO PARA BUSCAR NO BANCO</div>
             </div>
             <img id="faceImgQ" class="face-img" alt="">
@@ -1831,20 +1831,20 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📁 GALERIA
+              GALERIA
               <input type="file" accept="image/*" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📷 FOTO
+              FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <button class="btn btn-outline btn-sm" onclick="startLiveCam('Q')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">📡 LIVE</button>
+            <button class="btn btn-outline btn-sm" onclick="startLiveCam('Q')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
           </div>
         </div>
 
         <div class="row-btns" style="margin-bottom:16px">
-          <button class="btn btn-outline" onclick="resetFaceCompare()">🗑️ LIMPAR</button>
-          <button class="btn btn-primary" id="btnSearchFace" onclick="searchFaceInDB()" disabled>🔍 BUSCAR CORRESPONDÊNCIAS</button>
+          <button class="btn btn-outline" onclick="resetFaceCompare()">LIMPAR</button>
+          <button class="btn btn-primary" id="btnSearchFace" onclick="searchFaceInDB()" disabled>BUSCAR CORRESPONDÊNCIAS</button>
         </div>
 
         <!-- Progresso da busca -->
@@ -1860,61 +1860,61 @@ body.no-didatico .field-hint{display:none}
       <!-- ─── MODO BUSCAR NA WEB ─── -->
       <div id="faceModeWeb" style="display:none">
         <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#78350f;line-height:1.55">
-          <b>⚠️ LGPD — uso institucional autorizado.</b> A foto será enviada a um servidor público temporário (catbox.moe) pra gerar uma URL que será passada aos buscadores (Yandex, Google Lens, PimEyes). Dados biométricos exigem base legal — use somente em investigação/operação devidamente fundamentada.
+          <b>LGPD — uso institucional autorizado.</b> A foto será enviada a um servidor público temporário (catbox.moe) pra gerar uma URL que será passada aos buscadores (Yandex, Google Lens, PimEyes). Dados biométricos exigem base legal — use somente em investigação/operação devidamente fundamentada.
         </div>
 
         <div class="face-slot" id="faceSlotWeb" style="margin-bottom:16px">
           <div class="face-slot-label">FOTO PARA BUSCAR NA INTERNET</div>
           <div class="face-slot-frame" id="faceFrameWeb" style="aspect-ratio:16/10;max-width:420px;margin:0 auto 10px">
             <div class="face-empty">
-              <div style="font-size:48px;opacity:.3">🌐</div>
+              <div style="font-size:48px;opacity:.3"><span data-icon="web" data-size="40"></span></div>
               <div style="font-size:11px;color:var(--text-dim);margin-top:6px;letter-spacing:1px">CARREGUE UMA FOTO PARA BUSCAR EM SITES E REDES</div>
             </div>
             <img id="faceImgWeb" class="face-img" alt="">
           </div>
           <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📁 GALERIA
+              GALERIA
               <input type="file" accept="image/*" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              📷 FOTO
+              FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">👤 DO BANCO</button>
+            <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">DO BANCO</button>
           </div>
         </div>
 
         <div class="row-btns" style="margin-bottom:16px">
-          <button class="btn btn-outline" onclick="resetFaceWeb()">🗑️ LIMPAR</button>
-          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>🌐 BUSCAR EM REDES SOCIAIS + WEB</button>
+          <button class="btn btn-outline" onclick="resetFaceWeb()">LIMPAR</button>
+          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>BUSCAR EM REDES SOCIAIS + WEB</button>
         </div>
 
         <div id="faceWebStatus" style="display:none;background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid)"></div>
 
         <div id="faceWebLinks" style="display:none;background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px">
-          <div style="font-weight:700;color:#000;margin-bottom:10px;font-size:13px;letter-spacing:1px">🔗 LINKS DAS BUSCAS</div>
+          <div style="font-weight:700;color:#000;margin-bottom:10px;font-size:13px;letter-spacing:1px">LINKS DAS BUSCAS</div>
           <div id="faceWebLinksContent" style="display:flex;flex-direction:column;gap:8px"></div>
           <div style="font-size:11px;color:var(--text-dim);margin-top:10px;line-height:1.5">Se alguma aba não abriu (pop-up bloqueado), clique nos links acima.</div>
         </div>
 
         <!-- Como funciona — modo web -->
         <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
-          <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Sobre cada buscador (5 fontes)</div>
-          <div style="color:#7c3aed;font-weight:700;margin-bottom:4px">🎯 ESPECIALISTAS EM REDES SOCIAIS</div>
+          <div style="font-weight:700;color:#000;margin-bottom:6px">Sobre cada buscador (5 fontes)</div>
+          <div style="color:#7c3aed;font-weight:700;margin-bottom:4px">ESPECIALISTAS EM REDES SOCIAIS</div>
           <b>FaceCheck.ID:</b> o melhor pra achar perfis em Instagram, Facebook, TikTok, fóruns. Mostra os links borrados grátis (dá pra confirmar presença).<br>
           <b>Lenso.ai:</b> alternativa gratuita focada em rosto + redes sociais. Bom complemento.<br>
           <b>PimEyes:</b> reconhecimento facial em milhões de páginas indexadas. Resultados borrados grátis.<br>
-          <div style="color:#3b82f6;font-weight:700;margin:8px 0 4px">🌐 BUSCA GERAL NA WEB</div>
+          <div style="color:#3b82f6;font-weight:700;margin:8px 0 4px">BUSCA GERAL NA WEB</div>
           <b>Yandex Images:</b> ainda é o melhor pra rosto em buscadores genéricos. Indexa VK, OK.ru e parte de Insta/FB.<br>
           <b>Google Lens:</b> pega contexto — roupa, tatuagem visível, ambiente. Identifica local.<br>
-          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)">⚠️ FaceCheck/Lenso/PimEyes não aceitam URL — a foto é baixada automaticamente pra você arrastar/colar (Ctrl+V). Yandex e Google Lens abrem com a foto já carregada.<br><br>🚨 Triagem investigativa. Sempre confirme manualmente. Sujeito à LGPD.</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)">FaceCheck/Lenso/PimEyes não aceitam URL — a foto é baixada automaticamente pra você arrastar/colar (Ctrl+V). Yandex e Google Lens abrem com a foto já carregada.<br><br>Triagem investigativa. Sempre confirme manualmente. Sujeito à LGPD.</div>
         </div>
       </div>
 
       <!-- Como funciona -->
       <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:18px">
-        <div style="font-weight:700;color:#000;margin-bottom:6px">ℹ️ Como funciona — pipeline otimizado</div>
+        <div style="font-weight:700;color:#000;margin-bottom:6px">Como funciona — pipeline otimizado</div>
         <b>Detecção:</b> TinyFace (rápido) + SSD MobileNet v1 como fallback de segurança.<br>
         <b>Pré-processamento:</b> redimensionamento automático pra resolução ótima (~1000px).<br>
         <b>TTA (Test-Time Augmentation):</b> cada rosto gera <b>2 descritores</b> (original + espelhado) e a comparação usa a menor distância — sobe ~3% de acurácia.<br>
@@ -1924,20 +1924,20 @@ body.no-didatico .field-hint{display:none}
           <li><b>0,50 a 0,60</b> → possível match (verificar manualmente)</li>
           <li><b>&gt; 0,60</b> → pessoas diferentes</li>
         </ul>
-        <div style="margin-top:6px;font-size:11px;color:var(--text-dim)">⚠️ Use como triagem. Não é prova judicial.</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-dim)">Use como triagem. Não é prova judicial.</div>
       </div>
     </div>
 
     <!-- BUSCA REVERSA DE TATUAGENS -->
     <div class="page" id="page-tatuagens">
       <div style="background:linear-gradient(135deg,#fdf4ff 0%,#fae8ff 100%);border:2px solid rgba(168,85,247,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px">🎨</div>
+        <div style="font-size:32px;margin-bottom:6px"><span data-icon="tatuagens" data-size="27"></span></div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">BUSCA REVERSA DE TATUAGENS</div>
         <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">DIGITE TAGS OU PALAVRAS-CHAVE — ACHA QUEM TEM</div>
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-        <input id="tatBuscaInput" placeholder="🔍 Ex: anjo, peito, cv, religioso" oninput="buscarTatuagens()" style="flex:2;min-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--text)">
+        <input id="tatBuscaInput" placeholder="Ex: anjo, peito, cv, religioso" oninput="buscarTatuagens()" style="flex:2;min-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--text)">
         <select id="tatBuscaLocal" onchange="buscarTatuagens()" style="flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);-webkit-appearance:none">
           <option value="">Qualquer local</option>
         </select>
@@ -1951,7 +1951,7 @@ body.no-didatico .field-hint{display:none}
     <!-- SITES DE PESQUISA -->
     <div class="page" id="page-pesquisa">
       <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px">🔗</div>
+        <div style="font-size:32px;margin-bottom:6px"><span data-icon="anexo" data-size="27"></span></div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
         <div style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">ACESSO RÁPIDO AOS SISTEMAS</div>
       </div>
@@ -1959,7 +1959,7 @@ body.no-didatico .field-hint{display:none}
       <div style="display:flex;flex-direction:column;gap:14px">
 
         <a href="https://portalbnmp.cnj.jus.br/#/captcha/" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a6fa8;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(26,111,168,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">⚖️</div>
+          <div style="width:52px;height:52px;background:rgba(26,111,168,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="shield" data-size="22"></span></div>
           <div style="flex:1">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4db8ff">BNMP</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Banco Nacional de Mandados de Prisão — CNJ</div>
@@ -1969,7 +1969,7 @@ body.no-didatico .field-hint{display:none}
         </a>
 
         <a href="https://auth2.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=nexus-pmdf&redirect_uri=https%3A%2F%2Fnexus.pm.df.gov.br%2F&state=9419fdaa-0d42-4dc0-882b-cf5740f279fa&response_mode=fragment&response_type=code&scope=openid&nonce=c9fe45ab-80e1-4efe-82e3-db128596162f&code_challenge=x7U2mILgus8ex_hk6fCyXzlHNn8BUKNBjNtA4EQgihk&code_challenge_method=S256" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a5c1a;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(26,92,26,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🛡️</div>
+          <div style="width:52px;height:52px;background:rgba(26,92,26,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="shield" data-size="22"></span></div>
           <div style="flex:1">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4dff88">NEXUS</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema NEXUS — Polícia Militar DF</div>
@@ -1979,7 +1979,7 @@ body.no-didatico .field-hint{display:none}
         </a>
 
         <a href="https://auth.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=genesis-app&redirect_uri=https%3A%2F%2Fgenesis.pm.df.gov.br%2Fsignin-oidc&response_type=code&scope=openid%20profile&code_challenge=frNtMDKzlAU5o5yTcrUF3aJronRcQmrIRI-RGYMdSQA&code_challenge_method=S256&response_mode=form_post&nonce=639082571488975056.ZmM1YmYwM2MtODY3YS00YmEyLWJhMzktZDYyYTUxMjk5ZTRhMzM3MTk2YTItZjczOC00YmI0LTljNDctYmY2YjliYzg5YmVj&state=CfDJ8BJm6v3R8WRGuMVFriNhiT2LKbhG6holwOrCoDvOrxrbNkgg2mdInbien3dVEEFS4S8HVuQrYw2gG-be5gAM0IDeOomDsaOtvk0D11sZXJ0NEeoiQtT8-NBJ-fj6p0puQcTBl9HUPayzPgUFLYszN16Zk4o9rGnpILD_IpqG-GykS8X2H_WDLMyHFW8gz-1TixlsTOg4YJ5r5TwuYYRWH2S9eYkzWXUf1L13C_42c1RPfn5C590UEKvFvTIdjDU4ey8TlUmeKOMeoK96QAUz9L5K5daT9Cwu9t8j1U4oPBFxiYNZu6bi6CenbDOPDeWNhngVfE-AGfUjsKaJQUyJy9ah5OWIHSZxODKg9CjX5hUWs5u1Yrkb80lTVY-S4UCLkg&x-client-SKU=ID_NET8_0&x-client-ver=7.5.1.0" target="_blank" class="link-card" style="background:var(--card);border:1px solid #4a1a6e;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(74,26,110,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🔮</div>
+          <div style="width:52px;height:52px;background:rgba(74,26,110,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="web" data-size="22"></span></div>
           <div style="flex:1">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#c084fc">GENESIS</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema Genesis — Polícia Militar DF</div>
@@ -1989,7 +1989,7 @@ body.no-didatico .field-hint{display:none}
         </a>
 
         <a href="https://seape.df.gov.br/foragidos/" target="_blank" class="link-card" style="background:var(--card);border:1px solid rgba(255,61,61,.4);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
-          <div style="width:52px;height:52px;background:rgba(255,61,61,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🚨</div>
+          <div style="width:52px;height:52px;background:rgba(255,61,61,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="foragidos" data-size="22"></span></div>
           <div style="flex:1">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--danger)">FORAGIDOS PPDF</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Lista oficial de foragidos — SEAPE DF</div>
@@ -2047,7 +2047,7 @@ body.no-didatico .field-hint{display:none}
     <div class="mhandle"></div>
     <div class="mi">
       <div class="mhdr">
-        <div class="mtitle" id="alertaModalTitle">🚨 NOVO FORAGIDO</div>
+        <div class="mtitle" id="alertaModalTitle">NOVO FORAGIDO</div>
         <div class="mclose" onclick="closeAlertaModal()">✕</div>
       </div>
 
@@ -2055,8 +2055,8 @@ body.no-didatico .field-hint{display:none}
       <div class="fg">
         <label>O FORAGIDO JÁ TEM CADASTRO NO SICAD?</label>
         <div style="display:flex;gap:8px;margin-bottom:4px">
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">👥 JÁ CADASTRADO NO SICAD</button>
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">➕ NOVO FORAGIDO</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">JÁ CADASTRADO NO SICAD</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">NOVO FORAGIDO</button>
         </div>
       </div>
 
@@ -2078,7 +2078,7 @@ body.no-didatico .field-hint{display:none}
           <div class="pdrop" style="min-height:80px">
             <input type="file" id="aFotoFile" accept="image/*" onchange="onAlertaFoto(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10">
             <img class="ppreview" id="aFotoPreview">
-            <div id="aFotoDrop"><div class="pd-ico">📷</div><div class="pd-lbl">ADICIONAR FOTO</div></div>
+            <div id="aFotoDrop"><div class="pd-ico"><span data-icon="camera" data-size="18"></span></div><div class="pd-lbl">ADICIONAR FOTO</div></div>
           </div>
         </div>
       </div>
@@ -2097,16 +2097,16 @@ body.no-didatico .field-hint{display:none}
             <input type="text" id="aLat" placeholder="Latitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
             <input type="text" id="aLng" placeholder="Longitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
           </div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="aUsarGPS()" style="margin-top:8px;width:100%">📍 USAR MINHA LOCALIZAÇÃO ATUAL</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="aUsarGPS()" style="margin-top:8px;width:100%">USAR MINHA LOCALIZAÇÃO ATUAL</button>
           <div id="aLocInfo" style="font-size:11px;color:var(--text-dim);margin-top:4px"></div>
         </div>
         <div class="fg"><label>Nº DO PROCESSO</label><input type="text" id="aProcesso" placeholder="Ex.: 0712345-67.2026.8.07.0002" autocomplete="off"></div>
         <div class="fg">
           <label>NÍVEL DE PERICULOSIDADE</label>
           <div style="display:flex;gap:8px">
-            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">⚠️ MÉDIO</button>
-            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">🔶 ALTO</button>
-            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">🔴 EXTREMO</button>
+            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">MÉDIO</button>
+            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">ALTO</button>
+            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">EXTREMO</button>
           </div>
         </div>
         <div class="fg"><label>OBSERVAÇÕES</label><input type="text" id="aObs" placeholder="Informações relevantes..." autocomplete="off"></div>
@@ -2114,7 +2114,7 @@ body.no-didatico .field-hint{display:none}
 
       <div class="row-btns" style="margin-top:8px">
         <button class="btn btn-outline" onclick="closeAlertaModal()">CANCELAR</button>
-        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">🚨 SALVAR FORAGIDO</button>
+        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">SALVAR FORAGIDO</button>
       </div>
     </div>
   </div>
@@ -2165,7 +2165,7 @@ body.no-didatico .field-hint{display:none}
       </div>
       <div class="row-btns" style="margin-top:4px">
         <button class="btn btn-outline" onclick="closeUserModal()">CANCELAR</button>
-        <button class="btn btn-outline" id="uResetPwdBtn" onclick="resetUserPassword()" style="display:none">📧 ENVIAR RESET</button>
+        <button class="btn btn-outline" id="uResetPwdBtn" onclick="resetUserPassword()" style="display:none">ENVIAR RESET</button>
         <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">SALVAR</button>
       </div>
     </div>
@@ -2184,7 +2184,7 @@ body.no-didatico .field-hint{display:none}
     <div class="mhandle"></div>
     <div class="mi">
       <div class="mhdr">
-        <div class="mtitle">🎯 AJUSTAR POSIÇÃO</div>
+        <div class="mtitle">AJUSTAR POSIÇÃO</div>
         <button class="mclose" onclick="fecharMapaAjuste()">✕</button>
       </div>
       <div style="font-size:12px;color:var(--text-mid);margin-bottom:10px">Clique no mapa para marcar a localização exata. O endereço será preenchido automaticamente.</div>
@@ -2204,7 +2204,7 @@ body.no-didatico .field-hint{display:none}
     <div class="mhandle" style="background:#475569"></div>
     <div class="mi" style="padding:16px">
       <div class="mhdr" style="margin-bottom:10px">
-        <div class="mtitle" style="color:#fff">📡 CÂMERA AO VIVO</div>
+        <div class="mtitle" style="color:#fff">CÂMERA AO VIVO</div>
         <button class="mclose" onclick="stopLiveCam()" style="background:#334155;color:#fff;border-color:#475569">✕</button>
       </div>
       <div style="position:relative;aspect-ratio:3/4;background:#000;border-radius:12px;overflow:hidden;margin-bottom:10px">
@@ -2217,10 +2217,10 @@ body.no-didatico .field-hint{display:none}
         <div id="liveCamFlash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .12s"></div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px">
-        <button class="btn btn-outline btn-sm" id="liveCamSwitchBtn" onclick="switchLiveCam()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">🔄 TROCAR CÂMERA</button>
-        <button class="btn btn-outline btn-sm" id="liveCamAutoBtn" onclick="toggleLiveCamAuto()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">⏱️ AUTO: ON</button>
+        <button class="btn btn-outline btn-sm" id="liveCamSwitchBtn" onclick="switchLiveCam()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">TROCAR CÂMERA</button>
+        <button class="btn btn-outline btn-sm" id="liveCamAutoBtn" onclick="toggleLiveCamAuto()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">AUTO: ON</button>
       </div>
-      <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>📸 CAPTURAR AGORA</button>
+      <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>CAPTURAR AGORA</button>
       <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">Auto-captura ativada · estabilize o rosto na câmera</div>
     </div>
   </div>
@@ -2232,7 +2232,7 @@ body.no-didatico .field-hint{display:none}
     <div class="mhandle"></div>
     <div class="mi">
       <div class="mhdr">
-        <div class="mtitle">🎨 EDITAR TATUAGEM</div>
+        <div class="mtitle">EDITAR TATUAGEM</div>
         <button class="mclose" onclick="fecharTatModal()">✕</button>
       </div>
       <img id="tatModalImg" style="width:100%;max-height:240px;object-fit:contain;border-radius:10px;background:#f1f5f9;margin-bottom:12px">
@@ -2244,7 +2244,7 @@ body.no-didatico .field-hint{display:none}
         <label>Tags (separadas por vírgula)</label>
         <input type="text" id="tatModalTags" placeholder="ex: anjo, peito, religioso">
         <div id="tatModalSugestoes" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;max-height:140px;overflow-y:auto;padding:6px;background:var(--surface2);border-radius:8px"></div>
-        <div style="font-size:10px;color:var(--text-dim);margin-top:6px">💡 Clique nas sugestões pra adicionar rapidamente. Quanto mais tags, mais fácil achar via busca reversa.</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:6px">Clique nas sugestões pra adicionar rapidamente. Quanto mais tags, mais fácil achar via busca reversa.</div>
       </div>
       <div class="row-btns" style="margin-top:4px">
         <button class="btn btn-outline" onclick="fecharTatModal()">CANCELAR</button>
@@ -2255,7 +2255,7 @@ body.no-didatico .field-hint{display:none}
 </div>
 
 <!-- Botão flutuante de instalar PWA -->
-<button id="pwaInstallBtn" onclick="pwaInstall()" style="display:none;position:fixed;bottom:88px;right:16px;z-index:300;background:linear-gradient(135deg,#0099cc,#0086b3);color:#fff;border:none;border-radius:99px;padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 8px 24px rgba(0,153,204,.35);align-items:center;gap:8px"><span style="font-size:18px">📲</span> INSTALAR APP</button>
+<button id="pwaInstallBtn" onclick="pwaInstall()" style="display:none;position:fixed;bottom:88px;right:16px;z-index:300;background:linear-gradient(135deg,#0099cc,#0086b3);color:#fff;border:none;border-radius:99px;padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 8px 24px rgba(0,153,204,.35);align-items:center;gap:8px"><span style="font-size:18px"><span data-icon="instalar" data-size="16"></span></span> INSTALAR APP</button>
 
 <div class="toast" id="toast"></div>
 
@@ -2403,6 +2403,9 @@ function _renderIcones(root){
     el.innerHTML = ICON(name, {size});
   });
 }
+// Conteúdo criado depois (listas, modais, cards) também ganha os ícones
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.hasAttribute && n.hasAttribute('data-icon') && !n.firstChild) _renderIcones(n.parentNode); else if (n.querySelector && n.querySelector('[data-icon]')) _renderIcones(n); } })
+  .observe(document.documentElement, { childList: true, subtree: true });
 if(document.readyState !== 'loading') _renderIcones();
 else document.addEventListener('DOMContentLoaded', ()=>_renderIcones());
 
@@ -2454,7 +2457,7 @@ const HELP_BANNERS = {
   },
   foragidos: {
     titulo: 'Foragidos de Brazlândia',
-    corpo: 'Cadastre os foragidos de Brazlândia com foto, CPF, endereço, localização e nº do processo. Quem prender toca em <strong>🚔 PRESO</strong>: ele sai da lista de procurados e fica registrado quem prendeu e quando.'
+    corpo: 'Cadastre os foragidos de Brazlândia com foto, CPF, endereço, localização e nº do processo. Quem prender toca em <strong>PRESO</strong>: ele sai da lista de procurados e fica registrado quem prendeu e quando.'
   },
   tatuagens: {
     titulo: 'Busca reversa de tatuagens',
@@ -2466,7 +2469,7 @@ const HELP_BANNERS = {
   },
   usuarios: {
     titulo: 'Gerenciar equipe',
-    corpo: 'Aprove cadastros pendentes, defina o perfil de cada um (GTOP = acesso total · RP = só consulta), desative contas e veja o histórico (🕘). Só administradores veem esta aba.'
+    corpo: 'Aprove cadastros pendentes, defina o perfil de cada um (GTOP = acesso total · RP = só consulta), desative contas e veja o histórico (). Só administradores veem esta aba.'
   }
 };
 
@@ -2774,7 +2777,7 @@ const lsS=(k,v)=>localStorage.setItem('sicad_'+k,JSON.stringify(v));
 async function init() {
   // Online sempre — Auth gerencia conexão. Indica conectividade simples.
   window._L = false;
-  document.getElementById('modeLbl').textContent='🔒 SUPABASE AUTH';
+  document.getElementById('modeLbl').textContent='ACESSO RESTRITO';
 }
 
 // ── DB ──
@@ -2896,7 +2899,7 @@ async function aplicarPerfilLogado(user){
     try { const { data, error } = await supabase.rpc('sicad_resolicitar_acesso', { p_nome: null }); if (!error) r = data; } catch(_){}
     await supabase.auth.signOut();
     errLg(r === 'criado'
-      ? '✅ Seu pedido de acesso foi reenviado. Aguarde um administrador aprovar.'
+      ? 'Seu pedido de acesso foi reenviado. Aguarde um administrador aprovar.'
       : 'Perfil não cadastrado. Solicite ao administrador.');
     return;
   }
@@ -3017,7 +3020,7 @@ async function signup(){
                      (!error && data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0);
     if (jaExiste) {
       const r = await resolicitarAcessoContaExistente(email, senha, nome);
-      if (r === 'criado')  { okLg('✅ Solicitação reenviada! Aguarde um administrador aprovar sua conta.'); setTimeout(() => toggleSignup(false), 4000); return; }
+      if (r === 'criado')  { okLg('Solicitação reenviada! Aguarde um administrador aprovar sua conta.'); setTimeout(() => toggleSignup(false), 4000); return; }
       if (r === 'existe')  { errLg('Este e-mail já tem cadastro no SICAD. Faça login normalmente ou aguarde a aprovação do administrador.'); return; }
       errLg('Este e-mail já tem conta no SICAD, mas a senha não confere. Volte ao login, digite o e-mail e clique em "Esqueci minha senha". Depois de criar a nova senha, entre com ela que o pedido de acesso é reenviado automaticamente.');
       return;
@@ -3025,7 +3028,7 @@ async function signup(){
     if (error) throw new Error(error.message);
     // Trigger no banco criou perfil com ativo=false. Assina out pra não deixar sessão pendente logada.
     await supabase.auth.signOut();
-    okLg('✅ Solicitação enviada! Aguarde um administrador aprovar sua conta. Você poderá fazer login depois disso.');
+    okLg('Solicitação enviada! Aguarde um administrador aprovar sua conta. Você poderá fazer login depois disso.');
     setTimeout(() => toggleSignup(false), 4000);
   } catch(e) {
     errLg('Erro: ' + e.message);
@@ -3054,7 +3057,7 @@ async function resetPwd(){
       redirectTo: window.location.href
     });
     if (error) { errLg('Erro: '+error.message); return; }
-    errLg('✅ Verifique seu e-mail (inclusive spam).');
+    errLg('Verifique seu e-mail (inclusive spam).');
     document.getElementById('loginErr').style.color='var(--success)';
   } catch(e) { errLg('Erro: '+e.message); }
 }
@@ -3232,10 +3235,10 @@ function buscarTatuagens(){
       <div class="card" style="display:flex;gap:14px;padding:12px;cursor:pointer;align-items:center" onclick="viewPerson('${p.id}')">
         <img src="${t.img}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;flex-shrink:0;background:#f1f5f9">
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:14px;color:#000">${m.isAlert?'🚨 ':''}${esc(p.nome)}</div>
+          <div style="font-weight:700;font-size:14px;color:#000">${m.isAlert?'':''}${esc(p.nome)}</div>
           ${p.apelido?`<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mid)">@${esc(p.apelido)}</div>`:''}
           ${t.desc?`<div style="font-size:12px;color:var(--text);margin-top:4px">${esc(t.desc)}</div>`:''}
-          ${t.local?`<div style="font-size:11px;color:var(--text-dim);margin-top:2px">📍 ${esc(t.local)}</div>`:''}
+          ${t.local?`<div style="font-size:11px;color:var(--text-dim);margin-top:2px">${esc(t.local)}</div>`:''}
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:6px">${tagsHtml}</div>
         </div>
       </div>`;
@@ -3257,7 +3260,7 @@ async function loadDash(){
     const rec=ps.slice(0,6);
     document.getElementById('recentList').innerHTML=rec.length
       ?`<div class="pgrid">${rec.map(pCard).join('')}</div>`
-      :`<div class="empty"><div class="ei">📋</div><p>Nenhum cadastro.<br><a href="#" onclick="go('cadastrar')" style="color:var(--accent)">Adicionar o primeiro →</a></p></div>`;
+      :`<div class="empty"><div class="ei"><span data-icon="pdf" data-size="18"></span></div><p>Nenhum cadastro.<br><a href="#" onclick="go('cadastrar')" style="color:var(--accent)">Adicionar o primeiro →</a></p></div>`;
     observarFotosPendentes();
   }catch(e){toast('Erro ao carregar.','error');}
   finally{hideOv();}
@@ -3266,7 +3269,7 @@ async function loadDash(){
 function pCard(p){
   const iniciais = (p.nome||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
   const av=p.foto?`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''}"><img src="${p.foto}" loading="lazy"></div>`:`<div class="pavatar" style="${p.faccionado?'border:2px solid #ff4444;box-shadow:0 0 8px rgba(255,50,50,.5)':''};font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:1px"${(p.tem_foto&&p.foto===undefined)?` data-foto-pid="${p.id}"`:''}>${esc(iniciais)}</div>`;
-  const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">🚨 FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
+  const faccBadge = p.faccionado?`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.2);border:1px solid rgba(255,60,60,.4);border-radius:6px;padding:1px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:#ff6b6b;font-weight:700;letter-spacing:1px">FACC${p.faccao?': '+esc(p.faccao.substring(0,15)):''}</span>`:'';
   const cardStyle = p.faccionado?'border-left:3px solid #ff4444;background:linear-gradient(90deg,rgba(255,30,30,.06) 0%,var(--surface) 60%)':'';
   return `<div class="pcard" onclick="viewPerson('${p.id}')" style="${cardStyle}">
     ${av}
@@ -3423,7 +3426,7 @@ async function savePerson(){
       console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
       await DB.updPerson(idParaEditar, campos);
       allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
-      toast('Atualizado! ✅','success');
+      toast('Atualizado! ','success');
     }
     if(!editMode){
       // UUID gerado no cliente (funciona mesmo se a migration SQL que define DEFAULT
@@ -3436,11 +3439,11 @@ async function savePerson(){
       const salvo = await DB.addPerson(d);
       const registroFinal = salvo && salvo.id ? salvo : d;
       allP.unshift(registroFinal);
-      toast('Cadastro salvo! ✅','success');
+      toast('Cadastro salvo! ','success');
     }
     cadClear();renderList(allP);go('consultar');
   }catch(e){toast('Erro: '+e.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='💾 SALVAR CADASTRO';}
+  finally{btn.disabled=false;btn.innerHTML='SALVAR CADASTRO';}
 }
 function gv(id){return document.getElementById(id).value.trim()||null;}
 
@@ -3474,7 +3477,7 @@ async function viewPerson(id){
     document.getElementById('personTitle').textContent=p.nome.toUpperCase().substring(0,22);
     // Normaliza: tats podem ser strings (formato antigo) OU objetos {img,desc,tags,local} (formato novo)
     const tats = parseTats(p.tatuagens).map(_normTat).filter(t => t && t.img);
-    const av=p.foto?`<div class="d-avatar" onclick="lbOpen('${p.foto}')"><img src="${p.foto}"></div>`:`<div class="d-avatar">👤</div>`;
+    const av=p.foto?`<div class="d-avatar" onclick="lbOpen('${p.foto}')"><img src="${p.foto}"></div>`:`<div class="d-avatar"><span data-icon="usuarios" data-size="18"></span></div>`;
     const tatH=tats.length?`<div style="margin-top:14px"><div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px">TATUAGENS (${tats.length})</div><div class="d-photos">${tats.map(t=>{
       const legenda = [t.local, t.desc].filter(Boolean).join(' · ');
       const tagsHtml = (t.tags||[]).length ? '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">'+t.tags.map(tg=>`<span style="background:#7c3aed;color:#fff;font-size:8.5px;padding:1px 6px;border-radius:99px;font-weight:600">${esc(tg)}</span>`).join('')+'</div>' : '';
@@ -3503,19 +3506,19 @@ async function viewPerson(id){
         <div class="d-fld"><label>Facebook</label><span style="color:#1877f2">${esc(p.facebook||'—')}</span></div>
         <div class="d-fld"><label>Senha Celular</label><span style="font-family:'IBM Plex Mono',monospace;color:var(--text-mid);letter-spacing:1px;font-size:11px">${p.tipo_senha?'['+p.tipo_senha.toUpperCase()+'] '+(p.senha_hash?'••••• (hash SHA-256 armazenado)':'não cadastrada'):'—'}</span></div>
         ${(p.veiculo1||p.veiculo2||p.veiculo3)?`
-        <div class="d-section-title">🚗 VEÍCULOS</div>
+        <div class="d-section-title">VEÍCULOS</div>
         ${p.veiculo1?`<div class="d-fld"><label>Veículo 1</label><span>${esc(p.veiculo1)}</span></div>`:''}
         ${p.veiculo2?`<div class="d-fld"><label>Veículo 2</label><span>${esc(p.veiculo2)}</span></div>`:''}
         ${p.veiculo3?`<div class="d-fld"><label>Veículo 3</label><span>${esc(p.veiculo3)}</span></div>`:''}
         `:''}
         ${p.observacoes?`
-        <div class="d-section-title">📝 OBSERVAÇÕES</div>
+        <div class="d-section-title">OBSERVAÇÕES</div>
         <div class="d-fld d-obs"><span style="white-space:pre-wrap;line-height:1.6">${esc(p.observacoes)}</span></div>
         `:''}
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">📄 PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">✏️ EDITAR</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">🚨 FORAGIDO</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">🗑 EXCLUIR</button>':''}</div>`;
+      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">EDITAR</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">FORAGIDO</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">EXCLUIR</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
@@ -3544,7 +3547,7 @@ async function editPerson(){
   if(p.lat!=null&&p.lng!=null) _atualizarMiniMapa(parseFloat(p.lat),parseFloat(p.lng),false); else { const mm=document.getElementById('locMini'); if(mm) mm.style.display='none'; }
   const locSt2=document.getElementById('locStatus');
   if(locSt2){
-    if(p.lat!=null && p.lng!=null){locSt2.innerHTML='📍 Coordenada salva: <b>'+Number(p.lat).toFixed(5)+', '+Number(p.lng).toFixed(5)+'</b>';locSt2.style.color='var(--success)';}
+    if(p.lat!=null && p.lng!=null){locSt2.innerHTML='Coordenada salva: <b>'+Number(p.lat).toFixed(5)+', '+Number(p.lng).toFixed(5)+'</b>';locSt2.style.color='var(--success)';}
     else{locSt2.innerHTML='Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.';locSt2.style.color='var(--text-mid)';}
   }
   document.getElementById('fTelefone').value=p.telefone||'';
@@ -3747,7 +3750,7 @@ function renderUsersStats(){
   document.getElementById('userStats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${_allUsers.length}</div><div class="stat-lbl">TOTAL</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--success)">${ativos}</div><div class="stat-lbl">ATIVOS</div></div>
-    <div class="stat-card" style="${pendStyle}" onclick="${pendentes>0?'filtrarPendentes()':''}"><div class="stat-num" style="color:${pendentes>0?'var(--accent2)':'var(--text-dim)'}">${pendentes}</div><div class="stat-lbl">${pendentes>0?'⏳ AGUARDANDO':'PENDENTES'}</div></div>
+    <div class="stat-card" style="${pendStyle}" onclick="${pendentes>0?'filtrarPendentes()':''}"><div class="stat-num" style="color:${pendentes>0?'var(--accent2)':'var(--text-dim)'}">${pendentes}</div><div class="stat-lbl">${pendentes>0?'AGUARDANDO':'PENDENTES'}</div></div>
     <div class="stat-card"><div class="stat-num">${nGtop}<span style="color:var(--neutral-300);font-weight:500"> · </span>${nRp}</div><div class="stat-lbl">GTOP · RP ATIVOS</div></div>
   `;
 }
@@ -3797,20 +3800,20 @@ function renderUsersList(){
             <span>${esc(u.nome)}</span>
             <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
             ${u.role==='gtop'&&u.pode_excluir?'<span class="badge" style="background:#FEF2F2;color:#DC2626;font-size:9px;padding:3px 7px;border:1px solid #FECACA">PODE EXCLUIR</span>':''}
-            ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">⏳ AGUARDANDO APROVAÇÃO</span>':''}
-            ${u.protegido?'<span class="badge" style="background:#FEF9C3;color:#854D0E;font-size:9px;padding:3px 7px;border:1px solid #FDE047">🔒 PROTEGIDO</span>':''}
+            ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">AGUARDANDO APROVAÇÃO</span>':''}
+            ${u.protegido?'<span class="badge" style="background:#FEF9C3;color:#854D0E;font-size:9px;padding:3px 7px;border:1px solid #FDE047">PROTEGIDO</span>':''}
             ${isMe?'<span style="font-size:9px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace">VOCÊ</span>':''}
           </div>
           <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?'Solicitou em '+new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
         </div>
         <div class="uactions">
           ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
-          <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações">🕘</button>
-          ${!bloqueado ? `<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil">✏️</button>` : ''}
-          ${!isMe && !u.protegido && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir">🗑</button>` : ''}
+          <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações"><span data-icon="clock" data-size="18"></span></button>
+          ${!bloqueado ? `<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil"><span data-icon="editar" data-size="18"></span></button>` : ''}
+          ${!isMe && !u.protegido && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir"><span data-icon="excluir" data-size="18"></span></button>` : ''}
         </div>
       </div>`;
-  }).join('') : '<div class="empty"><div class="ei">🔍</div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
+  }).join('') : '<div class="empty"><div class="ei"><span data-icon="consultar" data-size="18"></span></div><p>Nenhum usuário encontrado com esses filtros.</p></div>';
 }
 
 // Aprovar usuário pendente
@@ -3946,7 +3949,7 @@ async function saveUser(){
 async function delUser(id, nome){
   if (id === CU.id) { toast('Não pode excluir a si próprio.','warn'); return; }
   if ((_allUsers.find(x => x.id === id) || {}).protegido) { toast('Este usuário é protegido e não pode ser excluído.','error'); return; }
-  if (!confirm('Excluir o usuário "' + nome + '"?\n\nEle perde o acesso na hora. O histórico de auditoria é mantido.\nSe quiser só bloquear temporariamente, use DESATIVAR no ✏️.\nSe a pessoa pedir acesso de novo com o mesmo e-mail, o pedido volta como PENDENTE para aprovação.')) return;
+  if (!confirm('Excluir o usuário "' + nome + '"?\n\nEle perde o acesso na hora. O histórico de auditoria é mantido.\nSe quiser só bloquear temporariamente, use DESATIVAR no .\nSe a pessoa pedir acesso de novo com o mesmo e-mail, o pedido volta como PENDENTE para aprovação.')) return;
   showOv('REMOVENDO...');
   try {
     // Delete perfil (auth.users tem cascade deletando o perfil; aqui só removemos perfil e desativamos)
@@ -4038,13 +4041,13 @@ function updateFaccionadoBanner(){
   if(_faccionado){
     banner.style.background='rgba(255,30,30,0.12)';
     banner.style.borderColor='rgba(255,60,60,0.6)';
-    lbl.textContent='⚠️ ALERTA ATIVO — este indivíduo é faccionado';
+    lbl.textContent='ALERTA ATIVO — este indivíduo é faccionado';
     lbl.style.color='#ff6b6b';
     toggle.style.background='rgba(255,60,60,0.4)';
     toggle.style.borderColor='rgba(255,80,80,0.6)';
     thumb.style.background='#ff4444';
     thumb.style.left='28px';
-    icon.textContent='🚨';
+    icon.innerHTML=ICON('foragidos',{size:19}); icon.style.color='#dc2626';
     nomeWrap.style.display='block';
   } else {
     banner.style.background='var(--surface2)';
@@ -4055,7 +4058,7 @@ function updateFaccionadoBanner(){
     toggle.style.borderColor='var(--border)';
     thumb.style.background='#666';
     thumb.style.left='2px';
-    icon.textContent='⚠️';
+    icon.innerHTML=ICON('alerta',{size:19}); icon.style.color='';
     nomeWrap.style.display='none';
   }
 }
@@ -4187,7 +4190,7 @@ function parseTats(v){if(!v)return[];if(Array.isArray(v))return v;try{return JSO
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtD(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 let toastT;
-function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'✅',error:'❌',info:'ℹ️'}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
+function toast(msg,type='info'){const t=document.getElementById('toast');t.innerHTML=`${{success:'',error:'',info:''}[type]||''} ${msg}`;t.className=`toast ${type} on`;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3500);}
 
 
 // ══════════════════════════════════════════════════════════════
@@ -4296,7 +4299,7 @@ async function dedupAbrir(){
   });
   _dedupGrupos = grupos;
 
-  if (!grupos.length){ toast('Nenhuma duplicata detectada 🎉', 'success'); return; }
+  if (!grupos.length){ toast('Nenhuma duplicata detectada ', 'success'); return; }
   const totalDesc = grupos.reduce((s,g) => s + g.descartar.length, 0);
 
   let html = `<div style="background:var(--surface);border-radius:14px;padding:20px;max-width:680px;width:90%;max-height:88vh;overflow-y:auto">
@@ -4331,7 +4334,7 @@ async function dedupAbrir(){
   html += `</div>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
       <button class="btn btn-outline btn-sm" onclick="hideOv()">CANCELAR</button>
-      <button class="btn btn-primary btn-sm" onclick="dedupExecutar()" style="background:#991b1b;border-color:#991b1b">🗑 REMOVER ${totalDesc} DUPLICATAS</button>
+      <button class="btn btn-primary btn-sm" onclick="dedupExecutar()" style="background:#991b1b;border-color:#991b1b">REMOVER ${totalDesc} DUPLICATAS</button>
     </div>
   </div>`;
   showOv(html);
@@ -4359,7 +4362,7 @@ async function dedupAuto(){
   });
   _dedupGrupos = grupos;
 
-  if (!grupos.length){ toast('Nenhuma duplicata detectada 🎉', 'success'); return; }
+  if (!grupos.length){ toast('Nenhuma duplicata detectada ', 'success'); return; }
   const totalDesc = grupos.reduce((s,g) => s + g.descartar.length, 0);
 
   if (!confirm(`MODO AUTOMÁTICO\n\nDetectei ${grupos.length} grupo(s) de duplicatas.\nVou remover ${totalDesc} cadastro(s), mantendo o mais completo de cada grupo.\n\nConfirma remoção (sem revisão prévia)?`)) return;
@@ -4504,20 +4507,20 @@ function parsearDocumentoBR(texto){
 function renderResultadoOCR(d, textoRaw){
   const res = document.getElementById('ocrResultado');
   const campos = [
-    { k:'nome', l:'Nome', icon:'👤' },
-    { k:'mae', l:'Nome da Mãe', icon:'👩' },
-    { k:'cpf', l:'CPF', icon:'🆔' },
-    { k:'nascimento', l:'Nascimento', icon:'🎂' },
-    { k:'rg', l:'RG', icon:'📋' },
+    { k:'nome', l:'Nome', icon:'' },
+    { k:'mae', l:'Nome da Mãe', icon:'' },
+    { k:'cpf', l:'CPF', icon:'' },
+    { k:'nascimento', l:'Nascimento', icon:'' },
+    { k:'rg', l:'RG', icon:'' },
   ];
   const achados = campos.filter(c => d[c.k]);
   if (!achados.length) {
-    res.innerHTML = `<div style="text-align:center;color:var(--accent2)">⚠️ Não identificou campos automaticamente.</div>
+    res.innerHTML = `<div style="text-align:center;color:var(--accent2)">Não identificou campos automaticamente.</div>
       <details style="margin-top:8px"><summary style="cursor:pointer;font-size:11px;color:var(--text-mid)">Ver texto bruto</summary><pre style="font-size:10px;background:#fff;padding:8px;border-radius:4px;margin-top:6px;max-height:140px;overflow:auto;white-space:pre-wrap">${esc(textoRaw)}</pre></details>`;
     res.style.display = 'block';
     return;
   }
-  let html = `<div style="font-weight:700;color:#000;margin-bottom:8px;font-size:12px">✅ ${achados.length} campo${achados.length>1?'s':''} identificado${achados.length>1?'s':''}:</div>`;
+  let html = `<div style="font-weight:700;color:#000;margin-bottom:8px;font-size:12px">${achados.length} campo${achados.length>1?'s':''} identificado${achados.length>1?'s':''}:</div>`;
   achados.forEach(c => {
     html += `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(0,0,0,.08)">
       <span>${c.icon}</span>
@@ -4580,7 +4583,7 @@ async function buscarCep(cepRaw){
   if (cep === _ultimoCep) return; // já buscado (digitação + saída do campo)
   _ultimoCep = cep; setTimeout(() => { if (_ultimoCep === cep) _ultimoCep = ''; }, 4000);
   let aproximado = false;
-  if(info){info.textContent='🔍 Buscando CEP em múltiplas bases...';info.className='cpf-info';info.style.color='var(--text-mid)';}
+  if(info){info.textContent='Buscando CEP em múltiplas bases...';info.className='cpf-info';info.style.color='var(--text-mid)';}
   let lat=null, lng=null, logradouro='', bairro='', cidade='', uf='';
 
   // ── Backend 1: BrasilAPI v2 (geralmente tem coords) ──
@@ -4689,19 +4692,19 @@ async function buscarCep(cepRaw){
     document.getElementById('fLat').value = lat;
     document.getElementById('fLng').value = lng;
     if (aproximado) {
-      if (ls) { ls.innerHTML = '📍 <b>Local aproximado</b> (centro do bairro). Toque no mapa para marcar a casa certa.'; ls.style.color = 'var(--accent2)'; }
-      if(info){info.textContent='✅ CEP encontrado · '+(bairro||cidade)+' · posição aproximada';info.className='cpf-info cpf-warn';}
+      if (ls) { ls.innerHTML = '<b>Local aproximado</b> (centro do bairro). Toque no mapa para marcar a casa certa.'; ls.style.color = 'var(--accent2)'; }
+      if(info){info.textContent='CEP encontrado · '+(bairro||cidade)+' · posição aproximada';info.className='cpf-info cpf-warn';}
     } else {
-      if (ls) { ls.innerHTML = '✅ Localizado pelo CEP: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b> · confira no mapa'; ls.style.color = 'var(--success)'; }
-      if(info){info.textContent='✅ CEP localizado · '+(bairro||cidade);info.className='cpf-info cpf-ok';}
+      if (ls) { ls.innerHTML = 'Localizado pelo CEP: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b> · confira no mapa'; ls.style.color = 'var(--success)'; }
+      if(info){info.textContent='CEP localizado · '+(bairro||cidade);info.className='cpf-info cpf-ok';}
     }
     _atualizarMiniMapa(lat, lng, aproximado);
   } else if (logradouro || bairro) {
-    if(info){info.textContent='⚠️ Endereço encontrado, mas sem coordenada precisa. Use "🎯 AJUSTAR POSIÇÃO NO MAPA".';info.className='cpf-info cpf-warn';}
-    if (ls) { ls.innerHTML='⚠️ Endereço preenchido, <b>ajuste a posição no mapa abaixo</b>.'; ls.style.color='var(--accent2)'; }
+    if(info){info.textContent='Endereço encontrado, mas sem coordenada precisa. Use "AJUSTAR POSIÇÃO NO MAPA".';info.className='cpf-info cpf-warn';}
+    if (ls) { ls.innerHTML='Endereço preenchido, <b>ajuste a posição no mapa abaixo</b>.'; ls.style.color='var(--accent2)'; }
   } else {
-    if(info){info.textContent='❌ CEP não encontrado em nenhuma base. Preencha o endereço e use "Ajustar no mapa".';info.className='cpf-info cpf-err';}
-    if (ls) { ls.innerHTML='❌ CEP não localizado. <b>Use o botão "🎯 AJUSTAR POSIÇÃO NO MAPA"</b> para marcar.'; ls.style.color='var(--danger)'; }
+    if(info){info.textContent='CEP não encontrado em nenhuma base. Preencha o endereço e use "Ajustar no mapa".';info.className='cpf-info cpf-err';}
+    if (ls) { ls.innerHTML='CEP não localizado. <b>Use o botão "AJUSTAR POSIÇÃO NO MAPA"</b> para marcar.'; ls.style.color='var(--danger)'; }
   }
 }
 
@@ -4776,7 +4779,7 @@ function _setLocMarker(lat, lng, reverseGeo){
   if (_locMarker) _locMapInst.removeLayer(_locMarker);
   if (_locCircle) { _locMapInst.removeLayer(_locCircle); _locCircle = null; }
   _locMarker = L.marker([lat, lng], { draggable: true, autoPan: true }).addTo(_locMapInst);
-  _locMarker.bindTooltip('📍 Arraste pra ajustar', { permanent: false, direction: 'top', offset: [0,-30] });
+  _locMarker.bindTooltip('Arraste pra ajustar', { permanent: false, direction: 'top', offset: [0,-30] });
   _locMarker.on('dragend', () => {
     const ll = _locMarker.getLatLng();
     _updateLocCoords(ll.lat, ll.lng);
@@ -4798,7 +4801,7 @@ function _setLocMarker(lat, lng, reverseGeo){
 
 function _updateLocCoords(lat, lng){
   const el = document.getElementById('locCoords');
-  if (el) el.innerHTML = `📍 <b>${lat.toFixed(6)}</b>, <b>${lng.toFixed(6)}</b>`;
+  if (el) el.innerHTML = `<b>${lat.toFixed(6)}</b>, <b>${lng.toFixed(6)}</b>`;
   document.getElementById('fLat').value = lat;
   document.getElementById('fLng').value = lng;
 }
@@ -4812,7 +4815,7 @@ function confirmarPosicaoMapa(){
   const lng = parseFloat(document.getElementById('fLng').value);
   if (isNaN(lat) || isNaN(lng)) { toast('Clique no mapa pra marcar uma posição.','warn'); return; }
   const ls = document.getElementById('locStatus');
-  if (ls) { ls.innerHTML = '🎯 Posição manual: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--accent)'; }
+  if (ls) { ls.innerHTML = 'Posição manual: <b>'+lat.toFixed(5)+', '+lng.toFixed(5)+'</b>'; ls.style.color = 'var(--accent)'; }
   fecharMapaAjuste();
   _atualizarMiniMapa(lat, lng, false);
   toast('Posição salva! Será gravada quando confirmar o cadastro.','success');
@@ -4885,7 +4888,7 @@ async function toggleHeatmap(){
     btn.style.background = 'linear-gradient(135deg,#dc2626,#f97316)';
     btn.style.color = '#fff';
     btn.style.borderColor = '#dc2626';
-    btn.innerHTML = '🔥 CALOR ON';
+    btn.innerHTML = 'CALOR ON';
     const b = document.getElementById('mapFiltBairro').value;
     const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
     await atualizarHeatmap(filtered);
@@ -4894,7 +4897,7 @@ async function toggleHeatmap(){
     btn.style.background = '';
     btn.style.color = '';
     btn.style.borderColor = '';
-    btn.innerHTML = '🔥 CALOR';
+    btn.innerHTML = 'CALOR';
     if (_heatLayer && mapaInst) { mapaInst.removeLayer(_heatLayer); _heatLayer = null; }
     toast('Mapa de calor desativado','info');
   }
@@ -5073,20 +5076,20 @@ async function renderMapMarkers(persons) {
 
     const content = `
       <div style="font-family:'IBM Plex Sans',sans-serif;padding:4px;min-width:220px">
-        <div style="font-weight:700;font-size:14px;margin-bottom:4px;color:#0f172a">${isAlert ? '🚨 ' : ''}${esc(p.nome)}</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px;color:#0f172a">${isAlert ? '' : ''}${esc(p.nome)}</div>
         ${p.apelido ? `<div style="color:#64748b;font-size:12px;margin-bottom:4px">@ ${esc(p.apelido)}</div>` : ''}
-        ${p.bairro ? `<div style="font-size:12px;color:#334155">📍 ${esc(p.bairro)}</div>` : ''}
-        ${p.endereco ? `<div style="font-size:12px;color:#334155">🏠 ${esc(p.endereco)}</div>` : ''}
-        ${p.cep ? `<div style="font-size:12px;color:#334155">✉️ CEP ${esc(p.cep)}</div>` : ''}
-        ${p.quadra ? `<div style="font-size:12px;color:#334155">🔲 ${esc(p.quadra)}</div>` : ''}
-        ${isAlert ? '<div style="color:#dc2626;font-weight:700;margin-top:6px">⚠️ ALERTA DE FORAGIDO</div>' : ''}
+        ${p.bairro ? `<div style="font-size:12px;color:#334155">${esc(p.bairro)}</div>` : ''}
+        ${p.endereco ? `<div style="font-size:12px;color:#334155">${esc(p.endereco)}</div>` : ''}
+        ${p.cep ? `<div style="font-size:12px;color:#334155">CEP ${esc(p.cep)}</div>` : ''}
+        ${p.quadra ? `<div style="font-size:12px;color:#334155">${esc(p.quadra)}</div>` : ''}
+        ${isAlert ? '<div style="color:#dc2626;font-weight:700;margin-top:6px">ALERTA DE FORAGIDO</div>' : ''}
 
         <div style="display:flex;gap:6px;margin-top:10px">
-          <a href="${gmapsUrl}" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 6px;background:#1a73e8;color:white;border-radius:7px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.3px">🧭 MAPS</a>
-          <a href="${wazeUrl}" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 6px;background:#33ccff;color:white;border-radius:7px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.3px">🚗 WAZE</a>
+          <a href="${gmapsUrl}" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 6px;background:#1a73e8;color:white;border-radius:7px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.3px">MAPS</a>
+          <a href="${wazeUrl}" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 6px;background:#33ccff;color:white;border-radius:7px;text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.3px">WAZE</a>
         </div>
 
-        <button onclick="viewPerson('${p.id}')" style="margin-top:8px;width:100%;padding:9px;background:#0f172a;color:white;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700">👁 VER FICHA COMPLETA</button>
+        <button onclick="viewPerson('${p.id}')" style="margin-top:8px;width:100%;padding:9px;background:#0f172a;color:white;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700">VER FICHA COMPLETA</button>
       </div>`;
 
     marker.bindPopup(content);
@@ -5162,9 +5165,9 @@ async function loadAlertas() {
 }
 
 const perigInfo = {
-  1: { label:'MÉDIO', icon:'⚠️', cls:'perig-1' },
-  2: { label:'ALTO', icon:'🔶', cls:'perig-2' },
-  3: { label:'EXTREMO', icon:'🔴', cls:'perig-3' }
+  1: { label:'MÉDIO', icon:'', cls:'perig-1' },
+  2: { label:'ALTO', icon:'', cls:'perig-2' },
+  3: { label:'EXTREMO', icon:'', cls:'perig-3' }
 };
 
 function _linkMapaForagido(a){
@@ -5177,28 +5180,28 @@ function _cardForagido(a, preso){
   const pi = perigInfo[a.periculosidade] || perigInfo[1];
   const cor = preso ? 'rgba(16,185,129,.55)' : 'rgba(255,61,61,.5)';
   const av = a.foto ? `<div class="pavatar" style="width:64px;height:64px;border:2px solid ${cor};flex-shrink:0;${preso?'filter:grayscale(1)':''}"><img src="${a.foto}" style="width:100%;height:100%;object-fit:cover" onclick="event.stopPropagation();lbOpen('${a.foto}')"></div>`
-                    : `<div class="pavatar" style="width:64px;height:64px;border:2px solid ${cor};flex-shrink:0;font-size:28px">👤</div>`;
+                    : `<div class="pavatar" style="width:64px;height:64px;border:2px solid ${cor};flex-shrink:0;font-size:28px"><span data-icon="usuarios" data-size="24"></span></div>`;
   const mapa = _linkMapaForagido(a);
   const linha = (rot, v) => v ? `<div style="font-size:12px;color:var(--text-mid);margin-top:2px"><b style="color:var(--text-dim);font-weight:600">${rot}</b> ${esc(v)}</div>` : '';
   const acoes = [];
-  if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">📍 ${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
-  if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">🚔 PRESO</button>`);
+  if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
+  if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">PRESO</button>`);
   if (preso && ['admin','inteligencia','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
-  if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0">🗑</button>`);
+  if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0"><span data-icon="excluir" data-size="18"></span></button>`);
   return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
     ${av}
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
         <span style="font-weight:700;font-size:15px;color:var(--text)">${esc(a.nome)}</span>
-        ${preso ? '<span class="perig-badge" style="background:rgba(16,185,129,.15);color:var(--success);border-color:rgba(16,185,129,.4)">✅ PRESO</span>' : `<span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>`}
+        ${preso ? '<span class="perig-badge" style="background:rgba(16,185,129,.15);color:var(--success);border-color:rgba(16,185,129,.4)">PRESO</span>' : `<span class="perig-badge ${pi.cls}">${pi.icon} ${pi.label}</span>`}
       </div>
       ${linha('CPF', a.cpf)}
       ${linha('Processo', a.processo)}
       ${linha('Endereço', a.endereco)}
       ${a.obs?`<div style="font-size:12px;color:var(--text-mid);margin-top:2px">${esc(a.obs)}</div>`:''}
-      ${preso ? `<div style="font-size:11px;color:var(--success);margin-top:6px;font-weight:600">🚔 Preso em ${a.preso_em?new Date(a.preso_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—'} por ${esc(a.preso_por_nome||'—')}${a.preso_obs?' · '+esc(a.preso_obs):''}</div>` : ''}
+      ${preso ? `<div style="font-size:11px;color:var(--success);margin-top:6px;font-weight:600">Preso em ${a.preso_em?new Date(a.preso_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—'} por ${esc(a.preso_por_nome||'—')}${a.preso_obs?' · '+esc(a.preso_obs):''}</div>` : ''}
       <div style="font-size:10px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:6px">
-        ${a.tipo==='existente'?'<span style="color:var(--accent)">📋 CADASTRADO NO SICAD</span>':'<span style="color:#ff8080">➕ NOVO</span>'}
+        ${a.tipo==='existente'?'<span style="color:var(--accent)">CADASTRADO NO SICAD</span>':'<span style="color:#ff8080">NOVO</span>'}
         · ${a.criado_em ? new Date(a.criado_em).toLocaleDateString('pt-BR') : ''}
         · por ${esc(a.criado_por||'—')}
       </div>
@@ -5229,10 +5232,10 @@ function renderAlertas() {
 async function _atualizarBtnCadForagido(pid){
   const b = document.getElementById('btnCadForagido'); if (!b) return;
   b.style.display = podeCadastrarSICAD() ? '' : 'none';
-  b.textContent = '🚨 ADICIONAR COMO FORAGIDO';
+  b.textContent = 'ADICIONAR COMO FORAGIDO';
   try {
     const r = await sbFetch('GET','sicad_alertas',null,`select=id&pessoa_id=eq.${pid}&status=neq.preso&limit=1`);
-    if (r && r.length) b.textContent = '🚨 JÁ É FORAGIDO: VER NA ABA FORAGIDOS';
+    if (r && r.length) b.textContent = 'JÁ É FORAGIDO: VER NA ABA FORAGIDOS';
   } catch(_){}
 }
 
@@ -5275,7 +5278,7 @@ async function marcarPreso(id) {
     allAlertas = allAlertas.filter(x => x.id !== id);
     alertasPresos.unshift(a);
     renderAlertas();
-    toast('🚔 ' + a.nome + ' marcado como PRESO.','success');
+    toast('' + a.nome + ' marcado como PRESO.','success');
   } catch(e) {
     toast(/sicad_marcar_preso|function/i.test(e.message) ? 'Banco sem a função de prisão. Rode a migration_v8_foragidos_brazlandia.sql.' : 'Erro: ' + e.message, 'error');
   } finally { hideOv(); }
@@ -5304,7 +5307,7 @@ function aLerLink() {
   if (r && r.lat != null) {
     document.getElementById('aLat').value = r.lat.toFixed(6);
     document.getElementById('aLng').value = r.lng.toFixed(6);
-    info.textContent = '✅ Localização lida do link.'; info.style.color = 'var(--success)';
+    info.textContent = 'Localização lida do link.'; info.style.color = 'var(--success)';
   } else {
     info.style.color = 'var(--accent2)';
     info.textContent = r && r.erro === 'curto'
@@ -5316,18 +5319,18 @@ function aLerLink() {
 function aUsarGPS() {
   const info = document.getElementById('aLocInfo');
   if (!navigator.geolocation) { info.textContent = 'Este aparelho não fornece localização.'; return; }
-  info.style.color = 'var(--text-dim)'; info.textContent = '📡 Obtendo localização...';
+  info.style.color = 'var(--text-dim)'; info.textContent = 'Obtendo localização...';
   navigator.geolocation.getCurrentPosition(p => {
     document.getElementById('aLat').value = p.coords.latitude.toFixed(6);
     document.getElementById('aLng').value = p.coords.longitude.toFixed(6);
-    info.style.color = 'var(--success)'; info.textContent = '✅ Localização atual registrada (precisão ~' + Math.round(p.coords.accuracy) + ' m).';
+    info.style.color = 'var(--success)'; info.textContent = 'Localização atual registrada (precisão ~' + Math.round(p.coords.accuracy) + ' m).';
   }, () => { info.style.color = 'var(--danger)'; info.textContent = 'Não foi possível obter a localização. Verifique a permissão de GPS.'; }, { enableHighAccuracy: true, timeout: 15000 });
 }
 
 function openAlertaModal(editData) {
   alertaEditId = editData ? editData.id : null;
   alertaTipo = null; alertaPerig = null; alertaPessoaId = null; alertaFotoD = null;
-  document.getElementById('alertaModalTitle').textContent = '🚨 NOVO FORAGIDO DE BRAZLÂNDIA';
+  document.getElementById('alertaModalTitle').textContent = 'NOVO FORAGIDO DE BRAZLÂNDIA';
   ['aCpf','aEndereco','aLink','aLat','aLng','aProcesso'].forEach(i => { const e = document.getElementById(i); if (e) e.value = ''; });
   document.getElementById('aLocInfo').textContent = '';
   document.getElementById('aTipoExist').className = 'btn btn-outline btn-sm';
@@ -5383,7 +5386,7 @@ function buscaPessoaAlerta() {
   res.style.display = 'block';
   res.innerHTML = found.slice(0,6).map(p => `
     <div onclick="selecionarPessoa('${p.id}')" style="padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .15s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
-      ${p.foto?`<img src="${p.foto}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>`}
+      ${p.foto?`<img src="${p.foto}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"><span data-icon="usuarios" data-size="16"></span></div>`}
       <div><div style="font-size:14px;font-weight:600">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''} ${p.bairro||''}</div></div>
     </div>`).join('');
 }
@@ -5403,9 +5406,9 @@ async function selecionarPessoa(id) {
   document.getElementById('aPessoaSelecionada').style.display = 'block';
   document.getElementById('aPessoaSelecionada').innerHTML = `
     <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px">
-      ${p.foto?`<img src="${p.foto}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:44px;height:44px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px">👤</div>`}
+      ${p.foto?`<img src="${p.foto}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:`<div style="width:44px;height:44px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px"><span data-icon="usuarios" data-size="19"></span></div>`}
       <div><div style="font-weight:600;color:var(--accent)">${esc(p.nome)}</div><div style="font-size:11px;color:var(--text-dim)">${p.apelido?esc(p.apelido)+' · ':''}${p.bairro||''}</div></div>
-      <div style="margin-left:auto;color:var(--success);font-size:20px">✅</div>
+      <div style="margin-left:auto;color:var(--success);font-size:20px"><span data-icon="check" data-size="17"></span></div>
     </div>`;
 }
 
@@ -5472,7 +5475,7 @@ async function saveAlerta() {
           id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID()
               : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}),
           nome, cpf: d.cpf, endereco: d.endereco, lat: d.lat, lng: d.lng, foto: d.foto,
-          observacoes: ['🚨 FORAGIDO (cadastrado pelo módulo Foragidos)', d.processo ? 'Processo nº ' + d.processo : null, d.obs].filter(Boolean).join(' · '),
+          observacoes: ['FORAGIDO (cadastrado pelo módulo Foragidos)', d.processo ? 'Processo nº ' + d.processo : null, d.obs].filter(Boolean).join(' · '),
           tatuagens: '[]', faccionado: false,
           criado_por: CU.usuario || 'admin', criado_em: agora, atualizado_em: agora
         };
@@ -5489,12 +5492,12 @@ async function saveAlerta() {
     renderAlertas();
     closeAlertaModal();
     logAudit('foragido_criar','sicad_alertas',d.id,{nome});
-    toast(pessoaCriada ? '🚨 Foragido cadastrado — e incluído no banco de pessoas do SICAD.' : (d.pessoa_id ? '🚨 Foragido cadastrado e vinculado ao cadastro existente.' : '🚨 Foragido cadastrado!'),'error');
+    toast(pessoaCriada ? 'Foragido cadastrado — e incluído no banco de pessoas do SICAD.' : (d.pessoa_id ? 'Foragido cadastrado e vinculado ao cadastro existente.' : 'Foragido cadastrado!'),'error');
   } catch(e) {
     if (/column|processo|status|endereco|cpf/i.test(e.message||'')) toast('Banco ainda sem os campos novos. Peça ao administrador para rodar a migration_v8_foragidos_brazlandia.sql.','error');
     else toast('Erro: '+e.message,'error');
   }
-  finally { btn.disabled=false; btn.innerHTML='🚨 SALVAR FORAGIDO'; }
+  finally { btn.disabled=false; btn.innerHTML='SALVAR FORAGIDO'; }
 }
 
 async function delAlerta(id) {
@@ -5705,7 +5708,7 @@ async function exportPDF(){
     doc.setFillColor(220,38,38);
     doc.roundedRect(tx,ty-3,txW,8,2,2,'F');
     doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
-    doc.text('⚠  FACCIONADO'+(p.faccao?' — '+p.faccao.toUpperCase():''),tx+3,ty+2.5);
+    doc.text(' FACCIONADO'+(p.faccao?' — '+p.faccao.toUpperCase():''),tx+3,ty+2.5);
     ty+=11;
   }
 
@@ -5743,7 +5746,7 @@ async function exportPDF(){
     doc.setFont('helvetica','normal');
     doc.setFontSize(9);
     doc.setTextColor(0,153,204);
-    const linkTxt = '🧭 Navegar até o endereço';
+    const linkTxt = 'Navegar até o endereço';
     doc.textWithLink(linkTxt, MAR+50, y, { url: mapsUrl });
     // Sublinha visual
     const tw = doc.getTextWidth(linkTxt);
@@ -5868,14 +5871,14 @@ function onCpfInput(el){
   if(raw.length===0){info.textContent='';info.className='cpf-info';}
   else if(raw.length<11){info.textContent='';info.className='cpf-info';}
   else if(!validarCPF(raw)){
-    info.textContent='❌ CPF inválido';info.className='cpf-info cpf-err';
+    info.textContent='CPF inválido';info.className='cpf-info cpf-err';
   } else {
     // Verificar se já cadastrado
     const dup=allP.find(x=>x.cpf&&x.cpf.replace(/\D/g,'')==raw&&x.id!==editId);
     if(dup){
-      info.textContent='⚠️ CPF já cadastrado: '+dup.nome;info.className='cpf-info cpf-warn';
+      info.textContent='CPF já cadastrado: '+dup.nome;info.className='cpf-info cpf-warn';
     } else {
-      info.textContent='✅ CPF válido';info.className='cpf-info cpf-ok';
+      info.textContent='CPF válido';info.className='cpf-info cpf-ok';
     }
   }
 }
@@ -5958,7 +5961,7 @@ async function consultarVeiculoModal(campo){
   if(!sm){
     sm=document.createElement('div');
     sm.id='sinespModal';sm.className='modal-overlay';
-    sm.innerHTML=`<div class="modal"><div class="mhandle"></div><div class="mi"><div class="mhdr"><div class="mtitle">🚗 SINESP</div><div class="mclose" onclick="this.closest('.modal-overlay').classList.remove('open')">✕</div></div><div id="sinespBody"></div></div></div>`;
+    sm.innerHTML=`<div class="modal"><div class="mhandle"></div><div class="mi"><div class="mhdr"><div class="mtitle">SINESP</div><div class="mclose" onclick="this.closest('.modal-overlay').classList.remove('open')">✕</div></div><div id="sinespBody"></div></div></div>`;
     document.body.appendChild(sm);
   }
   document.getElementById('sinespBody').innerHTML=html;
@@ -6001,7 +6004,7 @@ async function pwaInstall(){
 }
 
 window.addEventListener('appinstalled', () => {
-  toast('✅ SICAD instalado com sucesso!', 'success');
+  toast('SICAD instalado com sucesso!', 'success');
   document.getElementById('pwaInstallBtn').style.display = 'none';
 });
 
@@ -6080,9 +6083,9 @@ async function buscarRostoWeb(){
   const linksBox = document.getElementById('faceWebLinks');
   const linksContent = document.getElementById('faceWebLinksContent');
   const txtOrig = btn.innerHTML;
-  btn.innerHTML = '⏳ ENVIANDO FOTO...'; btn.disabled = true;
+  btn.innerHTML = 'ENVIANDO FOTO...'; btn.disabled = true;
   status.style.display = 'block';
-  status.innerHTML = '📤 Subindo foto pro Supabase Storage (bucket privado)...';
+  status.innerHTML = 'Subindo foto pro Supabase Storage (bucket privado)...';
   linksBox.style.display='none';
   try{
     // LGPD: foto agora vai pro Supabase Storage (bucket "faces", privado) com URL assinada.
@@ -6106,7 +6109,7 @@ async function buscarRostoWeb(){
     const pimU       = 'https://pimeyes.com/en';                           // não aceita URL — abre pra upload
     const yandexU    = 'https://yandex.com/images/search?rpt=imageview&url='+enc; // aceita URL ✓
     const googleLU   = 'https://lens.google.com/uploadbyurl?url='+enc;     // aceita URL ✓
-    status.innerHTML = '✅ Foto pública: <a href="'+url+'" target="_blank" style="color:var(--accent);word-break:break-all">'+url+'</a><br><br>📋 <b>Yandex e Google Lens</b> abriram com a foto já carregada.<br>📤 <b>FaceCheck, Lenso e PimEyes</b> não aceitam URL — você cola a foto manualmente (Ctrl+V) ou arrasta o arquivo baixado.';
+    status.innerHTML = 'Foto pública: <a href="'+url+'" target="_blank" style="color:var(--accent);word-break:break-all">'+url+'</a><br><br><span data-icon="pdf" data-size="18"></span><b>Yandex e Google Lens</b> abriram com a foto já carregada.<br><span data-icon="enviar" data-size="18"></span><b>FaceCheck, Lenso e PimEyes</b> não aceitam URL — você cola a foto manualmente (Ctrl+V) ou arrasta o arquivo baixado.';
     // Baixa a foto pra facilitar drag&drop nas que não aceitam URL
     const a = document.createElement('a'); a.href = _faceWebData; a.download = 'face_busca_'+Date.now()+'.jpg'; a.click();
     // Abre as 5 abas (escalonado pra não travar)
@@ -6116,17 +6119,17 @@ async function buscarRostoWeb(){
     setTimeout(()=>window.open(lensoU,'_blank'), 900);
     setTimeout(()=>window.open(pimU,'_blank'), 1200);
     linksContent.innerHTML =
-      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px">🎯 FOCO EM REDES SOCIAIS</div>'+
-      '<a href="'+facecheckU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥇 FaceCheck.ID — especialista em redes sociais e fóruns (upload manual)</a>'+
-      '<a href="'+lensoU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥈 Lenso.ai — rostos em redes (gratuito, upload manual)</a>'+
-      '<a href="'+pimU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥉 PimEyes — rec. facial em milhões de páginas (upload manual)</a>'+
-      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin:8px 0 4px">🌐 BUSCA GERAL NA WEB (foto já carregada)</div>'+
-      '<a href="'+yandexU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images — ótimo pra rosto + VK/OK</a>'+
-      '<a href="'+googleLU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens — contexto (roupa/local/tatuagem)</a>';
+      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px">FOCO EM REDES SOCIAIS</div>'+
+      '<a href="'+facecheckU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">1. FaceCheck.ID — especialista em redes sociais e fóruns (upload manual)</a>'+
+      '<a href="'+lensoU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">2. Lenso.ai — rostos em redes (gratuito, upload manual)</a>'+
+      '<a href="'+pimU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">3. PimEyes — rec. facial em milhões de páginas (upload manual)</a>'+
+      '<div style="font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--text-mid);letter-spacing:1px;margin:8px 0 4px">BUSCA GERAL NA WEB (foto já carregada)</div>'+
+      '<a href="'+yandexU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">Yandex Images — ótimo pra rosto + VK/OK</a>'+
+      '<a href="'+googleLU+'" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">Google Lens — contexto (roupa/local/tatuagem)</a>';
     linksBox.style.display='block';
     toast('5 abas abertas + foto baixada pra upload.','info');
   }catch(e){
-    status.innerHTML = '❌ Falha no upload: '+e.message+'<br>Baixando a foto local pra você arrastar manualmente nas buscas.';
+    status.innerHTML = 'Falha no upload: '+e.message+'<br>Baixando a foto local pra você arrastar manualmente nas buscas.';
     const a = document.createElement('a'); a.href = _faceWebData; a.download = 'face_busca_'+Date.now()+'.jpg'; a.click();
     setTimeout(()=>window.open('https://facecheck.id/','_blank'), 200);
     setTimeout(()=>window.open('https://lenso.ai/en','_blank'), 500);
@@ -6134,11 +6137,11 @@ async function buscarRostoWeb(){
     setTimeout(()=>window.open('https://yandex.com/images/','_blank'), 1100);
     setTimeout(()=>window.open('https://lens.google.com/','_blank'), 1400);
     linksContent.innerHTML =
-      '<a href="https://facecheck.id/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥇 FaceCheck.ID — redes sociais</a>'+
-      '<a href="https://lenso.ai/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥈 Lenso.ai — rostos em redes</a>'+
-      '<a href="https://pimeyes.com/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🥉 PimEyes — web geral</a>'+
-      '<a href="https://yandex.com/images/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Yandex Images</a>'+
-      '<a href="https://lens.google.com/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">🔎 Google Lens</a>';
+      '<a href="https://facecheck.id/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">1. FaceCheck.ID — redes sociais</a>'+
+      '<a href="https://lenso.ai/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">2. Lenso.ai — rostos em redes</a>'+
+      '<a href="https://pimeyes.com/en" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">3. PimEyes — web geral</a>'+
+      '<a href="https://yandex.com/images/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">Yandex Images</a>'+
+      '<a href="https://lens.google.com/" target="_blank" class="btn btn-outline btn-sm" style="text-align:left;text-decoration:none">Google Lens</a>';
     linksBox.style.display='block';
   }finally{
     btn.innerHTML = txtOrig; btn.disabled = false;
@@ -6153,11 +6156,11 @@ async function loadFaceModels(){
     return _faceModelsReady;
   }
   if (typeof faceapi === 'undefined') {
-    setFaceLoad('❌ Biblioteca face-api.js não carregou. Verifique sua conexão.', false);
+    setFaceLoad('Biblioteca face-api.js não carregou. Verifique sua conexão.', false);
     return false;
   }
   _faceModelsLoading = true;
-  setFaceLoad('⚙️ Carregando modelos de IA HIGH-PRECISION (~18MB)... aguarde.', true);
+  setFaceLoad('Carregando modelos de IA HIGH-PRECISION (~18MB)... aguarde.', true);
   try {
     // Alguns celulares não iniciam o backend padrão ("wasm has not yet been initialized").
     // Força WebGL (GPU) e, se não houver, CPU — que funciona em qualquer aparelho.
@@ -6174,11 +6177,11 @@ async function loadFaceModels(){
       faceapi.nets.faceRecognitionNet.loadFromUri(FACE_MODELS_URL),
     ]);
     _faceModelsReady = true;
-    setFaceLoad('✅ Modelos prontos (alta precisão). Carregue as fotos e clique em comparar/buscar.', false);
+    setFaceLoad('Modelos prontos (alta precisão). Carregue as fotos e clique em comparar/buscar.', false);
     return true;
   } catch(e) {
     console.error('[face] load error', e);
-    setFaceLoad('❌ Falha ao carregar modelos: '+e.message, false);
+    setFaceLoad('Falha ao carregar modelos: '+e.message, false);
     return false;
   } finally { _faceModelsLoading = false; }
 }
@@ -6316,11 +6319,11 @@ async function onFacePick(slot, file){
   imgEl.classList.add('on');
   const slotEl = document.getElementById('faceSlot'+slot);
   if (slotEl) slotEl.classList.add('has-face');
-  setSlotStatus(slot, '⏳ Detectando rosto...', 'warn');
+  setSlotStatus(slot, 'Detectando rosto...', 'warn');
 
   // Garante modelos carregados (lazy)
   const ok = await loadFaceModels();
-  if (!ok) { setSlotStatus(slot, '❌ Modelos não carregaram', 'err'); return; }
+  if (!ok) { setSlotStatus(slot, 'Modelos não carregaram', 'err'); return; }
 
   // Espera imagem decodificar antes de processar
   await new Promise(r => { if (imgEl.complete) r(); else imgEl.onload = r; });
@@ -6330,7 +6333,7 @@ async function onFacePick(slot, file){
 
     if (!detection) {
       _faceData[slot] = null;
-      setSlotStatus(slot, '⚠️ Nenhum rosto detectado', 'err');
+      setSlotStatus(slot, 'Nenhum rosto detectado', 'err');
       drawFaceBox(slot, null);
       updateCompareBtn();
       return;
@@ -6345,11 +6348,11 @@ async function onFacePick(slot, file){
       imgH: imgEl.naturalHeight,
     };
     drawFaceBox(slot, detection.box, imgEl);
-    setSlotStatus(slot, '✅ Rosto detectado ('+Math.round(detection.score*100)+'% conf.)', 'ok');
+    setSlotStatus(slot, 'Rosto detectado ('+Math.round(detection.score*100)+'% conf.)', 'ok');
     updateCompareBtn();
   } catch(e) {
     console.error('[face] detect error', e);
-    setSlotStatus(slot, '❌ Erro ao processar', 'err');
+    setSlotStatus(slot, 'Erro ao processar', 'err');
   }
 }
 
@@ -6410,13 +6413,13 @@ async function compareFaces(){
 
   let verdict, verCls, barCls, recom;
   if (distance < 0.50) {
-    verdict = '✅ MESMA PESSOA'; verCls = 'match'; barCls = 'match';
+    verdict = 'MESMA PESSOA'; verCls = 'match'; barCls = 'match';
     recom = 'Match com alta confiança. Distância biométrica abaixo do limiar de 0,50 — alta probabilidade de ser a mesma pessoa.';
   } else if (distance < 0.60) {
-    verdict = '⚠️ POSSÍVEL MATCH'; verCls = 'maybe'; barCls = 'maybe';
+    verdict = 'POSSÍVEL MATCH'; verCls = 'maybe'; barCls = 'maybe';
     recom = 'Resultado na zona cinzenta (0,50 a 0,60). Verifique manualmente — pode ser a mesma pessoa com variação de ângulo, iluminação, idade ou expressão.';
   } else {
-    verdict = '❌ PESSOAS DIFERENTES'; verCls = 'no'; barCls = 'no';
+    verdict = 'PESSOAS DIFERENTES'; verCls = 'no'; barCls = 'no';
     recom = 'Distância biométrica acima de 0,60. As fotos provavelmente não são da mesma pessoa.';
   }
 
@@ -6441,7 +6444,7 @@ async function compareFaces(){
   });
   el.scrollIntoView({ behavior:'smooth', block:'center' });
 
-  btn.disabled = false; btn.innerHTML = '🧬 COMPARAR ROSTOS';
+  btn.disabled = false; btn.innerHTML = 'COMPARAR ROSTOS';
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6495,7 +6498,7 @@ async function switchLiveCam(){
 
 function toggleLiveCamAuto(){
   _liveCamAuto = !_liveCamAuto;
-  document.getElementById('liveCamAutoBtn').innerHTML = '⏱️ AUTO: ' + (_liveCamAuto ? 'ON' : 'OFF');
+  document.getElementById('liveCamAutoBtn').innerHTML = 'AUTO: ' + (_liveCamAuto ? 'ON' : 'OFF');
   _liveCamStableCount = 0;
   _liveCamCountdownN = 0;
   document.getElementById('liveCamCountdown').style.display = 'none';
@@ -6551,7 +6554,7 @@ function startLiveCamLoop(){
       [[bx,by,c,0,0,c],[bx+bw,by,-c,0,0,c],[bx,by+bh,c,0,0,-c],[bx+bw,by+bh,-c,0,0,-c]].forEach(([x,y,dx1,dy1,dx2,dy2])=>{
         ctx.beginPath();ctx.moveTo(x+dx1,y+dy1);ctx.lineTo(x,y);ctx.lineTo(x+dx2,y+dy2);ctx.stroke();
       });
-      conf.textContent = '✅ Rosto detectado · ' + Math.round(det.score*100) + '% conf.';
+      conf.textContent = 'Rosto detectado · ' + Math.round(det.score*100) + '% conf.';
       conf.style.background = 'rgba(16,185,129,.85)';
       document.getElementById('liveCamCaptureBtn').disabled = false;
       // Critério de estabilidade: tamanho ok (rosto >= 25% do frame) + score >= 0.7
@@ -6567,7 +6570,7 @@ function startLiveCamLoop(){
         _liveCamStableCount = 0;
       }
     } else {
-      conf.textContent = '🔍 Procurando rosto...';
+      conf.textContent = 'Procurando rosto...';
       conf.style.background = 'rgba(0,0,0,.55)';
       _liveCamStableCount = 0;
       if (_liveCamCountdownN > 0) {
@@ -6708,10 +6711,10 @@ async function searchFaceInDB(){
   }
 
   fsp.style.display = 'none';
-  btn.disabled = false; btn.innerHTML = '🔍 BUSCAR CORRESPONDÊNCIAS';
+  btn.disabled = false; btn.innerHTML = 'BUSCAR CORRESPONDÊNCIAS';
 
   if (!matches.length) {
-    document.getElementById('faceSearchResults').innerHTML = '<div class="empty"><div class="ei">😶</div><p>Nenhum rosto pôde ser processado nos cadastros (fotos sem rosto detectável ou inválidas).</p></div>';
+    document.getElementById('faceSearchResults').innerHTML = '<div class="empty"><div class="ei"><span data-icon="face" data-size="18"></span></div><p>Nenhum rosto pôde ser processado nos cadastros (fotos sem rosto detectável ou inválidas).</p></div>';
     return;
   }
   matches.sort((a,b) => a.distance - b.distance);
@@ -6727,9 +6730,9 @@ function renderFaceMatches(matches){
   const best = top[0];
   const bestPct = Math.round(Math.max(0, 1 - best.distance) * 100);
   let bestCls, bestVerdict;
-  if (best.distance < 0.50) { bestCls='match'; bestVerdict='✅ MATCH FORTE'; }
-  else if (best.distance < 0.60) { bestCls='maybe'; bestVerdict='⚠️ POSSÍVEL MATCH'; }
-  else { bestCls='no'; bestVerdict='❌ SEM CORRESPONDÊNCIA FORTE'; }
+  if (best.distance < 0.50) { bestCls='match'; bestVerdict='MATCH FORTE'; }
+  else if (best.distance < 0.60) { bestCls='maybe'; bestVerdict='POSSÍVEL MATCH'; }
+  else { bestCls='no'; bestVerdict='SEM CORRESPONDÊNCIA FORTE'; }
 
   let html = `
     <div class="face-result on" style="margin-bottom:16px">
@@ -6751,9 +6754,9 @@ function renderFaceMatches(matches){
     html += `
       <div class="${cardCls}" onclick="viewPerson('${m.p.id}')">
         <div class="face-match-rank">${idx+1}</div>
-        <div class="face-match-thumb">${thumb ? `<img src="${thumb}" alt="">` : '👤'}</div>
+        <div class="face-match-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>
         <div class="face-match-info">
-          <div class="face-match-name">${isAlert?'🚨 ':''}${esc(m.p.nome)}</div>
+          <div class="face-match-name">${isAlert?'':''}${esc(m.p.nome)}</div>
           <div class="face-match-meta">${esc(m.p.bairro||'—')} · dist ${m.distance.toFixed(3)}</div>
         </div>
         <div class="face-match-score">
@@ -6966,7 +6969,7 @@ function c3RenderPainel(){
       <div class="c3-item-b"><div class="c3-item-t">${esc(c.nome)}${c.identificacao?` <span style="color:var(--neutral-400);font-weight:500">· ${esc(c.identificacao)}</span>`:''}</div>
       <div class="c3-item-s" style="white-space:normal">${c3Pendencias(c).map(p=>`<span class="c3-tag warn" style="margin:3px 4px 0 0;display:inline-block">${p}</span>`).join('')}</div></div>
     </div>`).join('')}</div>${pend.length>6?`<button class="btn btn-ghost btn-sm btn-full" style="margin-top:8px" onclick="document.getElementById('c3ChFiltSit').value='pend';c3Tab('chacaras');c3RenderChacaras()">Ver todas (${pend.length})</button>`:''}`
-    : '<div class="c3-empty">Tudo em dia. ✔</div>';
+    : '<div class="c3-empty">Tudo em dia. </div>';
 }
 
 // ── MAPA ──
@@ -7257,7 +7260,7 @@ function c3LerLink(){
     c3SyncMini();
     const longe = r.lat<-17 || r.lat>-14 || r.lng<-49.5 || r.lng>-46.5;
     msg.className = 'c3-geo-msg '+(longe?'warn':'ok');
-    msg.textContent = longe ? `⚠ Coordenadas lidas (${r.lat}, ${r.lng}), mas ficam fora do DF/entorno. Confira o link.` : `✓ Localização lida do link: ${r.lat}, ${r.lng}`;
+    msg.textContent = longe ? `Coordenadas lidas (${r.lat}, ${r.lng}), mas ficam fora do DF/entorno. Confira o link.` : `✓ Localização lida do link: ${r.lat}, ${r.lng}`;
   } else {
     msg.className = 'c3-geo-msg '+(r.erro==='curto'?'warn':'err');
     msg.textContent = r.erro==='curto'
