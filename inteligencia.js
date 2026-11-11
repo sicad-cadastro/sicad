@@ -23,7 +23,10 @@ const SITUACAO_DOS = { aberto: 'Aberto', em_analise: 'Em análise', suspenso: 'S
 const CLASSIF = { reservado: 'Reservado', confidencial: 'Confidencial', secreto: 'Secreto' };
 const CLASSIF_DOC = { ostensivo: 'Ostensivo', reservado: 'Reservado', sigiloso: 'Sigiloso' };
 const STATUS_REL = { rascunho: 'Rascunho', em_revisao: 'Em revisão', revisado: 'Revisado', devolvido: 'Devolvido', aprovado: 'Aprovado' };
-const TIPOS_VINCULO = ['Parentesco', 'Cônjuge / companheiro(a)', 'Proprietário de', 'Utiliza / conduz', 'Titular de', 'Reside em', 'Frequenta', 'Envolvido em', 'Comunica-se com', 'Associado a', 'Integrante declarado de', 'Visto com', 'Outro'];
+const MEMBRO = ['Integrante declarado de', 'Integrante de'];
+const FUNCOES = { 'Liderança': 1, 'Conselho / sintonia': 2, 'Gerência': 2, 'Financeiro': 3, 'Disciplina': 3, 'Logística': 3, 'Recrutamento': 3, 'Executor': 4, 'Venda / vapor': 5, 'Olheiro': 5, 'Integrante': 4, 'Função não identificada': 5 };
+const NIVEIS = { 1: '1 — Liderança', 2: '2 — Comando intermediário', 3: '3 — Coordenação de área', 4: '4 — Execução', 5: '5 — Base / apoio' };
+const TIPOS_VINCULO = ['Integrante de', 'Subordinado a', 'Parentesco', 'Cônjuge / companheiro(a)', 'Proprietário de', 'Utiliza / conduz', 'Titular de', 'Reside em', 'Frequenta', 'Envolvido em', 'Comunica-se com', 'Associado a', 'Integrante declarado de', 'Visto com', 'Outro'];
 const PERMS = [
   ['criar_dossie', 'Criar dossiês'], ['cadastrar', 'Cadastrar informações'], ['editar', 'Editar informações'],
   ['anexar', 'Anexar documentos'], ['gerar_relatorio', 'Gerar relatórios'], ['revisar_relatorio', 'Revisar relatórios'],
@@ -40,7 +43,7 @@ const MENU = [
   ['painel', 'Painel', 'dashboard'], ['central', 'Banco central', 'consultar'],
   ['pessoa', 'Pessoas', 'usuarios'], ['veiculo', 'Veículos', 'carro'], ['telefone', 'Telefones / IDs', 'live'],
   ['ocorrencia', 'Ocorrências', 'alerta'], ['localidade', 'Localidades', 'pin'], ['organizacao', 'Organizações', 'shield'],
-  ['vinculos', 'Análise de vínculos', 'web'], ['mapa', 'Mapa', 'mapa'], ['dossies', 'Dossiês', 'pdf'],
+  ['vinculos', 'Análise de vínculos', 'web'], ['organograma', 'Organograma', 'usuarios'], ['mapa', 'Mapa', 'mapa'], ['dossies', 'Dossiês', 'pdf'],
   ['documentos', 'Documentos', 'anexo'], ['relatorios', 'Relatórios', 'enviar'],
   ['acessos', 'Acessos', 'usuarios', 'administrar'], ['auditoria', 'Auditoria', 'clock', 'administrar']
 ];
@@ -178,6 +181,14 @@ function injetarCSS() {
 .int-tabs{display:flex;gap:4px;background:var(--neutral-100);padding:4px;border-radius:10px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
 .int-tabs button{border:0;background:transparent;padding:8px 12px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--neutral-600);cursor:pointer;white-space:nowrap}
 .int-tabs button.on{background:#fff;color:var(--neutral-900);box-shadow:var(--shadow-sm)}
+.int-foto{width:132px;height:160px;border-radius:12px;object-fit:cover;border:1px solid var(--border);background:var(--neutral-100);cursor:zoom-in;display:block}
+.int-foto-vazia{width:132px;height:160px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--neutral-400);font-size:12px;text-align:center;padding:8px}
+.int-ficha-top{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+.int-galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.int-galeria figure{margin:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+.int-galeria img{width:100%;height:150px;object-fit:cover;display:block;cursor:zoom-in}
+.int-galeria figcaption{font-size:11.5px;color:var(--neutral-600);padding:6px 8px}
+.int-org{height:640px;border:1px solid var(--border);border-radius:12px;background:#fff}
 .int-trava{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.92);display:flex;align-items:center;justify-content:center;padding:20px}
 .int-trava .bx{background:#fff;border-radius:16px;padding:24px;max-width:380px;width:100%}
 .int-classif{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;font-weight:700;color:#B91C1C;border:1px solid #FECACA;background:#FEF2F2;padding:3px 8px;border-radius:6px}
@@ -188,6 +199,9 @@ function injetarCSS() {
   .int-nav button{padding:8px 11px;font-size:12.5px}
   .int-grid2,.int-form,.int-dl,.int-chk{grid-template-columns:1fr}
   .int-net,.int-map{height:420px}
+  .int-org{height:520px}
+  .int-ficha-top{grid-template-columns:1fr}
+  .int-foto,.int-foto-vazia{width:100%;height:240px}
   .int-barra{grid-template-columns:110px 1fr 32px}
   .int-tab .hm{display:none}
 }`;
@@ -243,7 +257,7 @@ function render() {
     root.innerHTML = `<div class="int-wrap"><aside class="int-nav" id="intNav"></aside><main class="int-main" id="intMain"></main></div>`;
   }
   const grupos = [['Visão geral', ['painel', 'central']], ['Cadastros', ['pessoa', 'veiculo', 'telefone', 'ocorrencia', 'localidade', 'organizacao']],
-                  ['Análise', ['vinculos', 'mapa', 'dossies', 'documentos', 'relatorios']], ['Controle', ['acessos', 'auditoria']]];
+                  ['Análise', ['vinculos', 'organograma', 'mapa', 'dossies', 'documentos', 'relatorios']], ['Controle', ['acessos', 'auditoria']]];
   document.getElementById('intNav').innerHTML = grupos.map(([g, ids]) => {
     const itens = ids.map(id => MENU.find(m => m[0] === id)).filter(m => !m[3] || pode(m[3]));
     if (!itens.length) return '';
@@ -438,6 +452,56 @@ async function salvarEnt(tipo, id) {
   } catch (err) { toast(err.message, 'error'); } finally { hideOv(); }
 }
 
+// ── Fotos (vêm do cadastro do SICAD; RLS do SICAD decide) ───────────────
+S.fotos = {};
+async function fotosSicad(lista) {
+  const falta = lista.filter(x => x && x.sicad_pessoa_id && !(x.id in S.fotos));
+  for (let i = 0; i < falta.length; i += 30) {
+    const lote = falta.slice(i, i + 30);
+    const ids = lote.map(x => '"' + String(x.sicad_pessoa_id).replace(/"/g, '') + '"').join(',');
+    try {
+      const r = await req('GET', 'sicad_pessoas?select=id,foto&id=in.(' + encodeURIComponent(ids) + ')');
+      lote.forEach(x => { const p = r.find(z => String(z.id) === String(x.sicad_pessoa_id)); S.fotos[x.id] = (p && p.foto) || null; });
+    } catch (_) { lote.forEach(x => { S.fotos[x.id] = null; }); }
+  }
+  lista.forEach(x => { if (x && !(x.id in S.fotos)) S.fotos[x.id] = null; });
+}
+function avatarSVG(nome, cor) {
+  const ini = (nome || '?').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="${cor || '#1E3A8A'}"/><text x="60" y="74" font-family="Arial" font-size="44" font-weight="700" fill="#fff" text-anchor="middle">${ini}</text></svg>`);
+}
+async function preencherFotoFicha(x) {
+  const el = document.getElementById('iFotoP'); if (!el) return;
+  await fotosSicad([x]);
+  let src = S.fotos[x.id];
+  if (!src) { // sem foto no SICAD: primeira imagem anexada ao registro
+    const im = S.docs.find(d => d.entidade_id === x.id && /^image\//.test(d.mime || '') && d.classificacao !== 'sigiloso');
+    if (im) { try { const { data } = await supabase.storage.from('int-docs').download(im.storage_path); if (data) src = URL.createObjectURL(data); } catch (_) {} }
+  }
+  if (!document.getElementById('iFotoP')) return;
+  el.innerHTML = src ? `<img class="int-foto" src="${src}" alt="Foto" onclick="lbOpen(this.src)">` : `<div class="int-foto-vazia">Sem foto cadastrada${x.sicad_pessoa_id ? '' : '<br>(não vinculado ao SICAD)'}</div>`;
+}
+async function preencherGaleria(x) {
+  const el = document.getElementById('iGaleria'); if (!el) return;
+  const itens = [];
+  if (x.sicad_pessoa_id) {
+    try {
+      const r = await req('GET', 'sicad_pessoas?select=foto,tatuagens&id=eq.' + encodeURIComponent(x.sicad_pessoa_id));
+      const p = r[0] || {};
+      if (p.foto) itens.push([p.foto, 'Foto do cadastro SICAD']);
+      let t = p.tatuagens; try { t = typeof t === 'string' ? JSON.parse(t) : t; } catch (_) { t = []; }
+      (Array.isArray(t) ? t : []).forEach((tt, i) => { const src = typeof tt === 'string' ? tt : tt && tt.img; if (src) itens.push([src, 'Tatuagem ' + (i + 1) + (tt && tt.local ? ' · ' + tt.local : '') + (tt && tt.desc ? ' · ' + tt.desc : '')]); });
+    } catch (_) {}
+  }
+  for (const d of S.docs.filter(d => d.entidade_id === x.id && /^image\//.test(d.mime || ''))) {
+    try { const { data } = await supabase.storage.from('int-docs').download(d.storage_path); if (data) itens.push([URL.createObjectURL(data), d.codigo + ' · ' + d.titulo]); } catch (_) {}
+  }
+  if (!document.getElementById('iGaleria')) return;
+  el.className = itens.length ? 'int-galeria' : 'int-vazio';
+  el.innerHTML = itens.length ? itens.map(([src, cap]) => `<figure><img src="${src}" alt="" onclick="lbOpen(this.src)"><figcaption>${e(cap)}</figcaption></figure>`).join('') : 'Nenhuma foto. Fotos vêm do cadastro do SICAD (foto e tatuagens) ou de imagens anexadas em Documentos.';
+  aud('ver_fotos', 'int_entidades', x.id);
+}
+
 // ── Ficha do registro ───────────────────────────────────────────────────
 async function ficha(id, aba) {
   const x = ent(id); if (!x) return toast('Registro não encontrado.', 'error');
@@ -449,7 +513,7 @@ async function ficha(id, aba) {
   const docs = S.docs.filter(dc => dc.entidade_id === id);
   let corpo = '';
   if (aba === 'dados') {
-    corpo = `<div class="int-dl">${CAMPOS[x.tipo].map(([k, lbl]) => d[k] ? `<div><small>${e(lbl.replace(' *', ''))}</small>${e(d[k])}</div>` : '').join('')}
+    corpo = `${x.tipo === 'pessoa' ? '<div class="int-ficha-top"><div id="iFotoP"><div class="int-foto-vazia">Carregando foto...</div></div>' : ''}<div class="int-dl">${CAMPOS[x.tipo].map(([k, lbl]) => d[k] ? `<div><small>${e(lbl.replace(' *', ''))}</small>${e(d[k])}</div>` : '').join('')}
       ${x.data_fato ? `<div><small>Data do fato</small>${dataBR(x.data_fato)}</div>` : ''}
       ${x.lat != null ? `<div><small>Coordenadas</small>${(+x.lat).toFixed(5)}, ${(+x.lng).toFixed(5)} · <a href="https://www.google.com/maps?q=${x.lat},${x.lng}" target="_blank" rel="noopener">abrir</a></div>` : ''}
       <div><small>Situação</small>${tagNat(x.natureza)}</div>
@@ -459,7 +523,7 @@ async function ficha(id, aba) {
       <div><small>Cadastro</small>${dataHoraBR(x.criado_em)} · ${e(x.criado_por_nome || '—')}</div>
       ${x.atualizado_em ? `<div><small>Última alteração</small>${dataHoraBR(x.atualizado_em)}</div>` : ''}
       ${x.sicad_pessoa_id ? `<div><small>Cadastro SICAD</small><a href="#" onclick="INT.fechar();viewPerson('${e(x.sicad_pessoa_id)}');return false">abrir ficha no SICAD</a></div>` : ''}
-      ${x.observacoes ? `<div style="grid-column:1/-1"><small>Observações</small>${e(x.observacoes)}</div>` : ''}</div>`;
+      ${x.observacoes ? `<div style="grid-column:1/-1"><small>Observações</small>${e(x.observacoes)}</div>` : ''}</div>${x.tipo === 'pessoa' ? '</div>' : ''}`;
   } else if (aba === 'dossies') {
     corpo = `${pode('cadastrar') ? `<div class="int-busca"><select id="iAddDos">${opts(Object.fromEntries(S.dossies.filter(dd => !dos.includes(dd)).map(dd => [dd.id, dd.numero + ' — ' + dd.titulo])), '', 'Escolha o dossiê')}</select><input id="iAddPapel" placeholder="Papel no dossiê (opcional)"><button class="btn btn-primary btn-sm" onclick="INT.addAoDossie('${id}')">Incluir</button></div>` : ''}
       ${dos.length ? listaDossies(dos) : '<div class="int-vazio">Este registro ainda não está em nenhum dossiê.</div>'}`;
@@ -469,10 +533,12 @@ async function ficha(id, aba) {
     corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({entidade_id:'${id}'})">${ICON('anexo', { size: 15 })} Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
   } else if (aba === 'hist') {
     corpo = '<div id="iHist" class="int-vazio">Carregando histórico...</div>';
+  } else if (aba === 'fotos') {
+    corpo = '<div id="iGaleria" class="int-vazio">Carregando fotos...</div>';
   }
   modal(`<span class="int-cod">${e(x.codigo)}</span> ${e(x.titulo)}`, `
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">${tipoTag(x.tipo)} ${tagNat(x.natureza)} <span class="int-tag">${dos.length} dossiê(s)</span> <span class="int-tag">${vin.length} vínculo(s)</span></div>
-    <div class="int-tabs">${[['dados', 'Dados'], ['dossies', 'Dossiês'], ['vinculos', 'Vínculos'], ['docs', 'Documentos'], ['hist', 'Histórico']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.ficha('${id}','${k}')">${r}</button>`).join('')}</div>
+    <div class="int-tabs">${[['dados', 'Dados'], ...(x.tipo === 'pessoa' ? [['fotos', 'Fotos']] : []), ['dossies', 'Dossiês'], ['vinculos', 'Vínculos'], ['docs', 'Documentos'], ['hist', 'Histórico']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.ficha('${id}','${k}')">${r}</button>`).join('')}</div>
     ${corpo}
     <div class="row-btns" style="margin-top:14px;flex-wrap:wrap">
       ${pode('editar') ? `<button class="btn btn-outline" onclick="INT.formEnt('${x.tipo}','${id}')">${ICON('editar', { size: 15 })} Editar</button>` : ''}
@@ -481,6 +547,8 @@ async function ficha(id, aba) {
       ${pode('editar') ? `<button class="btn btn-outline" style="color:var(--danger)" onclick="INT.arquivar('int_entidades','${id}')">Arquivar</button>` : ''}
     </div>`, true);
   if (aba === 'hist') carregarHistorico(id, 'iHist');
+  if (aba === 'dados' && x.tipo === 'pessoa') preencherFotoFicha(x);
+  if (aba === 'fotos') preencherGaleria(x);
 }
 async function carregarHistorico(id, alvo) {
   try {
@@ -617,6 +685,172 @@ AFTER.vinculos = async () => {
   aud('analise_vinculos', 'int_vinculos', null, { dossies: f.dos });
   _redeFoco = null;
 };
+
+// ── Organograma das organizações ────────────────────────────────────────
+function membrosDe(orgId) {
+  return S.vinculos.filter(v => v.destino_id === orgId && MEMBRO.includes(v.tipo) && ent(v.origem_id) && ent(v.origem_id).tipo === 'pessoa')
+    .map(v => ({ v, x: ent(v.origem_id), nivel: v.nivel || FUNCOES[v.funcao] || 4 }));
+}
+function estruturaOrg(orgId) {
+  const membros = membrosDe(orgId); const ids = new Set(membros.map(m => m.x.id));
+  const sub = S.vinculos.filter(v => v.tipo === 'Subordinado a' && ids.has(v.origem_id) && ids.has(v.destino_id));
+  const com = S.vinculos.filter(v => v.tipo === 'Comunica-se com' && ids.has(v.origem_id) && ids.has(v.destino_id));
+  return { membros, sub, com };
+}
+const SIT_COR = { documentado: '#059669', informado: '#2563EB', hipotese: '#D97706' };
+// Altura no desenho = posição na cadeia de comando (quem responde a quem), não o nível da função
+function profundidades(est) {
+  const sup = {}; est.sub.forEach(v => { sup[v.origem_id] = v.destino_id; });
+  const prof = {};
+  const calc = (id, visto = new Set()) => {
+    if (prof[id]) return prof[id];
+    if (!sup[id] || visto.has(id)) return (prof[id] = 1);
+    visto.add(id); return (prof[id] = calc(sup[id], visto) + 1);
+  };
+  est.membros.forEach(m => calc(m.x.id));
+  return prof;
+}
+function nodesOrg(org, est, fotos) {
+  const prof = profundidades(est);
+  const nodes = [{ id: org.id, level: 0, shape: 'box', label: org.titulo, margin: 12, color: { background: '#0F172A', border: '#0F172A' }, font: { color: '#fff', size: 15, bold: true }, title: org.codigo + ' · ' + (org.dados && org.dados.area_atuacao || 'Organização') }];
+  est.membros.forEach(m => nodes.push({ id: m.x.id, level: prof[m.x.id] || 1, shape: 'circularImage', image: (fotos && fotos[m.x.id]) || avatarSVG(m.x.titulo, TIPOS.pessoa.cor), brokenImage: avatarSVG(m.x.titulo),
+    label: m.x.titulo + '\n' + (m.v.funcao || 'Função não informada') + ' · N' + m.nivel, size: m.nivel <= 1 ? 34 : m.nivel === 2 ? 30 : 26,
+    borderWidth: 4, color: { border: SIT_COR[m.v.situacao] || '#64748B', background: '#fff', highlight: { border: '#0F172A' } },
+    shapeProperties: { borderDashes: m.v.situacao === 'hipotese' ? [6, 4] : false, useBorderWithImage: true },
+    font: { size: 13, color: '#0F172A', strokeWidth: 4, strokeColor: '#fff', multi: false },
+    title: m.x.codigo + ' · ' + m.x.titulo + '\nFunção: ' + (m.v.funcao || '—') + ' · nível ' + m.nivel + '\nSituação: ' + NATUREZA[m.v.situacao] + '\nFonte: ' + m.v.fonte }));
+  return nodes;
+}
+function edgesOrg(org, est) {
+  const comSuperior = new Set(est.sub.map(v => v.origem_id));
+  const edges = est.sub.map(v => ({ id: v.id, from: v.destino_id, to: v.origem_id, arrows: 'to', width: 2, color: { color: '#334155' }, dashes: v.situacao === 'hipotese' ? [3, 5] : v.situacao === 'informado' ? [8, 5] : false, smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: .4 }, title: 'Hierarquia: ' + NATUREZA[v.situacao] + ' · fonte: ' + v.fonte }));
+  est.membros.filter(m => !comSuperior.has(m.x.id)).forEach(m => edges.push({ id: 'org_' + m.x.id, from: org.id, to: m.x.id, color: { color: '#CBD5E1' }, width: 1, smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: .4 }, title: 'Integrante (superior não identificado)' }));
+  est.com.forEach(v => edges.push({ id: v.id, from: v.origem_id, to: v.destino_id, color: { color: '#7C3AED' }, width: 2, dashes: [2, 6], arrows: { to: { enabled: true, scaleFactor: .5 }, from: { enabled: true, scaleFactor: .5 } }, smooth: { type: 'curvedCW', roundness: .25 }, label: v.observacoes ? v.observacoes.slice(0, 18) : '', font: { size: 9, color: '#6D28D9', strokeWidth: 3, strokeColor: '#fff' }, title: 'Comunica-se com · ' + NATUREZA[v.situacao] + '\nFonte: ' + v.fonte + (v.data_fato ? '\nData: ' + dataBR(v.data_fato) : '') + (v.observacoes ? '\n' + v.observacoes : '') }));
+  return edges;
+}
+const OPC_ORG = { layout: { hierarchical: { direction: 'UD', sortMethod: 'directed', levelSeparation: 140, nodeSpacing: 190, treeSpacing: 200, parentCentralization: true } }, physics: false, interaction: { hover: true, tooltipDelay: 120 } };
+let _org = null;
+VIEWS.organograma = () => {
+  const orgs = S.ents.filter(x => x.tipo === 'organizacao');
+  if (!S.orgId || !ent(S.orgId)) { const comMembros = orgs.map(o => [o, membrosDe(o.id).length]).sort((a, b) => b[1] - a[1]); S.orgId = comMembros[0] ? comMembros[0][0].id : null; }
+  const org = S.orgId ? ent(S.orgId) : null; const est = org ? estruturaOrg(org.id) : { membros: [], sub: [], com: [] };
+  return cabecalho('Organograma', 'Estrutura da organização: função e nível de cada integrante, quem responde a quem e quem se comunica com quem',
+      (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')">${ICON('novo', { size: 15 })} Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
+      (pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formEnt('organizacao')">Nova organização</button>` : '')) +
+    `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados.</div>
+    <div class="int-busca"><select onchange="INT.escolherOrg(this.value)">${orgs.map(o => `<option value="${o.id}" ${o.id === S.orgId ? 'selected' : ''}>${e(o.titulo)} (${membrosDe(o.id).length})</option>`).join('') || '<option>Nenhuma organização cadastrada</option>'}</select></div>
+    ${org ? `<div class="int-kpis"><div class="int-kpi"><b>${est.membros.length}</b><span>Integrantes</span></div><div class="int-kpi"><b>${est.membros.filter(m => m.v.funcao).length}</b><span>Com função definida</span></div><div class="int-kpi"><b>${est.sub.length}</b><span>Ligações de hierarquia</span></div><div class="int-kpi"><b>${est.com.length}</b><span>Comunicações lançadas</span></div></div>
+    <div id="intOrg" class="int-org"></div>
+    <div class="int-legenda"><span><i class="int-ln"></i>Hierarquia (superior → subordinado)</span><span><i class="int-ln" style="border-top:2px dotted #7C3AED"></i>Comunica-se com</span><span><i class="int-ln" style="border-top-color:#CBD5E1"></i>Integrante sem superior identificado</span></div>
+    <div id="intOrgInfo" style="margin-top:12px"></div>` : '<div class="int-vazio">Cadastre uma organização em Organizações.</div>'}`;
+};
+AFTER.organograma = async () => {
+  const el = document.getElementById('intOrg'); const org = S.orgId && ent(S.orgId); if (!el || !org) return;
+  try { await carregarVis(); } catch (err) { el.innerHTML = `<div class="int-vazio">${e(err.message)}</div>`; return; }
+  const est = estruturaOrg(org.id);
+  if (!est.membros.length) { el.innerHTML = '<div class="int-vazio" style="padding-top:120px">Nenhum integrante lançado. Use "Integrante / posição".</div>'; return; }
+  const desenhar = () => {
+    if (!document.getElementById('intOrg')) return;
+    if (_org) _org.destroy();
+    _org = new vis.Network(el, { nodes: new vis.DataSet(nodesOrg(org, est, S.fotos)), edges: new vis.DataSet(edgesOrg(org, est)) }, OPC_ORG);
+    _org.on('click', p => { if (p.nodes.length && p.nodes[0] !== org.id) infoIntegrante(org.id, p.nodes[0]); });
+  };
+  desenhar();
+  await fotosSicad(est.membros.map(m => m.x)); desenhar(); // redesenha com as fotos
+  aud('consultar_organograma', 'int_entidades', org.id);
+};
+function infoIntegrante(orgId, pid) {
+  const est = estruturaOrg(orgId); const m = est.membros.find(z => z.x.id === pid); if (!m) return;
+  const sup = est.sub.filter(v => v.origem_id === pid).map(v => ent(v.destino_id)).filter(Boolean);
+  const subs = est.sub.filter(v => v.destino_id === pid).map(v => ent(v.origem_id)).filter(Boolean);
+  const com = est.com.filter(v => v.origem_id === pid || v.destino_id === pid);
+  const el = document.getElementById('intOrgInfo'); if (!el) return;
+  const foto = S.fotos[pid];
+  el.innerHTML = `<div class="int-card"><div class="int-ficha-top">${foto ? `<img class="int-foto" style="width:96px;height:116px" src="${foto}" onclick="lbOpen(this.src)">` : ''}<div>
+    <h3 style="justify-content:flex-start;gap:10px">${e(m.x.titulo)} <span class="int-cod">${e(m.x.codigo)}</span></h3>
+    <div class="int-dl"><div><small>Função</small>${e(m.v.funcao || 'Não informada')}</div><div><small>Nível</small>${e(NIVEIS[m.nivel] || m.nivel)}</div>
+    <div><small>Situação</small>${tagNat(m.v.situacao)}</div><div><small>Fonte</small>${e(m.v.fonte)}</div>
+    <div><small>Responde a</small>${sup.map(s => e(s.titulo)).join(', ') || '—'}</div><div><small>Subordinados</small>${subs.map(s => e(s.titulo)).join(', ') || '—'}</div>
+    <div style="grid-column:1/-1"><small>Comunica-se com</small>${com.map(v => { const o = ent(v.origem_id === pid ? v.destino_id : v.origem_id); return e(o ? o.titulo : '?') + ' <span style="color:var(--neutral-500)">(' + e(NATUREZA[v.situacao]) + (v.observacoes ? ' · ' + e(v.observacoes) : '') + ')</span>'; }).join('<br>') || '—'}</div></div>
+    <div class="row-btns" style="margin-top:12px;flex-wrap:wrap">${pode('editar') || pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${orgId}','${pid}')">Editar posição</button>` : ''}${pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${orgId}','${pid}')">Lançar comunicação</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.ficha('${pid}')">Ficha completa</button></div>
+  </div></div></div>`;
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function formIntegrante(orgId, pid) {
+  if (!exige(pid ? 'editar' : 'cadastrar', pid ? 'editar posição' : 'lançar integrante')) return;
+  const org = ent(orgId); const est = estruturaOrg(orgId); const m = pid ? est.membros.find(z => z.x.id === pid) : null;
+  const supAtual = pid ? (est.sub.find(v => v.origem_id === pid) || {}).destino_id : '';
+  const pessoas = S.ents.filter(x => x.tipo === 'pessoa');
+  modal(`${m ? 'Posição de ' + e(m.x.titulo) : 'Integrante'} · ${e(org.titulo)}`, `
+    <datalist id="intPesDL">${pessoas.map(x => `<option value="${e(x.codigo)} — ${e(x.titulo)}">`).join('')}</datalist>
+    <div class="int-form">
+      ${campo('Pessoa *', `<input id="oPes" list="intPesDL" value="${m ? e(m.x.codigo + ' — ' + m.x.titulo) : ''}" ${m ? 'disabled' : ''} placeholder="Digite nome ou código (pessoa do banco central)">`, 'full')}
+      ${campo('Função na estrutura *', `<select id="oFun" onchange="INT.nivelDaFuncao(this.value)">${Object.keys(FUNCOES).map(k => `<option ${m && m.v.funcao === k ? 'selected' : ''}>${k}</option>`).join('')}</select>`)}
+      ${campo('Nível', `<select id="oNiv">${opts(NIVEIS, String(m ? m.nivel : 4))}</select>`)}
+      ${campo('Responde a (superior)', `<select id="oSup"><option value="">Não identificado</option>${est.membros.filter(z => z.x.id !== pid).map(z => `<option value="${z.x.id}" ${z.x.id === supAtual ? 'selected' : ''}>${e(z.x.titulo)}${z.v.funcao ? ' — ' + e(z.v.funcao) : ''}</option>`).join('')}</select>`)}
+      ${campo('Situação *', `<select id="oSit">${opts(NATUREZA, m ? m.v.situacao : 'informado')}</select>`)}
+      ${campo('Fonte *', `<input id="oFonte" value="${m && m.v.fonte !== 'Cadastro SICAD (marcado como faccionado)' ? e(m.v.fonte) : ''}" placeholder="Relatório, interceptação autorizada, depoimento...">`, 'full')}
+      ${campo('Data', `<input id="oData" type="date" value="${e(m && m.v.data_fato)}">`)}
+      ${campo('Confiabilidade', `<select id="oConf">${opts(CONF_FONTE, m && m.v.conf_fonte, 'Não avaliada')}</select>`)}
+      ${campo('Observações', `<textarea id="oObs">${e(m && m.v.observacoes)}</textarea>`, 'full')}
+    </div>
+    <div class="row-btns" style="margin-top:12px"><button class="btn btn-outline" onclick="INT.fechar()">Cancelar</button><button class="btn btn-primary" onclick="INT.salvarIntegrante('${orgId}','${pid || ''}')">Salvar</button></div>`, true);
+}
+async function salvarIntegrante(orgId, pid) {
+  const x = pid ? ent(pid) : (S.ents.find(z => z.tipo === 'pessoa' && z.codigo === val('oPes').split(' — ')[0].trim()));
+  if (!x) return toast('Escolha uma pessoa do banco central (cadastre antes em Pessoas, se preciso).', 'error');
+  const fonte = val('oFonte'); if (!fonte) return toast('Informe a fonte da posição na estrutura.', 'error');
+  const est = estruturaOrg(orgId); const m = est.membros.find(z => z.x.id === x.id);
+  const dadosV = { funcao: val('oFun'), nivel: +val('oNiv') || null, situacao: val('oSit'), fonte, data_fato: nul(val('oData')), conf_fonte: nul(val('oConf')), observacoes: nul(val('oObs')) };
+  const sup = val('oSup');
+  showOv('SALVANDO...');
+  try {
+    if (m) {
+      if (!pode('editar')) throw new Error('Sem permissão para editar posição.');
+      await req('PATCH', `int_vinculos?id=eq.${m.v.id}`, dadosV);
+    } else {
+      await req('POST', 'int_vinculos', Object.assign({ origem_id: x.id, destino_id: orgId, tipo: 'Integrante de' }, dadosV));
+    }
+    // hierarquia: arquiva superior antigo e lança o novo
+    const atual = est.sub.find(v => v.origem_id === x.id);
+    if (atual && atual.destino_id !== sup && pode('editar')) await req('PATCH', `int_vinculos?id=eq.${atual.id}`, { excluido_em: new Date().toISOString(), excluido_por: CU.id, excluido_motivo: 'Superior alterado no organograma' });
+    if (sup && (!atual || atual.destino_id !== sup)) await req('POST', 'int_vinculos', { origem_id: x.id, destino_id: sup, tipo: 'Subordinado a', situacao: dadosV.situacao, fonte, data_fato: dadosV.data_fato, conf_fonte: dadosV.conf_fonte });
+    aud('organograma_posicao', 'int_vinculos', x.id, { org: orgId, funcao: dadosV.funcao, nivel: dadosV.nivel, superior: sup || null });
+    await carregar(true); fechar(); toast('Posição salva.', 'success'); S.view = 'organograma'; S.orgId = orgId; render();
+  } catch (err) { toast(/funcao|nivel/.test(err.message) ? 'Rode a migration v16 para habilitar função e nível.' : err.message, 'error'); } finally { hideOv(); }
+}
+function formComunicacao(orgId, pid) {
+  if (!exige('cadastrar', 'lançar comunicação')) return;
+  const est = estruturaOrg(orgId);
+  const op = sel => est.membros.map(z => `<option value="${z.x.id}" ${z.x.id === sel ? 'selected' : ''}>${e(z.x.titulo)}${z.v.funcao ? ' — ' + e(z.v.funcao) : ''}</option>`).join('');
+  modal('Lançar comunicação entre integrantes', `<div class="int-form">
+      ${campo('Integrante A *', `<select id="cA">${op(pid)}</select>`)}${campo('Integrante B *', `<select id="cB">${op('')}</select>`)}
+      ${campo('Meio', `<select id="cMeio"><option>Telefone</option><option>WhatsApp / aplicativo</option><option>Presencial</option><option>Por intermediário</option><option>Carta / bilhete</option><option>Não identificado</option></select>`)}
+      ${campo('Situação *', `<select id="cSit">${opts(NATUREZA, 'informado')}</select>`)}
+      ${campo('Fonte *', `<input id="cFonte" placeholder="Ex.: interceptação autorizada proc. nº ..., relatório ...">`, 'full')}
+      ${campo('Data', `<input id="cData" type="date">`)}${campo('Confiabilidade', `<select id="cConf">${opts(CONF_FONTE, '', 'Não avaliada')}</select>`)}
+    </div><div class="row-btns" style="margin-top:12px"><button class="btn btn-outline" onclick="INT.fechar()">Cancelar</button><button class="btn btn-primary" onclick="INT.salvarComunicacao('${orgId}')">Salvar</button></div>`, true);
+}
+async function salvarComunicacao(orgId) {
+  const a = val('cA'), b = val('cB'); if (!a || !b || a === b) return toast('Escolha dois integrantes diferentes.', 'error');
+  const fonte = val('cFonte'); if (!fonte) return toast('Informe a fonte.', 'error');
+  showOv('SALVANDO...');
+  try { await req('POST', 'int_vinculos', { origem_id: a, destino_id: b, tipo: 'Comunica-se com', situacao: val('cSit'), fonte, data_fato: nul(val('cData')), conf_fonte: nul(val('cConf')), observacoes: val('cMeio') });
+    aud('organograma_comunicacao', 'int_vinculos', null, { org: orgId, a, b }); await carregar(true); fechar(); toast('Comunicação lançada.', 'success'); S.view = 'organograma'; S.orgId = orgId; render(); }
+  catch (err) { toast(err.message, 'error'); } finally { hideOv(); }
+}
+async function imagemOrg(orgId) {
+  const org = ent(orgId); const est = estruturaOrg(orgId); if (!org || !est.membros.length) return null;
+  await carregarVis(); await fotosSicad(est.membros.map(m => m.x));
+  const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-3000px;top:0;width:1200px;height:760px;background:#fff'; document.body.appendChild(box);
+  try {
+    const net = new vis.Network(box, { nodes: new vis.DataSet(nodesOrg(org, est, S.fotos)), edges: new vis.DataSet(edgesOrg(org, est)) }, OPC_ORG);
+    await new Promise(ok => setTimeout(ok, 900)); net.fit(); await new Promise(ok => setTimeout(ok, 500));
+    const cv = box.querySelector('canvas'); const out = document.createElement('canvas'); out.width = cv.width; out.height = cv.height;
+    const g = out.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, out.width, out.height); g.drawImage(cv, 0, 0); net.destroy();
+    return { url: out.toDataURL('image/jpeg', .9), w: out.width, h: out.height };
+  } catch (_) { return null; } finally { box.remove(); }
+}
 
 // ── Mapa ────────────────────────────────────────────────────────────────
 let _mapa = null, _mapaFoco = null;
@@ -1067,6 +1301,7 @@ async function gerarPDF(id) {
     }
     if (inc.has('pessoas')) { tit(num() + 'Pessoas e registros relacionados'); const ps = ents.filter(x => x.tipo === 'pessoa'); ps.forEach(x => par(`${x.codigo} — ${x.titulo}${resumoEnt(x) ? ' · ' + resumoEnt(x) : ''} · ${NATUREZA[x.natureza]} · fonte: ${x.fonte}`, 9.5)); if (!ps.length) par('Nenhuma pessoa relacionada.'); if (vin.length) { par('Vínculos lançados', 10.5, 'bold'); vin.forEach(v => par(`${(ent(v.origem_id) || {}).titulo || '?'} — ${v.tipo} → ${(ent(v.destino_id) || {}).titulo || '?'} [${NATUREZA[v.situacao]}; fonte: ${v.fonte}; conf. ${confTxt(v.conf_fonte, v.conf_info)}]`, 9.5)); } }
     if (inc.has('diagrama')) { tit(num() + 'Diagrama de vínculos', 120); const im = await imagemRede(r.dossies).catch(() => null); if (im) { img(im, 150); par('Legenda: linha contínua = documentado; tracejada = informado; pontilhada = hipótese em análise. Borda dourada = registro presente em mais de um dossiê.', 8.5, 'italic'); } else par('Sem vínculos lançados para os dossiês do relatório.'); }
+    if (inc.has('diagrama')) { for (const o of ents.filter(x => x.tipo === 'organizacao' && membrosDe(x.id).length)) { const im = await imagemOrg(o.id).catch(() => null); if (im) { tit('Organograma — ' + o.titulo, 120); img(im, 160); const est = estruturaOrg(o.id); est.membros.sort((a, b) => a.nivel - b.nivel).forEach(m => par(`${m.x.titulo} — ${m.v.funcao || 'função não informada'} (nível ${m.nivel}; ${NATUREZA[m.v.situacao]}; fonte: ${m.v.fonte})`, 9)); } } }
     if (inc.has('mapa')) { const geo = ents.filter(x => x.lat != null); if (geo.length) { tit(num() + 'Mapa geográfico', 120); const im = await imagemMapa(geo).catch(() => null); img(im, 150); geo.forEach((x, i) => par(`${i + 1}. ${x.codigo} — ${x.titulo} (${NATUREZA[x.natureza]}) · ${(+x.lat).toFixed(5)}, ${(+x.lng).toFixed(5)}`, 9)); } }
     if (inc.has('cronologia')) { tit(num() + 'Cronologia dos registros'); const ev = [...ents.map(x => [x.data_fato || x.criado_em.slice(0, 10), `${x.codigo} ${x.titulo} (${TIPOS[x.tipo].rot}${x.data_fato ? '' : ', data de cadastro'})`]), ...vin.filter(v => v.data_fato).map(v => [v.data_fato, `Vínculo: ${(ent(v.origem_id) || {}).titulo} — ${v.tipo} → ${(ent(v.destino_id) || {}).titulo}`]), ...docs.filter(d => d.data_doc).map(d => [d.data_doc, `Documento ${d.codigo}: ${d.titulo}`])].sort((a, b) => a[0] < b[0] ? -1 : 1); ev.forEach(([dt, t]) => par(`${dataBR(dt)} — ${t}`, 9.5)); if (!ev.length) par('Sem registros datados.'); }
     if (inc.has('documentos')) { tit(num() + 'Documentos de referência'); docs.forEach(d => par(`${d.codigo} — ${d.titulo} · ${CLASSIF_DOC[d.classificacao]} · origem: ${d.origem} · ${dataBR(d.data_doc)} · v${d.versao} · SHA-256 ${d.sha256.slice(0, 16)}…`, 9.5)); if (!docs.length) par('Nenhum documento anexado.'); }
@@ -1180,6 +1415,8 @@ Object.assign(INT_API(), {
   fechar, ficha, formEnt, salvarEnt, importarSicad, buscaSicad, usarSicad, addAoDossie, arquivar,
   formVinculo, salvarVinculo, formDossie, salvarDossie, abrirDossie, incluirExistente, confirmarInclusao, salvarAndamento,
   abaDossie: a => { S.abaDossie = a; render(); }, redeDoDossie: id => { S.filtros.rede = { dos: [id], sit: ['documentado', 'informado', 'hipotese'] }; S.view = 'vinculos'; render(); },
+  formIntegrante, salvarIntegrante, formComunicacao, salvarComunicacao, escolherOrg: id => { S.orgId = id; render(); },
+  nivelDaFuncao: f => { const el = document.getElementById('oNiv'); if (el) el.value = String(FUNCOES[f] || 4); },
   formDoc, salvarDoc, abrirDoc, baixarDoc, formRelatorio, salvarRel, abrirRel, fluxoRel, gerarPDF, salvarPerms, pesquisar, novaLocalidade,
   destravar, sairTrava, abaAud: a => { S.abaAud = a; render(); },
   verRede: id => { _redeFoco = id; S.filtros.rede = { dos: [], sit: ['documentado', 'informado', 'hipotese'] }; S.view = 'vinculos'; render(); },
