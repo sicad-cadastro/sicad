@@ -1044,16 +1044,19 @@ body.no-didatico .field-hint{display:none}
   /* Botão de ajuda menor e discreto: não cobre botões dos cartões */
   .help-fab{width:40px;height:40px;font-size:17px;right:10px;bottom:76px;opacity:.85}
   /* Respiro no fim da página pra barra inferior não cobrir o último item */
-  .page{padding-bottom:96px}
+  .page{padding-bottom:24px}
 
   /* ── USABILIDADE MOBILE ── */
   /* iPhone: campo com fonte < 16px dá zoom automático ao tocar */
   input,select,textarea{font-size:16px !important}
   /* Barra inferior: a área do "risquinho" do iPhone não espreme os ícones */
   .bottom-nav{height:calc(64px + env(safe-area-inset-bottom,0px))}
-  /* Barra inferior presa na tela (fixed): sticky "andava" junto ao rolar */
-  .bottom-nav{position:fixed !important;left:0;right:0;bottom:0;width:100%;transform:translateZ(0);-webkit-transform:translateZ(0)}
-  .content{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+  /* Formato APP: a página não rola, só o conteúdo. Assim o navegador não esconde/mostra
+     a barra de endereço ao rolar e a barra inferior fica parada no rodapé. */
+  #shell:not([style*="none"]){display:flex !important;flex-direction:column;height:100vh;height:100dvh;min-height:0 !important;overflow:hidden}
+  #shell .content{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:16px}
+  #shell .bottom-nav{position:relative !important;flex-shrink:0}
+  #shell .hdr{position:relative}
   /* Dicas recolhidas: só o título; toque para abrir */
   .help-banner{cursor:pointer;padding:10px 40px 10px 12px;align-items:center}
   .help-banner .help-banner-body{padding-top:0}
@@ -1064,9 +1067,9 @@ body.no-didatico .field-hint{display:none}
   .help-banner.aberto .help-banner-title::after{content:''}
   .help-banner .help-banner-icon{width:24px;height:24px;font-size:12px}
   /* Consultar: busca fica presa no topo enquanto rola a lista */
-  #page-consultar .search-box{position:sticky;top:52px;z-index:150;background:var(--bg);margin:0 -12px var(--sp-3);padding:8px 12px;box-shadow:0 6px 10px -8px rgba(15,23,42,.25)}
+  #page-consultar .search-box{position:sticky;top:-1px;z-index:150;background:var(--bg);margin:0 -12px var(--sp-3);padding:8px 12px;box-shadow:0 6px 10px -8px rgba(15,23,42,.25)}
   /* Cadastrar: Limpar/Salvar sempre visíveis acima da barra inferior */
-  #cadSaveBar{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:150;background:var(--neutral-0);margin:8px -12px 0 !important;padding:10px 12px;border-top:1px solid var(--neutral-200);box-shadow:0 -6px 12px -8px rgba(15,23,42,.25)}
+  #cadSaveBar{position:sticky;bottom:-16px;z-index:150;background:var(--neutral-0);margin:8px -12px 0 !important;padding:10px 12px;border-top:1px solid var(--neutral-200);box-shadow:0 -6px 12px -8px rgba(15,23,42,.25)}
   /* Ao rolar a lista, a busca presa mostra só o campo de nome */
   #page-consultar .search-box.compacta .s-filters{display:none !important}
   #page-consultar .search-box.compacta .s-facc:not(.ativo){display:none !important}
@@ -2428,10 +2431,12 @@ function sicadDidaticoToggle(){
 })();
 
 // Mobile: busca do Consultar fica compacta quando a lista rola
-window.addEventListener('scroll', () => {
+// No celular quem rola é o .content (formato app); no PC é a janela. Captura os dois.
+function _rolagemAtual(){ const c = document.querySelector('#shell .content'); return (c ? c.scrollTop : 0) + (window.scrollY || 0); }
+document.addEventListener('scroll', () => {
   const sb = document.querySelector('#page-consultar .search-box');
-  if (sb) sb.classList.toggle('compacta', window.scrollY > 260 && innerWidth < 768 && document.activeElement?.id !== 'sQuadra' && document.activeElement?.id !== 'sBairro');
-}, { passive: true });
+  if (sb) sb.classList.toggle('compacta', _rolagemAtual() > 260 && innerWidth < 768 && document.activeElement?.id !== 'sQuadra' && document.activeElement?.id !== 'sBairro');
+}, { passive: true, capture: true });
 
 // ─── BANNERS POR TELA ───────────────────────────────────────
 const HELP_BANNERS = {
@@ -3103,6 +3108,7 @@ function go(n, _fromPop){
   document.getElementById('page-'+n).classList.add('active');
   document.querySelectorAll(`[data-p="${n}"]`).forEach(b=>b.classList.add('active'));
   window.scrollTo&&window.scrollTo(0,0);
+  { const c = document.querySelector('#shell .content'); if (c) c.scrollTop = 0; }
   // Atualiza URL (hash) — só se veio de clique do usuário, não de popstate.
   // Sem isso, voltar do navegador criaria loop.
   if(!_fromPop){
