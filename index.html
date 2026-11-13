@@ -354,6 +354,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .s-filters input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
 .s-filters input:focus{border-color:var(--accent)}
 .s-filters input::placeholder{color:var(--text-dim)}
+.d-loc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#1E3A8A;color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:12.5px;letter-spacing:.4px;cursor:pointer;box-shadow:0 2px 8px rgba(30,58,138,.25)}
+.d-loc small{font-weight:500;opacity:.8;font-size:11px;letter-spacing:0}
+.d-loc:active{transform:scale(.97)}
+.ico-perfil{flex-shrink:0}
 .s-facc{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .s-facc-btn{border:1.5px solid #fecaca;background:#fff;color:#b91c1c;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;letter-spacing:.3px;cursor:pointer;min-height:38px;white-space:nowrap}
 .s-facc-btn b{font-weight:800;margin-left:2px}
@@ -2355,6 +2359,9 @@ function abrirMenuMais(){
 // Ou: <span data-icon="home"></span> renderizado no boot
 // ═══════════════════════════════════════════════════════════════════
 const ICONS = {
+  coruja: '<path d="M12 3.2c-3.9 0-6.4 2.9-6.4 7.2 0 5.4 2.9 9.6 6.4 9.6s6.4-4.2 6.4-9.6c0-4.3-2.5-7.2-6.4-7.2z"/><path d="M7.3 5.4L5.6 2.6l3.5 1.6M16.7 5.4l1.7-2.8-3.5 1.6"/><path d="M6.6 7.4L12 9.2l5.4-1.8"/><circle cx="9.2" cy="10.4" r="2.3"/><circle cx="14.8" cy="10.4" r="2.3"/><circle cx="9.2" cy="10.4" r=".5"/><circle cx="14.8" cy="10.4" r=".5"/><path d="M11.2 12.6l.8 1.7.8-1.7"/><path d="M9.6 16.6l1.2.8 1.2-.8 1.2.8 1.2-.8"/><path d="M10.2 20v1.4M13.8 20v1.4"/>',
+  aguia: '<path d="M5 21c-.6-7.8 1.6-14.2 7.2-15.4 3.4-.7 6.7.3 8.6 2.4.9 1 1.1 2.3.7 3.2-.4-.9-1.2-1.3-2.1-1.1"/><path d="M19.4 10.1c-.7 1.1-2.1 1.5-3.5 1.2L12.2 14l-1.9 7"/><path d="M12.4 8.3c1.3-.6 2.7-.6 3.9 0"/><circle cx="14.6" cy="9.3" r=".6"/><path d="M6.6 15.6l2.2-.9M6.4 18.3l2.4-.8"/>',
+  viatura: '<path d="M3 17v-3.6L5 9h14l2 4.4V17"/><path d="M3 17h18"/><circle cx="7" cy="17.2" r="1.9"/><circle cx="17" cy="17.2" r="1.9"/><path d="M8 9l1.3-2.6h5.4L16 9"/><path d="M10 6.4V4.6h4v1.8"/><path d="M3.5 13.4h17"/>',
   dashboard: '<path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/>',
   usuarios: '<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
   cadastrar: '<path d="M19 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6"/>',
@@ -2396,6 +2403,9 @@ const ICONS = {
   pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
   anexo: '<path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>'
 };
+// Símbolo de cada perfil: coruja = Inteligência · águia = GTOP · viatura = RP
+const PERFIL_ICONE = { inteligencia: 'coruja', gtop: 'aguia', rp: 'viatura' };
+function iconePerfil(role, size){ const n = PERFIL_ICONE[role]; return n ? ICON(n, { size: size || 14, cls: 'ico-perfil' }) : ''; }
 function ICON(name, opts){
   const size = (opts && opts.size) || 18;
   const cls = (opts && opts.cls) || '';
@@ -2925,13 +2935,14 @@ async function aplicarPerfilLogado(user){
     role: profile.role,
     matricula: profile.matricula || null,
     pode_excluir: !!profile.pode_excluir,
+    protegido: !!profile.protegido,
     usuario: user.email,
     login: user.email,
   };
 
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('shell').style.display='block';
-  document.getElementById('userChip').innerHTML=`${esc(CU.nome)} <b>${PERFIL_LABEL[CU.role]||(CU.role||'operator').toUpperCase()}</b>`;
+  document.getElementById('userChip').innerHTML=`${esc(CU.nome)} <b style="display:inline-flex;align-items:center;gap:4px">${iconePerfil(CU.role,14)}${PERFIL_LABEL[CU.role]||(CU.role||'operator').toUpperCase()}</b>`;
 
   // UI baseado em role
   aplicarUIporRole();
@@ -2964,8 +2975,11 @@ function podeCadastrarSICAD(){ return ['admin','inteligencia','gtop','supervisor
 function podeExcluirSICAD(){ return ['admin','inteligencia'].includes(CU?.role) || (CU?.role === 'gtop' && !!CU.pode_excluir); }
 // INTELIGÊNCIA: tudo, menos excluir membros e mexer em administradores (migration v11)
 function isInteligencia(){ return CU?.role === 'inteligencia'; }
-function podeGerirUsuarios(){ return ['admin','inteligencia'].includes(CU?.role); }
-function podeExcluirMembro(){ return CU?.role === 'admin'; }
+// Usuários (aprovar, editar, excluir): SOMENTE o dono do sistema (migration v17 garante no banco)
+const DONO_EMAIL = 'kleciofdes@gmail.com';
+function isDono(){ return !!CU && (CU.protegido === true || String(CU.email||'').toLowerCase() === DONO_EMAIL); }
+function podeGerirUsuarios(){ return isDono(); }
+function podeExcluirMembro(){ return isDono(); }
 
 // Mostra/esconde elementos conforme role
 function aplicarUIporRole(){
@@ -3145,7 +3159,7 @@ function abrirInteligencia(){
   const root = document.getElementById('intRoot');
   if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
   if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
-    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261111d';
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261112a';
     s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
     document.head.appendChild(s);
   });
@@ -3496,10 +3510,34 @@ function cadClear(){
 
 
 // ── VIEW PERSON ──
+// ── Ir até o endereço do cadastrado (Google Maps ou Waze) ──
+function destinoPessoa(p){
+  if (!p) return null;
+  if (p.lat != null && p.lng != null && !isNaN(+p.lat) && !isNaN(+p.lng)) return { lat: +p.lat, lng: +p.lng };
+  const end = [p.endereco, p.quadra && ('Quadra ' + p.quadra), p.bairro].filter(Boolean).join(', ');
+  return end ? { end: end + ', Brazlândia - DF' } : null;
+}
+function abrirLocalizacao(pid){
+  const p = allP.find(x => x.id === pid) || window._pessoaAberta; const d = destinoPessoa(p); if (!d) return toast('Cadastro sem endereço ou localização.', 'error');
+  const g = d.lat != null ? `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.end)}`;
+  const w = d.lat != null ? `https://www.waze.com/ul?ll=${d.lat},${d.lng}&navigate=yes` : `https://www.waze.com/ul?q=${encodeURIComponent(d.end)}&navigate=yes`;
+  let sh = document.getElementById('locSheet'); if (sh) sh.remove();
+  sh = document.createElement('div'); sh.id = 'locSheet'; sh.className = 'more-sheet-backdrop'; sh.style.zIndex = '1300';
+  sh.onclick = ev => { if (ev.target === sh) sh.remove(); };
+  sh.innerHTML = `<div class="more-sheet"><div class="more-sheet-title">Ir até ${esc(p.nome || '')}</div>
+    <div style="font-size:13px;color:var(--neutral-500);margin-bottom:14px">${d.lat != null ? 'Localização marcada no cadastro' : 'Pelo endereço: ' + esc(d.end)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <a class="btn btn-primary" style="text-decoration:none;justify-content:center" href="${g}" target="_blank" rel="noopener" onclick="logAudit('navegar_endereco','sicad_pessoas','${pid}',{app:'maps'})">${ICON('navegar',{size:16})} Google Maps</a>
+      <a class="btn btn-outline" style="text-decoration:none;justify-content:center" href="${w}" target="_blank" rel="noopener" onclick="logAudit('navegar_endereco','sicad_pessoas','${pid}',{app:'waze'})">${ICON('waze',{size:16})} Waze</a>
+    </div>
+    <button class="btn btn-outline btn-full" style="margin-top:10px" onclick="document.getElementById('locSheet').remove()">Fechar</button></div>`;
+  document.body.appendChild(sh);
+}
 async function viewPerson(id){
   showOv('CARREGANDO...');
   try{
     const p=await DB.getPerson(id)||allP.find(x=>x.id===id);if(!p)return;
+    window._pessoaAberta=p;
     editId=id;
     logAudit('view_person','sicad_pessoas',id,{ nome: p.nome });
     document.getElementById('personTitle').textContent=p.nome.toUpperCase().substring(0,22);
@@ -3519,6 +3557,7 @@ async function viewPerson(id){
         <div><div class="d-name">${esc(p.nome)}</div>
         <div class="d-nick">${p.apelido?'@ '+esc(p.apelido):'Sem apelido'}</div>
         <div style="margin-top:6px">${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
+        ${destinoPessoa(p)?`<button type="button" class="d-loc" onclick="abrirLocalizacao('${id}')" title="Ir até o endereço">${ICON('pin',{size:17})}<span>LOCALIZAÇÃO</span>${p.lat!=null?'':'<small>pelo endereço</small>'}</button>`:''}
       </div></div>
       <div class="d-flds">
         <div class="d-fld"><label>Nome da Mãe</label><span>${esc(p.mae||'—')}</span></div>
@@ -3826,7 +3865,7 @@ function renderUsersList(){
         <div class="uitem-info">
           <div class="ulogin" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span>${esc(u.nome)}</span>
-            <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px">${roleLabels[u.role]||u.role}</span>
+            <span class="badge" style="${roleBadgeStyle[u.role]||''};font-size:9px;padding:3px 7px;display:inline-flex;align-items:center;gap:4px">${iconePerfil(u.role,12)}${roleLabels[u.role]||u.role}</span>
             ${u.role==='gtop'&&u.pode_excluir?'<span class="badge" style="background:#FEF2F2;color:#DC2626;font-size:9px;padding:3px 7px;border:1px solid #FECACA">PODE EXCLUIR</span>':''}
             ${pendente?'<span class="badge" style="background:#fed7aa;color:#9a3412;font-size:9px;padding:3px 7px;border:1px solid #fdba74;animation:pulse 2s infinite">AGUARDANDO APROVAÇÃO</span>':''}
             ${u.protegido?'<span class="badge" style="background:#FEF9C3;color:#854D0E;font-size:9px;padding:3px 7px;border:1px solid #FDE047">PROTEGIDO</span>':''}

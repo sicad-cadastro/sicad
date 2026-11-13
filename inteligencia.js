@@ -697,8 +697,10 @@ AFTER.vinculos = async () => {
 };
 
 // ── Organograma das organizações ────────────────────────────────────────
+// Faccionado = marcado como faccionado no SICAD, ou lançado pelo analista como integrante da organização
+function ehFaccionado(x, v) { return !!x && x.tipo === 'pessoa' && ((x.dados && (x.dados.faccionado_sicad === true || x.dados.faccionado === true)) || (v && v.tipo === 'Integrante de')); }
 function membrosDe(orgId) {
-  return S.vinculos.filter(v => v.destino_id === orgId && MEMBRO.includes(v.tipo) && ent(v.origem_id) && ent(v.origem_id).tipo === 'pessoa')
+  return S.vinculos.filter(v => v.destino_id === orgId && MEMBRO.includes(v.tipo) && ehFaccionado(ent(v.origem_id), v))
     .map(v => ({ v, x: ent(v.origem_id), nivel: v.nivel || FUNCOES[v.funcao] || 4 }));
 }
 function estruturaOrg(orgId) {
@@ -747,7 +749,7 @@ VIEWS.organograma = () => {
   return cabecalho('Organograma', 'Estrutura da organização: função e nível de cada integrante, quem responde a quem e quem se comunica com quem',
       (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')">${ICON('novo', { size: 15 })} Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
       (pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formEnt('organizacao')">Nova organização</button>` : '')) +
-    `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados.</div>
+    `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados. <b>Só faccionados aparecem no organograma</b>; parentes, contatos e demais pessoas ligadas aparecem ao clicar no faccionado.</div>
     <div class="int-busca"><select onchange="INT.escolherOrg(this.value)">${orgs.map(o => `<option value="${o.id}" ${o.id === S.orgId ? 'selected' : ''}>${e(o.titulo)} (${membrosDe(o.id).length})</option>`).join('') || '<option>Nenhuma organização cadastrada</option>'}</select></div>
     ${org ? `<div class="int-kpis"><div class="int-kpi"><b>${est.membros.length}</b><span>Integrantes</span></div><div class="int-kpi"><b>${est.membros.filter(m => m.v.funcao).length}</b><span>Com função definida</span></div><div class="int-kpi"><b>${est.sub.length}</b><span>Ligações de hierarquia</span></div><div class="int-kpi"><b>${est.com.length}</b><span>Comunicações lançadas</span></div></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(-1)">−</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(0)">Ajustar à tela</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(1)">+</button></div>
@@ -837,12 +839,31 @@ AFTER.organograma = async () => {
   await fotosSicad(est.membros.map(m => m.x)); desenhar();
   aud('consultar_organograma', 'int_entidades', org.id);
 };
-function infoIntegrante(orgId, pid) {
+function relacionadosHtml(orgId, pid, est) {
+  const noOrg = new Set(est.membros.map(m => m.x.id)); noOrg.add(orgId);
+  const rel = S.vinculos.filter(v => (v.origem_id === pid || v.destino_id === pid))
+    .map(v => ({ v, o: ent(v.origem_id === pid ? v.destino_id : v.origem_id) }))
+    .filter(r => r.o && !noOrg.has(r.o.id) && !(MEMBRO.includes(r.v.tipo) && r.o.tipo === 'organizacao'));
+  if (!rel.length) return '<div style="margin-top:12px;font-size:12.5px;color:var(--neutral-500)">Nenhuma pessoa ou registro relacionado a este faccionado.</div>';
+  const pessoas = rel.filter(r => r.o.tipo === 'pessoa'), outros = rel.filter(r => r.o.tipo !== 'pessoa');
+  const linha = r => `<div class="int-item" onclick="INT.ficha('${r.o.id}')" style="align-items:center">${r.o.tipo === 'pessoa' ? `<img src="${S.fotos[r.o.id] || avatarSVG(r.o.titulo, '#64748B')}" style="width:38px;height:42px;border-radius:7px;object-fit:cover;flex-shrink:0">` : `<div style="color:${TIPOS[r.o.tipo].cor}">${ICON(TIPOS[r.o.tipo].ico, { size: 18 })}</div>`}<div class="m"><b>${e(r.o.titulo)}</b><small>${e(r.v.tipo)} · ${e(NATUREZA[r.v.situacao])} · fonte: ${e(r.v.fonte)}${r.o.tipo === 'pessoa' && !ehFaccionado(r.o) ? ' · não faccionado' : ''}</small></div></div>`;
+  return `<div style="margin-top:14px"><div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--neutral-500);margin-bottom:6px">Relacionadas a este faccionado (${rel.length})</div>
+    <div class="int-lista">${pessoas.map(linha).join('')}${outros.map(linha).join('')}</div></div>`;
+}
+async function carregarFotosRelacionados(orgId, pid) {
+  const est = estruturaOrg(orgId); const noOrg = new Set(est.membros.map(m => m.x.id));
+  const pes = S.vinculos.filter(v => v.origem_id === pid || v.destino_id === pid).map(v => ent(v.origem_id === pid ? v.destino_id : v.origem_id)).filter(o => o && o.tipo === 'pessoa' && !noOrg.has(o.id) && !(o.id in S.fotos));
+  if (!pes.length) return;
+  await fotosSicad(pes);
+  const el = document.getElementById('intOrgInfo'); if (el && el.dataset.pid === pid) infoIntegrante(orgId, pid, true);
+}
+function infoIntegrante(orgId, pid, semRecarga) {
   const est = estruturaOrg(orgId); const m = est.membros.find(z => z.x.id === pid); if (!m) return;
   const sup = est.sub.filter(v => v.origem_id === pid).map(v => ent(v.destino_id)).filter(Boolean);
   const subs = est.sub.filter(v => v.destino_id === pid).map(v => ent(v.origem_id)).filter(Boolean);
   const com = est.com.filter(v => v.origem_id === pid || v.destino_id === pid);
   const el = document.getElementById('intOrgInfo'); if (!el) return;
+  el.dataset.pid = pid;
   const foto = S.fotos[pid];
   el.innerHTML = `<div class="int-card"><div class="int-ficha-top">${foto ? `<img class="int-foto" style="width:96px;height:116px" src="${foto}" onclick="lbOpen(this.src)">` : ''}<div>
     <h3 style="justify-content:flex-start;gap:10px">${e(m.x.titulo)} <span class="int-cod">${e(m.x.codigo)}</span></h3>
@@ -850,9 +871,10 @@ function infoIntegrante(orgId, pid) {
     <div><small>Situação</small>${tagNat(m.v.situacao)}</div><div><small>Fonte</small>${e(m.v.fonte)}</div>
     <div><small>Responde a</small>${sup.map(s => e(s.titulo)).join(', ') || '—'}</div><div><small>Subordinados</small>${subs.map(s => e(s.titulo)).join(', ') || '—'}</div>
     <div style="grid-column:1/-1"><small>Comunica-se com</small>${com.map(v => { const o = ent(v.origem_id === pid ? v.destino_id : v.origem_id); return e(o ? o.titulo : '?') + ' <span style="color:var(--neutral-500)">(' + e(NATUREZA[v.situacao]) + (v.observacoes ? ' · ' + e(v.observacoes) : '') + ')</span>'; }).join('<br>') || '—'}</div></div>
-    <div class="row-btns" style="margin-top:12px;flex-wrap:wrap">${pode('editar') || pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${orgId}','${pid}')">Editar posição</button>` : ''}${pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${orgId}','${pid}')">Lançar comunicação</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.ficha('${pid}')">Ficha completa</button></div>
+    ${relacionadosHtml(orgId, pid, est)}
+    <div class="row-btns" style="margin-top:12px;flex-wrap:wrap">${pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formVinculo('${pid}')">Relacionar pessoa</button>` : ''}${pode('editar') || pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${orgId}','${pid}')">Editar posição</button>` : ''}${pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${orgId}','${pid}')">Lançar comunicação</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.ficha('${pid}')">Ficha completa</button></div>
   </div></div></div>`;
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (!semRecarga) { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); carregarFotosRelacionados(orgId, pid); }
 }
 function formIntegrante(orgId, pid) {
   if (!exige(pid ? 'editar' : 'cadastrar', pid ? 'editar posição' : 'lançar integrante')) return;
@@ -1427,7 +1449,7 @@ AFTER.acessos = async () => {
   try {
     const [us, acc] = await Promise.all([req('GET', 'sicad_perfis?select=id,nome,matricula,role,ativo&role=eq.inteligencia&order=nome'), req('GET', 'int_acessos?select=*')]);
     const el = document.getElementById('intAcessos'); if (!el) return; el.className = '';
-    el.innerHTML = us.length ? us.map(u => { const p = new Set((acc.find(a => a.user_id === u.id) || {}).perms || []); const eu = u.id === CU.id; return `<div class="int-card"><h3>${e(u.nome)} ${u.matricula ? `<span class="int-cod">mat ${e(u.matricula)}</span>` : ''} ${u.ativo ? '' : '<span class="int-tag sig">inativo</span>'}${eu ? '<span class="int-tag">você</span>' : ''}</h3><div class="int-chk">${PERMS.map(([k, rot]) => `<label><input type="checkbox" class="pm_${u.id}" value="${k}" ${p.has(k) ? 'checked' : ''} ${eu && CU.role !== 'admin' ? 'disabled' : ''}> ${rot}</label>`).join('')}</div>${eu && CU.role !== 'admin' ? '<div style="font-size:12px;color:var(--neutral-500);margin-top:8px">Você não altera as próprias permissões.</div>' : `<div style="text-align:right;margin-top:10px"><button class="btn btn-primary btn-sm" onclick="INT.salvarPerms('${u.id}','${e(u.nome).replace(/'/g, '')}')">Salvar permissões</button></div>`}</div>`; }).join('') : '<div class="int-vazio">Nenhum usuário com perfil INTELIGÊNCIA.</div>';
+    el.innerHTML = us.length ? us.map(u => { const p = new Set((acc.find(a => a.user_id === u.id) || {}).perms || []); const eu = u.id === CU.id; return `<div class="int-card"><h3><span style="display:inline-flex;align-items:center;gap:6px">${typeof iconePerfil === 'function' ? iconePerfil(u.role, 16) : ''}${e(u.nome)}</span> ${u.matricula ? `<span class="int-cod">mat ${e(u.matricula)}</span>` : ''} ${u.ativo ? '' : '<span class="int-tag sig">inativo</span>'}${eu ? '<span class="int-tag">você</span>' : ''}</h3><div class="int-chk">${PERMS.map(([k, rot]) => `<label><input type="checkbox" class="pm_${u.id}" value="${k}" ${p.has(k) ? 'checked' : ''} ${eu && CU.role !== 'admin' ? 'disabled' : ''}> ${rot}</label>`).join('')}</div>${eu && CU.role !== 'admin' ? '<div style="font-size:12px;color:var(--neutral-500);margin-top:8px">Você não altera as próprias permissões.</div>' : `<div style="text-align:right;margin-top:10px"><button class="btn btn-primary btn-sm" onclick="INT.salvarPerms('${u.id}','${e(u.nome).replace(/'/g, '')}')">Salvar permissões</button></div>`}</div>`; }).join('') : '<div class="int-vazio">Nenhum usuário com perfil INTELIGÊNCIA.</div>';
   } catch (err) { const el = document.getElementById('intAcessos'); if (el) el.textContent = err.message; }
 };
 async function salvarPerms(uid, nome) {
