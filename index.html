@@ -354,9 +354,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .s-filters input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
 .s-filters input:focus{border-color:var(--accent)}
 .s-filters input::placeholder{color:var(--text-dim)}
-.d-loc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#1E3A8A;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px;cursor:pointer}
-.d-loc small{font-weight:500;opacity:.8;font-size:11px;letter-spacing:0}
-.d-loc:active{transform:scale(.97)}
+.d-loc{display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:transparent;color:var(--neutral-700);border:1px solid var(--neutral-300);border-radius:6px;padding:5px 10px;font-weight:500;font-size:12.5px;cursor:pointer;font-family:var(--font-sans)}
+.d-loc:hover{border-color:var(--neutral-500);color:var(--neutral-900)}
+.d-loc .ico{color:var(--neutral-500)}
+.d-loc:active{background:var(--neutral-100)}
 .ico-perfil{flex-shrink:0}
 .s-facc{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .s-facc-btn{border:1.5px solid #fecaca;background:#fff;color:#b91c1c;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;letter-spacing:.3px;cursor:pointer;min-height:38px;white-space:nowrap}
@@ -3557,7 +3558,7 @@ async function viewPerson(id){
         <div><div class="d-name">${esc(p.nome)}</div>
         <div class="d-nick">${p.apelido?'@ '+esc(p.apelido):'Sem apelido'}</div>
         <div style="margin-top:6px">${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
-        ${destinoPessoa(p)?`<button type="button" class="d-loc" onclick="abrirLocalizacao('${id}')" title="Ir até o endereço">${ICON('pin',{size:17})}<span>Localização</span>${p.lat!=null?'':'<small>pelo endereço</small>'}</button>`:''}
+        ${destinoPessoa(p)?`<button type="button" class="d-loc" onclick="abrirLocalizacao('${id}')" title="Ir até o endereço">${ICON('pin',{size:14})}Ver localização</button>`:''}
       </div></div>
       <div class="d-flds">
         <div class="d-fld"><label>Nome da Mãe</label><span>${esc(p.mae||'—')}</span></div>
