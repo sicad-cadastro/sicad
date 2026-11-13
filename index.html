@@ -249,8 +249,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 }
 .btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-primary{background:var(--brand-navy);color:#fff;box-shadow:var(--shadow-sm)}
-.btn-primary:hover{background:var(--brand-navy-dark);box-shadow:var(--shadow-md)}
+.btn-primary{background:var(--brand-navy);color:#fff}
+.btn-primary:hover{background:var(--brand-navy-dark)}
 .btn-outline{background:var(--neutral-0);border-color:var(--neutral-300);color:var(--neutral-700)}
 .btn-outline:hover{border-color:var(--brand-navy);color:var(--brand-navy);background:var(--brand-navy-soft)}
 .btn-ghost{background:transparent;color:var(--neutral-600)}
@@ -354,7 +354,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .s-filters input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s}
 .s-filters input:focus{border-color:var(--accent)}
 .s-filters input::placeholder{color:var(--text-dim)}
-.d-loc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#1E3A8A;color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:12.5px;letter-spacing:.4px;cursor:pointer;box-shadow:0 2px 8px rgba(30,58,138,.25)}
+.d-loc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#1E3A8A;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px;cursor:pointer}
 .d-loc small{font-weight:500;opacity:.8;font-size:11px;letter-spacing:0}
 .d-loc:active{transform:scale(.97)}
 .ico-perfil{flex-shrink:0}
@@ -1104,11 +1104,11 @@ body.no-didatico .field-hint{display:none}
       <div id="loginFields">
         <div class="fg"><label>E-mail</label><input type="email" id="lu" placeholder="seu@email.gov.br" autocomplete="username"></div>
         <div class="fg"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
-        <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">ENTRAR</button>
+        <button class="btn btn-primary btn-full" onclick="login()" id="loginBtn" style="margin-top:4px">Entrar</button>
         <button class="btn btn-outline btn-full btn-sm" onclick="resetPwd()" style="margin-top:8px;font-size:11px">Esqueci minha senha</button>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">NÃO TEM CADASTRO?</div>
-          <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(true)">SOLICITAR CADASTRO</button>
+          <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(true)">Solicitar cadastro</button>
         </div>
       </div>
       <div id="signupFields" style="display:none">
@@ -1116,8 +1116,8 @@ body.no-didatico .field-hint{display:none}
         <div class="fg"><label>E-mail *</label><input type="email" id="suEmail" placeholder="seu@email.com" autocomplete="email">
           <div style="font-size:12px;color:var(--neutral-500);margin-top:6px;line-height:1.4">Esse e-mail será usado para recuperação de senha.</div></div>
         <div class="fg"><label>Senha *</label><input type="password" id="suSenha" placeholder="Mínimo 6 caracteres"></div>
-        <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">ENVIAR SOLICITAÇÃO</button>
-        <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">← Voltar ao login</button>
+        <button class="btn btn-primary btn-full" onclick="signup()" id="signupBtn" style="margin-top:4px">Enviar solicitação</button>
+        <button class="btn btn-outline btn-full btn-sm" onclick="toggleSignup(false)" style="margin-top:8px;font-size:11px">Voltar ao login</button>
         <div style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.5;text-align:center">Após o cadastro, um administrador precisa <b>aprovar</b> sua conta antes do primeiro acesso.</div>
       </div>
     </div>
@@ -1218,7 +1218,7 @@ body.no-didatico .field-hint{display:none}
     <!-- CADASTRAR -->
     <div class="page" id="page-cadastrar">
       <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
-      <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">ADICIONAR COMO FORAGIDO</button>
+      <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">Adicionar como foragido</button>
       <!-- OCR de documento (RG/CPF/CNH) -->
       <div class="card" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:1px solid rgba(124,58,237,.35);margin-bottom:16px;padding:14px">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
@@ -1269,8 +1269,8 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="camwrap" id="faceCam"><video id="faceVid" autoplay playsinline muted></video></div>
           <div class="cam-btns" id="faceCamBtns" style="display:none">
-            <button class="btn btn-primary btn-sm" onclick="camCapture('face')">CAPTURAR</button>
-            <button class="btn btn-outline btn-sm" onclick="camClose('face')">✕ CANCELAR</button>
+            <button class="btn btn-primary btn-sm" onclick="camCapture('face')">Capturar</button>
+            <button class="btn btn-outline btn-sm" onclick="camClose('face')">Cancelar</button>
           </div>
         </div>
 
@@ -1326,7 +1326,7 @@ body.no-didatico .field-hint{display:none}
             <input type="hidden" id="fLng">
             <div id="locStatus" style="font-size:12px;color:var(--text-mid);margin-bottom:8px">Nenhuma coordenada definida — será buscada pelo endereço/CEP automaticamente.</div>
             <div id="locMini" onclick="abrirMapaAjuste()" title="Toque para ajustar" style="display:none;height:170px;border-radius:10px;overflow:hidden;border:1px solid var(--neutral-200);margin-bottom:8px;cursor:pointer;position:relative;z-index:0"></div>
-            <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">AJUSTAR POSIÇÃO NO MAPA</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="abrirMapaAjuste()" style="width:100%">Ajustar posição no mapa</button>
           </div>
         </div>
 
@@ -1366,9 +1366,9 @@ body.no-didatico .field-hint{display:none}
         <div class="fg" style="margin-top:4px">
           <label>SENHA DO CELULAR DA PESSOA</label>
           <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">NÚMEROS</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">LETRAS+NÚM</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">PADRÃO</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoNum" onclick="setTipoSenha('numeros')" style="flex:1">Números</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoAlf" onclick="setTipoSenha('alfanumerico')" style="flex:1">Letras+núm</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnTipoPad" onclick="setTipoSenha('padrao')" style="flex:1">Padrão</button>
           </div>
 
           <!-- Numérica -->
@@ -1401,7 +1401,7 @@ body.no-didatico .field-hint{display:none}
               <span id="padSequencia" style="font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--accent);letter-spacing:6px">—</span>
             </div>
             <div style="text-align:center;margin-top:8px">
-              <button type="button" class="btn btn-outline btn-sm" onclick="clearPattern()">↺ LIMPAR PADRÃO</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="clearPattern()">Limpar padrão</button>
             </div>
           </div>
 
@@ -1426,8 +1426,8 @@ body.no-didatico .field-hint{display:none}
           <div class="thumbs" id="tatThumbs"></div>
           <div class="camwrap" id="tatCam"><video id="tatVid" autoplay playsinline muted></video></div>
           <div class="cam-btns" id="tatCamBtns" style="display:none">
-            <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">CAPTURAR</button>
-            <button class="btn btn-outline btn-sm" onclick="camClose('tat')">✕ CANCELAR</button>
+            <button class="btn btn-primary btn-sm" onclick="camCapture('tat')">Capturar</button>
+            <button class="btn btn-outline btn-sm" onclick="camClose('tat')">Cancelar</button>
           </div>
         </div>
 
@@ -1457,8 +1457,8 @@ body.no-didatico .field-hint{display:none}
         </div>
 
         <div class="row-btns" id="cadSaveBar" style="margin-top:8px">
-          <button class="btn btn-outline" onclick="cadClear()">LIMPAR</button>
-          <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">SALVAR CADASTRO</button>
+          <button class="btn btn-outline" onclick="cadClear()">Limpar</button>
+          <button class="btn btn-success" onclick="savePerson()" id="saveBtn" style="flex:2">Salvar cadastro</button>
         </div>
       </div>
     </div>
@@ -1499,8 +1499,8 @@ body.no-didatico .field-hint{display:none}
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap">
         <div class="rcnt" id="rcnt"></div>
         <div id="dedupBtns" style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-family:'IBM Plex Mono',monospace;font-weight:700" title="Mostra os grupos antes de remover">REVISAR DUPLICATAS</button>
-          <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-family:'IBM Plex Mono',monospace;font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">LIMPAR AUTOMÁTICO</button>
+          <button class="btn btn-outline btn-sm" onclick="dedupAbrir()" style="font-weight:700" title="Mostra os grupos antes de remover">Revisar duplicatas</button>
+          <button class="btn btn-primary btn-sm" onclick="dedupAuto()" style="font-weight:700;background:#991b1b;border-color:#991b1b" title="Detecta e remove sem revisão (1 clique)">Limpar automático</button>
         </div>
       </div>
       <div class="pgrid" id="pgrid"></div>
@@ -1535,8 +1535,8 @@ body.no-didatico .field-hint{display:none}
         </div>
         <!-- Ações em lote -->
         <div class="row-btns" style="margin-bottom:14px">
-          <button class="btn btn-primary" onclick="openUserModal()" style="flex:2">NOVO USUÁRIO</button>
-          <button class="btn btn-outline" onclick="document.getElementById('csvUsersInput').click()" style="flex:1">IMPORTAR CSV</button>
+          <button class="btn btn-primary" onclick="openUserModal()" style="flex:2">Novo usuário</button>
+          <button class="btn btn-outline" onclick="document.getElementById('csvUsersInput').click()" style="flex:1">Importar CSV</button>
           <input type="file" id="csvUsersInput" accept=".csv,text/csv" style="display:none" onchange="importUsersCSV(this.files[0])">
         </div>
         <div id="uListCount" style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:10px;letter-spacing:1px"></div>
@@ -1554,7 +1554,7 @@ body.no-didatico .field-hint{display:none}
         </div>
         <div class="row-btns" id="c3AcoesTopo" style="flex:0 0 auto">
           <button class="btn btn-outline" onclick="c3FormMorador()"><span data-icon="cadastrar" data-size="16"></span>Morador</button>
-          <button class="btn btn-primary" onclick="c3FormChacara()"><span data-icon="novo" data-size="16"></span>Nova chácara</button>
+          <button class="btn btn-primary" onclick="c3FormChacara()">Nova chácara</button>
         </div>
       </div>
 
@@ -1663,7 +1663,7 @@ body.no-didatico .field-hint{display:none}
         </select>
         <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
         <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px"><span data-icon="pin" data-size="18"></span></button>
-        <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">CALOR</button>
+        <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">Calor</button>
       </div>
 
       <div style="position:relative">
@@ -1679,37 +1679,37 @@ body.no-didatico .field-hint{display:none}
     <!-- FORAGIDOS -->
     <div class="page" id="page-foragidos">
 
-      <!-- Banner alerta -->
-      <div style="background:rgba(255,61,61,.12);border:2px solid var(--danger);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;animation:pulseRed 2s infinite">
-        <div style="font-size:36px;margin-bottom:8px;color:var(--danger)"><span data-icon="foragidos" data-size="31"></span></div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--danger);text-shadow:0 0 20px rgba(255,61,61,.5)">FORAGIDOS DE BRAZLÂNDIA</div>
-        <div style="font-size:12px;color:#ff8080;margin-top:6px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">VERIFIQUE SEMPRE ANTES DE ABORDAR</div>
-        <a href="https://seape.df.gov.br/foragidos/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--danger);color:white;padding:13px 24px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 20px rgba(255,61,61,.5)">
-          LISTA OFICIAL DE FORAGIDOS PPDF
-        </a>
+      <!-- Banner -->
+      <div style="background:#fff;border:1px solid #FECACA;border-left:4px solid var(--danger);border-radius:12px;padding:18px 18px 16px;margin-bottom:16px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+        <div style="color:var(--danger);padding-top:2px"><span data-icon="foragidos" data-size="26"></span></div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:19px;font-weight:800;color:var(--neutral-900);letter-spacing:-.01em">Foragidos de Brazlândia</div>
+          <div style="font-size:13px;color:var(--neutral-500);margin-top:3px">Verifique sempre antes de abordar.</div>
+        </div>
+        <a class="btn btn-sm" href="https://seape.df.gov.br/foragidos/" target="_blank" rel="noopener" style="background:var(--danger);color:#fff;text-decoration:none;align-self:center">Lista oficial de foragidos PPDF</a>
       </div>
 
       <!-- Observação BNMP -->
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:12px 14px;margin-bottom:20px">
         <div style="font-size:22px;line-height:1;color:#b45309"><span data-icon="shield" data-size="19"></span></div>
         <div style="flex:1;min-width:180px;color:#78350f;font-size:13px;line-height:1.45">
-          <strong style="font-size:14px;letter-spacing:.3px">OBSERVAÇÃO: CONFIRME NO BNMP</strong><br>
+          <strong style="font-size:14px">Confirme no BNMP</strong><br>
           Antes de abordar ou conduzir, confirme se o mandado de prisão continua em aberto no Banco Nacional de Medidas Penais e Prisões.
         </div>
-        <a href="https://portalbnmp.cnj.jus.br/" target="_blank" rel="noopener" style="background:#b45309;color:#fff;padding:10px 16px;border-radius:9px;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap">ABRIR BNMP ↗</a>
+        <a href="https://portalbnmp.cnj.jus.br/" target="_blank" rel="noopener" class="btn btn-sm" style="background:#B45309;color:#fff;text-decoration:none;white-space:nowrap">Abrir BNMP</a>
       </div>
 
       <!-- Tabs internas -->
       <div style="display:flex;gap:8px;margin-bottom:20px">
-        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">PROCURADOS</button>
-        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">NO SISTEMA</button>
+        <button class="btn btn-danger" id="tabAlertasBtn" onclick="showForagidoTab('alertas')" style="flex:1">Procurados</button>
+        <button class="btn btn-outline" id="tabSistemaBtn" onclick="showForagidoTab('sistema')" style="flex:1">No sistema</button>
       </div>
 
       <!-- Tab alertas -->
       <div id="tabAlertas">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
           <div class="sec-title" style="color:var(--danger);margin-bottom:0">PROCURADOS EM BRAZLÂNDIA</div>
-          <button class="btn btn-danger btn-sm" id="btnNovoForagido" onclick="openAlertaModal()">+ NOVO FORAGIDO</button>
+          <button class="btn btn-danger btn-sm" id="btnNovoForagido" onclick="openAlertaModal()">Novo foragido</button>
         </div>
         <div id="alertasList"></div>
         <div id="alertasEmpty" class="empty" style="display:none">
@@ -1816,8 +1816,8 @@ body.no-didatico .field-hint{display:none}
 
       <!-- Ações -->
       <div class="row-btns" style="margin-bottom:16px">
-        <button class="btn btn-outline" onclick="resetFaceCompare()">LIMPAR</button>
-        <button class="btn btn-primary" id="btnCompareFaces" onclick="compareFaces()" disabled>COMPARAR ROSTOS</button>
+        <button class="btn btn-outline" onclick="resetFaceCompare()">Limpar</button>
+        <button class="btn btn-primary" id="btnCompareFaces" onclick="compareFaces()" disabled>Comparar rostos</button>
       </div>
 
       <!-- Resultado -->
@@ -1851,8 +1851,8 @@ body.no-didatico .field-hint{display:none}
         </div>
 
         <div class="row-btns" style="margin-bottom:16px">
-          <button class="btn btn-outline" onclick="resetFaceCompare()">LIMPAR</button>
-          <button class="btn btn-primary" id="btnSearchFace" onclick="searchFaceInDB()" disabled>BUSCAR CORRESPONDÊNCIAS</button>
+          <button class="btn btn-outline" onclick="resetFaceCompare()">Limpar</button>
+          <button class="btn btn-primary" id="btnSearchFace" onclick="searchFaceInDB()" disabled>Buscar correspondências</button>
         </div>
 
         <!-- Progresso da busca -->
@@ -1889,13 +1889,13 @@ body.no-didatico .field-hint{display:none}
               FOTO
               <input type="file" accept="image/*" capture="environment" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">DO BANCO</button>
+            <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">Do banco</button>
           </div>
         </div>
 
         <div class="row-btns" style="margin-bottom:16px">
-          <button class="btn btn-outline" onclick="resetFaceWeb()">LIMPAR</button>
-          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>BUSCAR EM REDES SOCIAIS + WEB</button>
+          <button class="btn btn-outline" onclick="resetFaceWeb()">Limpar</button>
+          <button class="btn btn-primary" id="btnBuscarRostoWeb" onclick="buscarRostoWeb()" disabled>Buscar em redes sociais + web</button>
         </div>
 
         <div id="faceWebStatus" style="display:none;background:#f1f5f9;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text-mid)"></div>
@@ -2066,8 +2066,8 @@ body.no-didatico .field-hint{display:none}
       <div class="fg">
         <label>O FORAGIDO JÁ TEM CADASTRO NO SICAD?</label>
         <div style="display:flex;gap:8px;margin-bottom:4px">
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">JÁ CADASTRADO NO SICAD</button>
-          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">NOVO FORAGIDO</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoExist" onclick="setAlertaTipo('existente')" style="flex:1">Já cadastrado no SICAD</button>
+          <button type="button" class="btn btn-outline btn-sm" id="aTipoNovo" onclick="setAlertaTipo('novo')" style="flex:1">Novo foragido</button>
         </div>
       </div>
 
@@ -2108,24 +2108,24 @@ body.no-didatico .field-hint{display:none}
             <input type="text" id="aLat" placeholder="Latitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
             <input type="text" id="aLng" placeholder="Longitude" inputmode="decimal" autocomplete="off" style="flex:1;min-width:0">
           </div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="aUsarGPS()" style="margin-top:8px;width:100%">USAR MINHA LOCALIZAÇÃO ATUAL</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="aUsarGPS()" style="margin-top:8px;width:100%">Usar minha localização atual</button>
           <div id="aLocInfo" style="font-size:11px;color:var(--text-dim);margin-top:4px"></div>
         </div>
         <div class="fg"><label>Nº DO PROCESSO</label><input type="text" id="aProcesso" placeholder="Ex.: 0712345-67.2026.8.07.0002" autocomplete="off"></div>
         <div class="fg">
           <label>NÍVEL DE PERICULOSIDADE</label>
           <div style="display:flex;gap:8px">
-            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">MÉDIO</button>
-            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">ALTO</button>
-            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">EXTREMO</button>
+            <button type="button" class="btn btn-sm perig-1" id="aPerig1" onclick="setPerig(1)" style="flex:1;border-radius:10px">Médio</button>
+            <button type="button" class="btn btn-sm perig-2" id="aPerig2" onclick="setPerig(2)" style="flex:1;border-radius:10px">Alto</button>
+            <button type="button" class="btn btn-sm perig-3" id="aPerig3" onclick="setPerig(3)" style="flex:1;border-radius:10px">Extremo</button>
           </div>
         </div>
         <div class="fg"><label>OBSERVAÇÕES</label><input type="text" id="aObs" placeholder="Informações relevantes..." autocomplete="off"></div>
       </div>
 
       <div class="row-btns" style="margin-top:8px">
-        <button class="btn btn-outline" onclick="closeAlertaModal()">CANCELAR</button>
-        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">SALVAR FORAGIDO</button>
+        <button class="btn btn-outline" onclick="closeAlertaModal()">Cancelar</button>
+        <button class="btn btn-danger" onclick="saveAlerta()" id="saveAlertaBtn" style="flex:2">Salvar foragido</button>
       </div>
     </div>
   </div>
@@ -2175,9 +2175,9 @@ body.no-didatico .field-hint{display:none}
         </label>
       </div>
       <div class="row-btns" style="margin-top:4px">
-        <button class="btn btn-outline" onclick="closeUserModal()">CANCELAR</button>
-        <button class="btn btn-outline" id="uResetPwdBtn" onclick="resetUserPassword()" style="display:none">ENVIAR RESET</button>
-        <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">SALVAR</button>
+        <button class="btn btn-outline" onclick="closeUserModal()">Cancelar</button>
+        <button class="btn btn-outline" id="uResetPwdBtn" onclick="resetUserPassword()" style="display:none">Enviar reset</button>
+        <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">Salvar</button>
       </div>
     </div>
   </div>
@@ -2202,8 +2202,8 @@ body.no-didatico .field-hint{display:none}
       <div id="locMap" style="height:380px;border-radius:12px;border:1px solid var(--border);overflow:hidden;z-index:1"></div>
       <div id="locCoords" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-mid);margin-top:10px;text-align:center"></div>
       <div class="row-btns" style="margin-top:14px">
-        <button class="btn btn-outline" onclick="fecharMapaAjuste()">CANCELAR</button>
-        <button class="btn btn-primary" onclick="confirmarPosicaoMapa()">✓ USAR ESTA POSIÇÃO</button>
+        <button class="btn btn-outline" onclick="fecharMapaAjuste()">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmarPosicaoMapa()">Usar esta posição</button>
       </div>
     </div>
   </div>
@@ -2228,10 +2228,10 @@ body.no-didatico .field-hint{display:none}
         <div id="liveCamFlash" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .12s"></div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px">
-        <button class="btn btn-outline btn-sm" id="liveCamSwitchBtn" onclick="switchLiveCam()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">TROCAR CÂMERA</button>
-        <button class="btn btn-outline btn-sm" id="liveCamAutoBtn" onclick="toggleLiveCamAuto()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">AUTO: ON</button>
+        <button class="btn btn-outline btn-sm" id="liveCamSwitchBtn" onclick="switchLiveCam()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">Trocar câmera</button>
+        <button class="btn btn-outline btn-sm" id="liveCamAutoBtn" onclick="toggleLiveCamAuto()" style="flex:1;background:#1e293b;color:#fff;border-color:#475569">Automático: ligado</button>
       </div>
-      <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>CAPTURAR AGORA</button>
+      <button class="btn btn-primary" id="liveCamCaptureBtn" onclick="captureLiveCam()" style="width:100%;background:#7c3aed;font-size:15px;padding:14px" disabled>Capturar agora</button>
       <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">Auto-captura ativada · estabilize o rosto na câmera</div>
     </div>
   </div>
@@ -2258,8 +2258,8 @@ body.no-didatico .field-hint{display:none}
         <div style="font-size:10px;color:var(--text-dim);margin-top:6px">Clique nas sugestões pra adicionar rapidamente. Quanto mais tags, mais fácil achar via busca reversa.</div>
       </div>
       <div class="row-btns" style="margin-top:4px">
-        <button class="btn btn-outline" onclick="fecharTatModal()">CANCELAR</button>
-        <button class="btn btn-primary" onclick="salvarTatuagem()">✓ SALVAR</button>
+        <button class="btn btn-outline" onclick="fecharTatModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarTatuagem()">Salvar</button>
       </div>
     </div>
   </div>
@@ -2900,7 +2900,7 @@ async function login(){
     if (error) { errLg('E-mail ou senha inválidos.'); return; }
     await aplicarPerfilLogado(data.user);
   }catch(e){errLg('Erro: '+e.message);}
-  finally{btn.disabled=false;btn.textContent='ENTRAR';}
+  finally{btn.disabled=false;btn.textContent='Entrar';}
 }
 
 // Carrega perfil + role do usuário e prepara a interface
@@ -3159,7 +3159,7 @@ function abrirInteligencia(){
   const root = document.getElementById('intRoot');
   if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
   if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
-    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261112a';
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261113a';
     s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
     document.head.appendChild(s);
   });
@@ -3362,7 +3362,7 @@ function _renderMaisPagina(){
   if (fim < _listaFiltrada.length){
     const restante = _listaFiltrada.length - fim;
     grid.insertAdjacentHTML('afterend',
-      `<button id="btnCarregarMais" class="btn btn-outline" onclick="_renderMaisPagina()" style="margin:14px auto;display:block;font-family:'IBM Plex Mono',monospace;font-weight:700">▼ CARREGAR MAIS ${Math.min(PAGE_SIZE, restante)} (de ${restante} restantes)</button>`);
+      `<button id="btnCarregarMais" class="btn btn-outline" onclick="_renderMaisPagina()" style="margin:14px auto;display:block;font-weight:700">Carregar mais ${Math.min(PAGE_SIZE, restante)} (de ${restante} restantes)</button>`);
   }
 }
 
@@ -3431,7 +3431,7 @@ async function savePerson(){
   if(editMode && editId && !podeCadastrarSICAD()){ toast('Seu perfil cadastra, mas não edita cadastros existentes.','error'); return; }
   const nome=document.getElementById('fNome').value.trim();
   if(!nome){toast('Nome completo é obrigatório.','error');return;}
-  const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> SALVANDO...';
+  const btn=document.getElementById('saveBtn');btn.disabled=true;btn.innerHTML='<span class="ld"></span> Salvando...';
   try{
     const now=new Date().toISOString();
     // Coleta senha antes de qualquer outra operação
@@ -3485,7 +3485,7 @@ async function savePerson(){
     }
     cadClear();renderList(allP);go('consultar');
   }catch(e){toast('Erro: '+e.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='SALVAR CADASTRO';}
+  finally{btn.disabled=false;btn.innerHTML='Salvar cadastro';}
 }
 function gv(id){return document.getElementById(id).value.trim()||null;}
 
@@ -3557,7 +3557,7 @@ async function viewPerson(id){
         <div><div class="d-name">${esc(p.nome)}</div>
         <div class="d-nick">${p.apelido?'@ '+esc(p.apelido):'Sem apelido'}</div>
         <div style="margin-top:6px">${p.bairro?`<span class="tag tag-b">${esc(p.bairro)}</span>`:''} ${p.quadra?`<span class="tag tag-q">Q:${esc(p.quadra)}</span>`:''}</div>
-        ${destinoPessoa(p)?`<button type="button" class="d-loc" onclick="abrirLocalizacao('${id}')" title="Ir até o endereço">${ICON('pin',{size:17})}<span>LOCALIZAÇÃO</span>${p.lat!=null?'':'<small>pelo endereço</small>'}</button>`:''}
+        ${destinoPessoa(p)?`<button type="button" class="d-loc" onclick="abrirLocalizacao('${id}')" title="Ir até o endereço">${ICON('pin',{size:17})}<span>Localização</span>${p.lat!=null?'':'<small>pelo endereço</small>'}</button>`:''}
       </div></div>
       <div class="d-flds">
         <div class="d-fld"><label>Nome da Mãe</label><span>${esc(p.mae||'—')}</span></div>
@@ -3585,7 +3585,7 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
-      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">EDITAR</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">FORAGIDO</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">EXCLUIR</button>':''}</div>`;
+      <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">Editar</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">Foragido</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">Excluir</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
@@ -3874,7 +3874,7 @@ function renderUsersList(){
           <div class="unome">${u.matricula?'Mat '+esc(u.matricula)+' · ':''}${u.created_at?'Solicitou em '+new Date(u.created_at).toLocaleDateString('pt-BR'):'—'}</div>
         </div>
         <div class="uactions">
-          ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">✓ APROVAR</button>` : ''}
+          ${pendente && !isMe ? `<button class="btn btn-success btn-sm" onclick="aprovarUsuario('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Aprovar acesso" style="font-weight:700">Aprovar</button>` : ''}
           <button class="btn btn-outline btn-sm" onclick="verHistoricoUsuario('${u.id}')" title="Histórico de acessos e alterações"><span data-icon="clock" data-size="18"></span></button>
           ${!bloqueado ? `<button class="btn btn-outline btn-sm" onclick='openUserModal(${JSON.stringify(u).replace(/'/g,"&#39;")})' title="Editar perfil"><span data-icon="editar" data-size="18"></span></button>` : ''}
           ${!isMe && !u.protegido && podeExcluirMembro() ? `<button class="btn btn-danger btn-sm" onclick="delUser('${u.id}','${esc(u.nome).replace(/'/g,"&#39;")}')" title="Excluir"><span data-icon="excluir" data-size="18"></span></button>` : ''}
@@ -3989,7 +3989,7 @@ async function saveUser(){
       toast('Usuário atualizado.','success');
     } else {
       // CRIAR novo: signUp (trigger cria perfil auto com ativo=false) + PATCH pra ajustar role/ativo
-      if (!senha || senha.length < 6) { toast('Senha mínima de 6 caracteres.','error'); btn.disabled=false; btn.innerHTML='SALVAR'; return; }
+      if (!senha || senha.length < 6) { toast('Senha mínima de 6 caracteres.','error'); btn.disabled=false; btn.innerHTML='Salvar'; return; }
       const { data, error } = await supabase.auth.signUp({
         email, password: senha,
         options: { data: { nome, matricula } }
@@ -4009,7 +4009,7 @@ async function saveUser(){
   } catch(e) {
     toast('Erro: '+e.message, 'error');
   } finally {
-    btn.disabled = false; btn.innerHTML = 'SALVAR';
+    btn.disabled = false; btn.innerHTML = 'Salvar';
   }
 }
 
@@ -4400,8 +4400,8 @@ async function dedupAbrir(){
   if (grupos.length > 50) html += `<div style="text-align:center;padding:10px;font-size:11px;color:var(--text-mid)">... e mais ${grupos.length - 50} grupos não mostrados (mas serão processados)</div>`;
   html += `</div>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
-      <button class="btn btn-outline btn-sm" onclick="hideOv()">CANCELAR</button>
-      <button class="btn btn-primary btn-sm" onclick="dedupExecutar()" style="background:#991b1b;border-color:#991b1b">REMOVER ${totalDesc} DUPLICATAS</button>
+      <button class="btn btn-outline btn-sm" onclick="hideOv()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="dedupExecutar()" style="background:#991b1b;border-color:#991b1b">Remover ${totalDesc} duplicatas</button>
     </div>
   </div>`;
   showOv(html);
@@ -4596,7 +4596,7 @@ function renderResultadoOCR(d, textoRaw){
     </div>`;
   });
   html += `<div class="row-btns" style="margin-top:10px">
-    <button class="btn btn-outline btn-sm" onclick="document.getElementById('ocrResultado').style.display='none'" style="flex:1">DESCARTAR</button>
+    <button class="btn btn-outline btn-sm" onclick="document.getElementById('ocrResultado').style.display='none'" style="flex:1">Descartar</button>
     <button class="btn btn-primary btn-sm" onclick='aplicarOCR(${JSON.stringify(d).replace(/'/g,"&#39;")})' style="flex:2">✓ APLICAR AO FORMULÁRIO</button>
   </div>`;
   res.innerHTML = html;
@@ -4955,7 +4955,7 @@ async function toggleHeatmap(){
     btn.style.background = 'linear-gradient(135deg,#dc2626,#f97316)';
     btn.style.color = '#fff';
     btn.style.borderColor = '#dc2626';
-    btn.innerHTML = 'CALOR ON';
+    btn.innerHTML = 'Calor ligado';
     const b = document.getElementById('mapFiltBairro').value;
     const filtered = b ? allMapPersons.filter(p => (p.bairro||'').toUpperCase() === b) : allMapPersons;
     await atualizarHeatmap(filtered);
@@ -4964,7 +4964,7 @@ async function toggleHeatmap(){
     btn.style.background = '';
     btn.style.color = '';
     btn.style.borderColor = '';
-    btn.innerHTML = 'CALOR';
+    btn.innerHTML = 'Calor';
     if (_heatLayer && mapaInst) { mapaInst.removeLayer(_heatLayer); _heatLayer = null; }
     toast('Mapa de calor desativado','info');
   }
@@ -5251,9 +5251,9 @@ function _cardForagido(a, preso){
   const mapa = _linkMapaForagido(a);
   const linha = (rot, v) => v ? `<div style="font-size:12px;color:var(--text-mid);margin-top:2px"><b style="color:var(--text-dim);font-weight:600">${rot}</b> ${esc(v)}</div>` : '';
   const acoes = [];
-  if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">${a.lat!=null?'LOCALIZAÇÃO':'VER ENDEREÇO'}</a>`);
-  if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">PRESO</button>`);
-  if (preso && ['admin','inteligencia','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">↩ DESFAZER</button>`);
+  if (mapa) acoes.push(`<a class="btn btn-outline btn-sm" href="${mapa}" target="_blank" rel="noopener" style="flex:1;text-decoration:none">${a.lat!=null?'Localização':'Ver endereço'}</a>`);
+  if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">Preso</button>`);
+  if (preso && ['admin','inteligencia','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">Desfazer</button>`);
   if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0"><span data-icon="excluir" data-size="18"></span></button>`);
   return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
     ${av}
@@ -5299,10 +5299,10 @@ function renderAlertas() {
 async function _atualizarBtnCadForagido(pid){
   const b = document.getElementById('btnCadForagido'); if (!b) return;
   b.style.display = podeCadastrarSICAD() ? '' : 'none';
-  b.textContent = 'ADICIONAR COMO FORAGIDO';
+  b.textContent = 'Adicionar como foragido';
   try {
     const r = await sbFetch('GET','sicad_alertas',null,`select=id&pessoa_id=eq.${pid}&status=neq.preso&limit=1`);
-    if (r && r.length) b.textContent = 'JÁ É FORAGIDO: VER NA ABA FORAGIDOS';
+    if (r && r.length) b.textContent = 'Já é foragido: ver na aba Foragidos';
   } catch(_){}
 }
 
@@ -5507,7 +5507,7 @@ async function saveAlerta() {
   if ((document.getElementById('aLat').value || document.getElementById('aLng').value) && (!_temLoc || Math.abs(_lat) > 90 || Math.abs(_lng) > 180)) { toast('Latitude/longitude inválidas.','error'); return; }
 
   const btn = document.getElementById('saveAlertaBtn');
-  btn.disabled=true; btn.innerHTML='<span class="ld"></span> SALVANDO...';
+  btn.disabled=true; btn.innerHTML='<span class="ld"></span> Salvando...';
   try {
     const d = {
       // UUID gerado no cliente (crypto.randomUUID nativo, fallback pra polyfill)
@@ -5564,7 +5564,7 @@ async function saveAlerta() {
     if (/column|processo|status|endereco|cpf/i.test(e.message||'')) toast('Banco ainda sem os campos novos. Peça ao administrador para rodar a migration_v8_foragidos_brazlandia.sql.','error');
     else toast('Erro: '+e.message,'error');
   }
-  finally { btn.disabled=false; btn.innerHTML='SALVAR FORAGIDO'; }
+  finally { btn.disabled=false; btn.innerHTML='Salvar foragido'; }
 }
 
 async function delAlerta(id) {
@@ -6021,7 +6021,7 @@ async function consultarVeiculoModal(campo){
     <div style="font-size:11px;color:var(--accent);font-family:'IBM Plex Mono',monospace;letter-spacing:2px;margin-bottom:12px">RESULTADO SINESP</div>
     ${fields?`<div class="d-flds">${fields}</div>`:'<p style="color:var(--text-dim)">Nenhum dado retornado.</p>'}
     ${dados.situacao?`<div style="margin-top:10px;padding:8px;background:${situCor}22;border:1px solid ${situCor};border-radius:8px;color:${situCor};font-weight:700;font-size:12px;text-align:center">SITUAÇÃO: ${dados.situacao.toUpperCase()}</div>`:''}
-    <button class="btn btn-outline" style="width:100%;margin-top:14px" onclick="document.getElementById('sinespModal').classList.remove('open')">FECHAR</button>
+    <button class="btn btn-outline" style="width:100%;margin-top:14px" onclick="document.getElementById('sinespModal').classList.remove('open')">Fechar</button>
   </div>`;
 
   let sm=document.getElementById('sinespModal');
@@ -6150,7 +6150,7 @@ async function buscarRostoWeb(){
   const linksBox = document.getElementById('faceWebLinks');
   const linksContent = document.getElementById('faceWebLinksContent');
   const txtOrig = btn.innerHTML;
-  btn.innerHTML = 'ENVIANDO FOTO...'; btn.disabled = true;
+  btn.innerHTML = 'Enviando foto...'; btn.disabled = true;
   status.style.display = 'block';
   status.innerHTML = 'Subindo foto pro Supabase Storage (bucket privado)...';
   linksBox.style.display='none';
@@ -6511,7 +6511,7 @@ async function compareFaces(){
   });
   el.scrollIntoView({ behavior:'smooth', block:'center' });
 
-  btn.disabled = false; btn.innerHTML = 'COMPARAR ROSTOS';
+  btn.disabled = false; btn.innerHTML = 'Comparar rostos';
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6565,7 +6565,7 @@ async function switchLiveCam(){
 
 function toggleLiveCamAuto(){
   _liveCamAuto = !_liveCamAuto;
-  document.getElementById('liveCamAutoBtn').innerHTML = 'AUTO: ' + (_liveCamAuto ? 'ON' : 'OFF');
+  document.getElementById('liveCamAutoBtn').innerHTML = 'Automático: ' + (_liveCamAuto ? 'ligado' : 'desligado');
   _liveCamStableCount = 0;
   _liveCamCountdownN = 0;
   document.getElementById('liveCamCountdown').style.display = 'none';
@@ -7259,7 +7259,7 @@ function c3FormChacara(id, preset){
     <div class="c3-fsec">Moradores</div>
     ${morExist.length ? `<div style="font-size:12.5px;color:var(--neutral-600);margin-bottom:10px">Já vinculados: ${morExist.map(m=>`<b>${esc(m.nome)}</b>`).join(', ')}. Para editar um morador, abra a ficha dele.</div>` : ''}
     <div id="c3fMRows"></div>
-    <button type="button" class="btn btn-outline btn-sm" onclick="c3AddMRow()">${ICON('novo',{size:14})} Adicionar morador</button>
+    <button type="button" class="btn btn-outline btn-sm" onclick="c3AddMRow()"> Adicionar morador</button>
 
     <div class="c3-fsec">Administrativo</div>
     ${c3Campo('Observações administrativas', `<textarea id="c3fObs" placeholder="Acesso, características da propriedade, cães, portões…">${v('observacoes')}</textarea>`)}
@@ -7270,7 +7270,7 @@ function c3FormChacara(id, preset){
 
     <div class="c3-mfoot">
       <button class="btn btn-outline" onclick="${c?`c3FichaChacara('${c.id}')`:'c3FecharModal()'}">Cancelar</button>
-      <button class="btn btn-primary" id="c3fSalvar" onclick="c3SalvarChacara(${c?`'${c.id}'`:'null'})">${ICON('check',{size:16})} Salvar chácara</button>
+      <button class="btn btn-primary" id="c3fSalvar" onclick="c3SalvarChacara(${c?`'${c.id}'`:'null'})"> Salvar chácara</button>
     </div>`);
   if(!c) c3AddMRow();
   setTimeout(c3InitMini, 80);
@@ -7418,14 +7418,14 @@ function c3FichaChacara(id){
 
     <div class="c3-fsec" style="margin-top:var(--sp-6)">Moradores e indivíduos vinculados</div>
     <div class="c3-list">${mor.length ? mor.map(m=>c3ItemMorador(m,'')).join('') : '<div class="c3-empty" style="padding:12px">Nenhum morador cadastrado nesta propriedade.</div>'}</div>
-    ${c3PodeEditar()?`<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="c3FormMorador(null,{chacara_id:'${c.id}'})">${ICON('novo',{size:14})} Adicionar morador</button>`:''}
+    ${c3PodeEditar()?`<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="c3FormMorador(null,{chacara_id:'${c.id}'})"> Adicionar morador</button>`:''}
 
     ${ocs.length?`<div class="c3-fsec" style="margin-top:var(--sp-6)">Ocorrências ligadas à propriedade · ${ocs.length}</div>
       ${ocs.slice(0,10).map(o=>{ const m=c3Mo(o.morador_id); const s=C3_SIT[o.situacao]||C3_SIT.registrada; return `<div class="c3-item" style="margin-bottom:6px" onclick="${m?`c3FichaMorador('${m.id}','oc')`:''}"><div class="c3-item-b"><div class="c3-item-t">${esc(o.natureza)}${o.numero?' · nº '+esc(o.numero):''}</div><div class="c3-item-s">${c3DataHora(o.data_hora)}${m?' · '+esc(m.nome):''}</div></div><span class="c3-tag ${s[0]}">${s[1]}</span></div>`; }).join('')}`:''}
 
     <div class="c3-mfoot">
-      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirChacara('${c.id}')">${ICON('excluir',{size:15})} Excluir</button>`:''}
-      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormChacara('${c.id}')">${ICON('editar',{size:15})} Editar chácara</button>`:''}
+      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirChacara('${c.id}')"> Excluir</button>`:''}
+      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormChacara('${c.id}')"> Editar chácara</button>`:''}
     </div>`);
 }
 
@@ -7458,7 +7458,7 @@ function c3FormMorador(id, preset){
     ${c3Campo('Observações pertinentes ao serviço', `<textarea id="c3mObs" placeholder="Somente fatos verificáveis. Evite rótulos e suposições.">${v('observacoes')}</textarea>`)}
     <div class="c3-mfoot">
       <button class="btn btn-outline" onclick="${voltar}">Cancelar</button>
-      <button class="btn btn-primary" id="c3mSalvar" onclick="c3SalvarMorador(${m?`'${m.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+      <button class="btn btn-primary" id="c3mSalvar" onclick="c3SalvarMorador(${m?`'${m.id}'`:'null'})"> Salvar</button>
     </div>`);
 }
 
@@ -7530,8 +7530,8 @@ function c3FichaMorador(id, sub, semLog){
     <div class="c3-note" style="margin-top:var(--sp-3)">${ICON('shield',{size:15})}<span>Registre apenas informações com origem identificável (nº de BO, procedimento ou sistema oficial). Não use classificações sem respaldo documental.</span></div>
 
     <div class="c3-mfoot">
-      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirMorador('${m.id}')">${ICON('excluir',{size:15})} Excluir</button>`:''}
-      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormMorador('${m.id}')">${ICON('editar',{size:15})} Editar dados</button>`:''}
+      ${c3PodeExcluir()?`<button class="btn btn-danger" onclick="c3ExcluirMorador('${m.id}')"> Excluir</button>`:''}
+      ${c3PodeEditar()?`<button class="btn btn-primary" onclick="c3FormMorador('${m.id}')"> Editar dados</button>`:''}
     </div>`);
 }
 
@@ -7539,7 +7539,7 @@ function c3RenderRegs(mid){
   const pode = c3PodeEditar(), podeDel = c3PodeExcluir();
   if(c3FichaSub==='oc'){
     const l = C3.oc.filter(o=>o.morador_id===mid);
-    return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormOcorrencia('${mid}')">${ICON('novo',{size:14})} Registrar ocorrência</button>`:'') +
+    return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormOcorrencia('${mid}')"> Registrar ocorrência</button>`:'') +
       (l.length ? l.map(o=>{ const s=C3_SIT[o.situacao]||C3_SIT.registrada; const anx=o.anexos||[]; return `
       <div class="c3-reg oc">
         <div class="c3-reg-h"><div><div class="c3-reg-t">${esc(o.natureza)}${o.numero?` · nº ${esc(o.numero)}`:''}</div>
@@ -7553,7 +7553,7 @@ function c3RenderRegs(mid){
       </div>`; }).join('') : '<div class="c3-empty">Nenhuma ocorrência registrada.</div>');
   }
   const l = C3.pa.filter(p=>p.morador_id===mid);
-  return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormPassagem('${mid}')">${ICON('novo',{size:14})} Registrar passagem</button>`:'') +
+  return (pode?`<button class="btn btn-outline btn-sm" style="margin-bottom:10px" onclick="c3FormPassagem('${mid}')"> Registrar passagem</button>`:'') +
     (l.length ? l.map(p=>`
     <div class="c3-reg">
       <div class="c3-reg-h"><div><div class="c3-reg-t">${esc(p.natureza)}${p.numero?` · nº ${esc(p.numero)}`:''}</div>
@@ -7584,7 +7584,7 @@ function c3FormPassagem(mid, id){
     ${c3Campo('Observações', `<textarea id="c3rObs">${v('observacoes')}</textarea>`)}
     <div class="c3-mfoot">
       <button class="btn btn-outline" onclick="c3FichaMorador('${mid}','pa',true)">Cancelar</button>
-      <button class="btn btn-primary" id="c3rSalvar" onclick="c3SalvarPassagem('${mid}',${p?`'${p.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+      <button class="btn btn-primary" id="c3rSalvar" onclick="c3SalvarPassagem('${mid}',${p?`'${p.id}'`:'null'})"> Salvar</button>
     </div>`);
 }
 async function c3SalvarPassagem(mid, id){
@@ -7626,7 +7626,7 @@ function c3FormOcorrencia(mid, id){
     <div style="font-size:11.5px;color:var(--neutral-500);margin:-6px 0 var(--sp-3)">Anexe apenas documentos cujo uso esteja autorizado. Arquivos ficam em área privada e só abrem por link temporário.</div>
     <div class="c3-mfoot">
       <button class="btn btn-outline" onclick="c3FichaMorador('${mid}','oc',true)">Cancelar</button>
-      <button class="btn btn-primary" id="c3oSalvar" onclick="c3SalvarOcorrencia('${mid}',${o?`'${o.id}'`:'null'})">${ICON('check',{size:16})} Salvar</button>
+      <button class="btn btn-primary" id="c3oSalvar" onclick="c3SalvarOcorrencia('${mid}',${o?`'${o.id}'`:'null'})"> Salvar</button>
     </div>`);
 }
 function c3MarcarRemoverAnexo(btn, path){

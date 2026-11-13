@@ -199,6 +199,42 @@ function injetarCSS() {
 .oc-card b{font-size:12px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oc-card small{font-size:11px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .oc-card span{font-size:10px;color:#94A3B8;font-family:var(--font-mono)}
+.tc-box{position:relative;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tc-bar{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--border);background:#F8FAFC;flex-wrap:wrap}
+.tc-tit{font-size:13px;color:var(--neutral-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+.tc-esp{flex:1}
+.tc-btn{border:1px solid var(--neutral-300);background:#fff;color:var(--neutral-700);border-radius:7px;height:32px;padding:0 11px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
+.tc-btn:hover{border-color:var(--neutral-500);color:var(--neutral-900)}
+.tc-btn.on{background:#0F172A;border-color:#0F172A;color:#fff}
+.tc-max{background:#0F172A;border-color:#0F172A;color:#fff}.tc-max:hover{background:#1E293B;color:#fff}
+.tc-b{display:none}.is-max .tc-a{display:none}.is-max .tc-b{display:inline}
+.tc-box .oc-wrap{border:0;border-radius:0}
+.tc-box .int-net{border:0;border-radius:0}
+.tc-side{display:none}
+.tc-side.on{display:block;padding:12px;border-top:1px solid var(--border);background:#fff}
+.tc-side .row-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tc-side .row-btns .btn{width:100%;white-space:normal;line-height:1.15;text-align:center;padding:6px 8px}
+.tc-x{position:absolute;top:10px;right:10px;width:30px;height:30px;border:1px solid var(--border);background:#fff;border-radius:7px;cursor:pointer;color:var(--neutral-500);font-size:14px}
+.tc-box.is-max{position:fixed;inset:0;z-index:1800;border-radius:0;border:0;display:flex;flex-direction:column}
+.tc-box.is-max .oc-wrap,.tc-box.is-max .int-net{flex:1 1 0;min-height:0;height:auto !important;max-height:none}
+.tc-box.is-max .tc-side.on{position:absolute;right:12px;top:110px;bottom:12px;width:380px;max-width:calc(100% - 24px);overflow:auto;border:1px solid var(--border);border-radius:12px;box-shadow:0 20px 40px -12px rgba(15,23,42,.35);z-index:5}
+body.tc-aberta{overflow:hidden}
+.vn-busca input{height:32px;border:1px solid var(--neutral-300);border-radius:7px;padding:0 10px;font-size:13px;width:220px;background:#fff}
+.vn-dd{position:relative}
+.vn-dd summary{list-style:none;height:32px;display:flex;align-items:center;border:1px solid var(--neutral-300);border-radius:7px;padding:0 11px;font-size:12.5px;font-weight:600;cursor:pointer;background:#fff;color:var(--neutral-700)}
+.vn-dd summary::-webkit-details-marker{display:none}
+.vn-dd-c{position:absolute;top:38px;left:0;z-index:20;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;min-width:280px;max-height:300px;overflow:auto;box-shadow:0 12px 28px -8px rgba(15,23,42,.25);display:flex;flex-direction:column;gap:8px}
+.vn-dd-c label{display:flex;gap:8px;align-items:center;font-size:13px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--neutral-700)}
+.vn-cont{font-size:12px;color:var(--neutral-500);font-variant-numeric:tabular-nums;margin-right:4px}
+.vn-filtros{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--border);align-items:center}
+.vn-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--neutral-300);background:#fff;font-size:12px;font-weight:600;color:var(--neutral-400);cursor:pointer}
+.vn-chip i{width:8px;height:8px;border-radius:50%;opacity:.35}
+.vn-chip.on{color:var(--neutral-800);border-color:var(--neutral-400);background:#F8FAFC}.vn-chip.on i{opacity:1}
+.vn-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
+.vn-net{height:620px;background:radial-gradient(circle at 1px 1px,#E2E8F0 1px,transparent 0) 0 0/22px 22px,#fff}
+.vn-leg{position:absolute;left:12px;bottom:12px;display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--neutral-600);background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:9px;padding:6px 10px;pointer-events:none}
+.vn-leg span{display:inline-flex;align-items:center;gap:6px}
+.vn-box:not(.is-max) .tc-side.on + .vn-leg{bottom:auto;top:auto;position:static;margin:0 10px 10px}
 .int-trava{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.92);display:flex;align-items:center;justify-content:center;padding:20px}
 .int-trava .bx{background:#fff;border-radius:16px;padding:24px;max-width:380px;width:100%}
 .int-classif{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;font-weight:700;color:#B91C1C;border:1px solid #FECACA;background:#FEF2F2;padding:3px 8px;border-radius:6px}
@@ -210,6 +246,19 @@ function injetarCSS() {
   .int-grid2,.int-form,.int-dl,.int-chk{grid-template-columns:1fr}
   .int-net,.int-map{height:420px}
   .int-org{height:520px}
+  .vn-net{height:480px}
+  .tc-bar,.vn-filtros{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .tc-bar::-webkit-scrollbar,.vn-filtros::-webkit-scrollbar{display:none}
+  .tc-bar>*,.vn-filtros>*{flex-shrink:0}
+  .vn-cont{display:none}
+  .tc-box.is-max .tc-side.on{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:52%}
+  .vn-leg{display:none}
+  .vn-busca input{width:150px}
+  .tc-tit{display:none}
+  .tc-max{order:-1}
+  .tc-side .int-ficha-top{grid-template-columns:auto 1fr}
+  .tc-side .int-foto{width:84px !important;height:100px !important}
+  .tc-side .int-dl{grid-template-columns:1fr 1fr}
   .int-ficha-top{grid-template-columns:1fr}
   .int-foto,.int-foto-vazia{width:100%;height:240px}
   .int-barra{grid-template-columns:110px 1fr 32px}
@@ -299,8 +348,8 @@ VIEWS.painel = () => {
   const porMes = meses.map(([k]) => S.ents.filter(x => (x.criado_em || '').slice(0, 7) === k).length);
   const mxM = Math.max(1, ...porMes);
   return cabecalho('Painel de Inteligência', 'Banco central, dossiês e produção de conhecimento',
-      (pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()">${ICON('novo', { size: 15 })} Novo dossiê</button>` : '') +
-      (pode('gerar_relatorio') ? `<button class="btn btn-outline btn-sm" onclick="INT.formRelatorio()">${ICON('pdf', { size: 15 })} Gerar relatório</button>` : '')) +
+      (pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()"> Novo dossiê</button>` : '') +
+      (pode('gerar_relatorio') ? `<button class="btn btn-outline btn-sm" onclick="INT.formRelatorio()"> Gerar relatório</button>` : '')) +
     `<div class="int-busca"><input id="intBuscaG" placeholder="Pesquisa central: nome, CPF, placa, telefone, código, dossiê..." onkeydown="if(event.key==='Enter')INT.pesquisar(this.value)"><button class="btn btn-primary btn-sm" onclick="INT.pesquisar(document.getElementById('intBuscaG').value)">Pesquisar</button></div>
     <div class="int-kpis">
       <div class="int-kpi" onclick="INT.ir('dossies')"><b>${ativos.length}</b><span>Dossiês ativos</span></div>
@@ -342,7 +391,7 @@ function viewLista(tipo) {
   const chave = tipo || 'central';
   const titulo = tipo ? TIPOS[tipo].plural : 'Banco central de informações';
   const sub = tipo ? 'Registro único no banco central — o mesmo registro pode estar em vários dossiês' : 'Base unificada: cada pessoa, veículo, telefone, ocorrência, localidade e organização tem um código único';
-  return cabecalho(titulo, sub, pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('${tipo || ''}')">${ICON('novo', { size: 15 })} Novo ${tipo ? e(TIPOS[tipo].rot.toLowerCase()) : 'registro'}</button>` : '') +
+  return cabecalho(titulo, sub, pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('${tipo || ''}')"> Novo ${tipo ? e(TIPOS[tipo].rot.toLowerCase()) : 'registro'}</button>` : '') +
     (tipo === 'organizacao' ? `<div class="int-aviso">Cadastro de <b>organizações e grupos sob análise</b>. Incluir uma pessoa num grupo exige vínculo lançado com fonte e situação (documentado, informado ou hipótese). O sistema <b>não classifica ninguém automaticamente</b> como integrante de organização criminosa.</div>` : '') +
     `<div class="int-busca">
       <input placeholder="Buscar por nome, código, CPF, placa, número, fonte..." value="${e(f.q)}" oninput="INT.setFiltro('${chave}','q',this.value)">
@@ -538,9 +587,9 @@ async function ficha(id, aba) {
     corpo = `${pode('cadastrar') ? `<div class="int-busca"><select id="iAddDos">${opts(Object.fromEntries(S.dossies.filter(dd => !dos.includes(dd)).map(dd => [dd.id, dd.numero + ' — ' + dd.titulo])), '', 'Escolha o dossiê')}</select><input id="iAddPapel" placeholder="Papel no dossiê (opcional)"><button class="btn btn-primary btn-sm" onclick="INT.addAoDossie('${id}')">Incluir</button></div>` : ''}
       ${dos.length ? listaDossies(dos) : '<div class="int-vazio">Este registro ainda não está em nenhum dossiê.</div>'}`;
   } else if (aba === 'vinculos') {
-    corpo = `${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formVinculo('${id}')">${ICON('novo', { size: 15 })} Novo vínculo</button>` : ''}${tabelaVinculos(vin, id)}`;
+    corpo = `${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formVinculo('${id}')"> Novo vínculo</button>` : ''}${tabelaVinculos(vin, id)}`;
   } else if (aba === 'docs') {
-    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({entidade_id:'${id}'})">${ICON('anexo', { size: 15 })} Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
+    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({entidade_id:'${id}'})"> Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
   } else if (aba === 'hist') {
     corpo = '<div id="iHist" class="int-vazio">Carregando histórico...</div>';
   } else if (aba === 'fotos') {
@@ -551,7 +600,7 @@ async function ficha(id, aba) {
     <div class="int-tabs">${[['dados', 'Dados'], ...(x.tipo === 'pessoa' ? [['fotos', 'Fotos']] : []), ['dossies', 'Dossiês'], ['vinculos', 'Vínculos'], ['docs', 'Documentos'], ['hist', 'Histórico']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.ficha('${id}','${k}')">${r}</button>`).join('')}</div>
     ${corpo}
     <div class="row-btns" style="margin-top:14px;flex-wrap:wrap">
-      ${pode('editar') ? `<button class="btn btn-outline" onclick="INT.formEnt('${x.tipo}','${id}')">${ICON('editar', { size: 15 })} Editar</button>` : ''}
+      ${pode('editar') ? `<button class="btn btn-outline" onclick="INT.formEnt('${x.tipo}','${id}')"> Editar</button>` : ''}
       <button class="btn btn-outline" onclick="INT.fechar();INT.verRede('${id}')">${ICON('web', { size: 15 })} Ver na rede</button>
       ${x.lat != null ? `<button class="btn btn-outline" onclick="INT.fechar();INT.verMapa('${id}')">${ICON('mapa', { size: 15 })} Ver no mapa</button>` : ''}
       ${pode('editar') ? `<button class="btn btn-outline" style="color:var(--danger)" onclick="INT.arquivar('int_entidades','${id}')">Arquivar</button>` : ''}
@@ -644,57 +693,182 @@ function dadosRede(filtroDossies, filtroSit, focoId) {
   }
   const usados = ids ? new Set(ids) : new Set();
   vin.forEach(v => { usados.add(v.origem_id); usados.add(v.destino_id); });
-  const nodes = [...usados].map(ent).filter(Boolean).map(x => {
-    const nDos = dossiesDoEnt(x.id).length; const c = TIPOS[x.tipo];
-    return { id: x.id, label: x.titulo.length > 28 ? x.titulo.slice(0, 26) + '…' : x.titulo, title: `${x.codigo} · ${c.rot}\n${x.titulo}\n${nDos} dossiê(s)${nDos > 1 ? ' — CONEXÃO COMPARTILHADA' : ''}`,
-      shape: c.forma, color: { background: c.cor, border: nDos > 1 ? '#F59E0B' : c.cor, highlight: { background: c.cor, border: '#0F172A' } },
-      borderWidth: nDos > 1 ? 4 : 1, size: x.id === focoId ? 22 : 15, font: { size: 12, color: '#0F172A', strokeWidth: 3, strokeColor: '#fff' },
-      shapeProperties: { borderDashes: x.natureza === 'hipotese' ? [4, 3] : false } };
-  });
-  const edges = vin.map(v => ({ id: v.id, from: v.origem_id, to: v.destino_id, label: v.tipo, arrows: 'to',
-    dashes: v.situacao === 'informado' ? [8, 6] : v.situacao === 'hipotese' ? [2, 5] : false,
-    color: { color: v.situacao === 'hipotese' ? '#94A3B8' : '#334155' }, width: v.situacao === 'documentado' ? 2 : 1.4,
-    font: { size: 10, color: '#475569', strokeWidth: 3, strokeColor: '#fff', align: 'middle' },
-    title: `${v.tipo} — ${NATUREZA[v.situacao]}\nFonte: ${v.fonte}\nData: ${dataBR(v.data_fato)}\nLançado por: ${v.criado_por_nome || '—'}` }));
+  const nodes = [...usados].map(ent).filter(Boolean).map(x => noRede(x, vin, focoId));
+  const edges = vin.map(v => arestaRede(v, true));
   return { nodes, edges };
 }
 function carregarVis() {
   if (window.vis && window.vis.Network) return Promise.resolve();
   return new Promise((ok, falha) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/standalone/umd/vis-network.min.js'; s.onload = ok; s.onerror = () => falha(new Error('Não foi possível carregar o diagrama (sem internet?)')); document.head.appendChild(s); });
 }
+function badgeTipo(tipo) {
+  const c = TIPOS[tipo] || TIPOS.pessoa; const path = (typeof ICONS !== 'undefined' && ICONS[c.ico]) || '';
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="${c.cor}"/><g transform="translate(5.2 5.2) scale(.567)" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${path}</g></svg>`);
+}
+const COR_SIT = { documentado: '#334155', informado: '#2563EB', hipotese: '#D97706' };
+function grauDe(id, vin) { return vin.filter(v => v.origem_id === id || v.destino_id === id).length; }
+function noRede(x, vin, focoId) {
+  const nDos = dossiesDoEnt(x.id).length, g = grauDe(x.id, vin), c = TIPOS[x.tipo];
+  const img = x.tipo === 'pessoa' ? (S.fotos[x.id] || avatarSVG(x.titulo, c.cor)) : badgeTipo(x.tipo);
+  return { id: x.id, shape: 'circularImage', image: img, brokenImage: badgeTipo(x.tipo),
+    label: x.titulo.length > 24 ? x.titulo.slice(0, 22) + '…' : x.titulo,
+    size: (x.tipo === 'organizacao' ? 26 : 16) + Math.min(16, g * 2.2) + (x.id === focoId ? 6 : 0),
+    borderWidth: nDos > 1 ? 5 : 3, borderWidthSelected: 6,
+    color: { border: nDos > 1 ? '#F59E0B' : (COR_SIT[x.natureza] || c.cor), background: '#fff', highlight: { border: '#0F172A', background: '#fff' }, hover: { border: '#0F172A', background: '#fff' } },
+    shapeProperties: { useBorderWithImage: true, borderDashes: x.natureza === 'hipotese' ? [5, 4] : false },
+    font: { size: 13, color: '#0F172A', face: 'Inter, Arial', strokeWidth: 4, strokeColor: '#ffffff', vadjust: 2 },
+    title: `${x.codigo} · ${c.rot}\n${x.titulo}\n${g} ligação(ões) · ${nDos} dossiê(s)${nDos > 1 ? ' · conexão compartilhada' : ''}` };
+}
+function arestaRede(v, rotulos) {
+  return { id: v.id, from: v.origem_id, to: v.destino_id, label: rotulos ? v.tipo : undefined,
+    arrows: { to: { enabled: !['Comunica-se com', 'Parentesco', 'Cônjuge / companheiro(a)', 'Visto com', 'Associado a'].includes(v.tipo), scaleFactor: .55 } },
+    dashes: v.situacao === 'informado' ? [7, 5] : v.situacao === 'hipotese' ? [2, 5] : false,
+    color: { color: COR_SIT[v.situacao] || '#334155', highlight: '#0F172A', hover: '#0F172A', opacity: .85 },
+    width: v.situacao === 'documentado' ? 2.4 : 1.6, hoverWidth: 1.5, selectionWidth: 2,
+    smooth: { type: 'continuous', roundness: .35 },
+    font: { size: 11, color: '#334155', strokeWidth: 4, strokeColor: '#fff', align: 'middle' },
+    title: `${v.tipo} — ${NATUREZA[v.situacao]}\nFonte: ${v.fonte}${v.data_fato ? '\nData: ' + dataBR(v.data_fato) : ''}\nLançado por: ${v.criado_por_nome || '—'}` };
+}
+// Conjunto inicial (dossiês / situação / tipos / foco)
+function baseRede() {
+  const f = S.filtros.rede;
+  let vin = S.vinculos.filter(v => f.sit.includes(v.situacao));
+  let ids = null;
+  if (f.dos.length) {
+    ids = new Set(S.itens.filter(i => f.dos.includes(i.dossie_id)).map(i => i.entidade_id));
+    vin = vin.filter(v => f.dos.includes(v.dossie_id) || (ids.has(v.origem_id) && ids.has(v.destino_id)));
+  }
+  if (f.foco) {
+    const viz = new Set([f.foco]);
+    for (let k = 0; k < 2; k++) S.vinculos.filter(v => f.sit.includes(v.situacao)).forEach(v => { if (viz.has(v.origem_id) || viz.has(v.destino_id)) { viz.add(v.origem_id); viz.add(v.destino_id); } });
+    vin = S.vinculos.filter(v => f.sit.includes(v.situacao) && viz.has(v.origem_id) && viz.has(v.destino_id)); ids = viz;
+  }
+  const usados = new Set(ids || []); vin.forEach(v => { usados.add(v.origem_id); usados.add(v.destino_id); });
+  let ents = [...usados].map(ent).filter(Boolean).filter(x => f.tipos.includes(x.tipo));
+  const ok = new Set(ents.map(x => x.id));
+  vin = vin.filter(v => ok.has(v.origem_id) && ok.has(v.destino_id));
+  return { ents, vin };
+}
+let _redeDS = null;
 VIEWS.vinculos = () => {
-  const f = S.filtros.rede || { dos: [], sit: ['documentado', 'informado', 'hipotese'] };
-  S.filtros.rede = f;
-  return cabecalho('Análise de vínculos', 'Relações lançadas com fonte. Bordas douradas = registro presente em mais de um dossiê (conexão compartilhada).',
-      pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo()">${ICON('novo', { size: 15 })} Novo vínculo</button>` : '') +
-    `<div class="int-aviso">O diagrama mostra apenas relações lançadas por analistas, com fonte. <b>Proximidade no gráfico ou ligação indireta não prova participação em organização criminosa</b> — toda conclusão exige análise e documentação.</div>
-    <div class="int-card" style="padding:12px">
-      <div class="int-chk" style="margin-bottom:10px">${S.dossies.map(d => `<label><input type="checkbox" ${f.dos.includes(d.id) ? 'checked' : ''} onchange="INT.redeDos('${d.id}',this.checked)"> ${e(d.numero)} — ${e(d.titulo)}</label>`).join('') || '<span style="color:var(--neutral-500)">Sem dossiês: mostrando todos os vínculos.</span>'}</div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">${Object.entries(NATUREZA).map(([k, v]) => `<label style="display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500"><input type="checkbox" ${f.sit.includes(k) ? 'checked' : ''} onchange="INT.redeSit('${k}',this.checked)"> ${v}</label>`).join('')}</div>
+  const f = S.filtros.rede = Object.assign({ dos: [], sit: ['documentado', 'informado', 'hipotese'], tipos: Object.keys(TIPOS), rotulos: false, foco: null }, S.filtros.rede || {});
+  const chip = (on, onclick, txt, cor) => `<button class="vn-chip ${on ? 'on' : ''}" onclick="${onclick}">${cor ? `<i style="background:${cor}"></i>` : ''}${txt}</button>`;
+  return cabecalho('Análise de vínculos', 'Clique numa pessoa para destacar as ligações dela · duplo clique para expandir a rede · arraste para reorganizar',
+      pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo()">Novo vínculo</button>` : '') +
+    `<div id="vnBox" class="tc-box vn-box">
+      <div class="tc-bar">
+        <div class="vn-busca"><input id="vnBusca" list="vnDL" placeholder="Localizar no diagrama..." onkeydown="if(event.key==='Enter')INT.vnLocalizar(this.value)"><datalist id="vnDL"></datalist></div>
+        <details class="vn-dd"><summary>Dossiês${f.dos.length ? ' (' + f.dos.length + ')' : ''}</summary><div class="vn-dd-c">${S.dossies.map(d => `<label><input type="checkbox" ${f.dos.includes(d.id) ? 'checked' : ''} onchange="INT.redeDos('${d.id}',this.checked)"> ${e(d.numero)} — ${e(d.titulo)}</label>`).join('') || '<span>Nenhum dossiê</span>'}</div></details>
+        <span class="tc-esp"></span>
+        <span id="vnCont" class="vn-cont"></span>
+        <button class="tc-btn ${f.rotulos ? 'on' : ''}" onclick="INT.vnRotulos()">Rótulos</button>
+        <button class="tc-btn" onclick="INT.vnReorganizar()">Reorganizar</button>
+        <button class="tc-btn" onclick="INT.vnAjustar()">Ajustar</button>
+        <button class="tc-btn tc-max" onclick="INT.telaCheia('vnBox')"><span class="tc-a">Tela cheia</span><span class="tc-b">Sair da tela cheia</span></button>
+      </div>
+      <div class="vn-filtros">
+        ${Object.entries(TIPOS).map(([k, c]) => chip(f.tipos.includes(k), `INT.vnTipo('${k}')`, c.plural.split(' ')[0], c.cor)).join('')}
+        <span class="vn-sep"></span>
+        ${Object.entries(NATUREZA).map(([k, v]) => chip(f.sit.includes(k), `INT.redeSit('${k}',${!f.sit.includes(k)})`, v.replace(' em análise', ''), COR_SIT[k])).join('')}
+        ${f.foco && ent(f.foco) ? `<span class="vn-sep"></span><button class="vn-chip on" onclick="INT.vnFoco(null)">Foco: ${e(ent(f.foco).titulo)} ✕</button>` : ''}
+      </div>
+      <div id="intNet" class="int-net vn-net"></div>
+      <div id="vnSide" class="tc-side"></div>
+      <div class="vn-leg"><span><i class="int-ln"></i>Documentado</span><span><i class="int-ln" style="border-top:2px dashed #2563EB"></i>Informado</span><span><i class="int-ln" style="border-top:2px dotted #D97706"></i>Hipótese</span><span><i style="width:11px;height:11px;border:3px solid #F59E0B;border-radius:50%;display:inline-block"></i>Em vários dossiês</span></div>
     </div>
-    <div id="intNet" class="int-net"></div>
-    <div class="int-legenda">${Object.values(TIPOS).map(c => `<span><i style="width:10px;height:10px;border-radius:50%;background:${c.cor};display:inline-block"></i>${c.rot}</span>`).join('')}
-      <span><i class="int-ln"></i>Documentado</span><span><i class="int-ln inf"></i>Informado</span><span><i class="int-ln hip"></i>Hipótese</span>
-      <span><i style="width:12px;height:12px;border:3px solid #F59E0B;border-radius:50%;display:inline-block"></i>Em vários dossiês</span></div>
-    <div id="intNetInfo" style="margin-top:12px"></div>`;
+    <div class="int-aviso" style="margin-top:12px">O diagrama mostra apenas relações lançadas com fonte. Ligação indireta ou proximidade no gráfico <b>não prova</b> participação em organização criminosa.</div>`;
 };
 AFTER.vinculos = async () => {
   const el = document.getElementById('intNet'); if (!el) return;
   try { await carregarVis(); } catch (err) { el.innerHTML = `<div class="int-vazio">${e(err.message)}</div>`; return; }
   const f = S.filtros.rede;
-  const { nodes, edges } = dadosRede(f.dos, f.sit, _redeFoco);
-  if (!nodes.length) { el.innerHTML = '<div class="int-vazio" style="padding-top:120px">Nenhum vínculo para os filtros escolhidos.</div>'; return; }
-  _rede = new vis.Network(el, { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) }, {
-    physics: { solver: 'forceAtlas2Based', forceAtlas2Based: { gravitationalConstant: -60, springLength: 120 }, stabilization: { iterations: 250 } },
-    interaction: { hover: true, tooltipDelay: 120, navigationButtons: false, keyboard: false }, nodes: { borderWidthSelected: 3 } });
-  _rede.on('click', p => {
-    const info = document.getElementById('intNetInfo');
-    if (p.nodes.length) { const x = ent(p.nodes[0]); info.innerHTML = `<div class="int-card"><h3>${e(x.codigo)} · ${e(x.titulo)} <button class="btn btn-outline btn-sm" onclick="INT.ficha('${x.id}')">Abrir ficha</button></h3>${tabelaVinculos(S.vinculos.filter(v => v.origem_id === x.id || v.destino_id === x.id))}</div>`; }
-    else if (p.edges.length) { info.innerHTML = `<div class="int-card"><h3>Vínculo</h3>${tabelaVinculos(S.vinculos.filter(v => v.id === p.edges[0]))}</div>`; }
-  });
-  aud('analise_vinculos', 'int_vinculos', null, { dossies: f.dos });
-  _redeFoco = null;
+  const { ents, vin } = baseRede();
+  const cont = document.getElementById('vnCont'); if (cont) cont.textContent = `${ents.length} registros · ${vin.length} ligações`;
+  if (!ents.length) { el.innerHTML = '<div class="int-vazio" style="padding-top:140px">Nenhum vínculo para os filtros escolhidos.</div>'; return; }
+  const nodes = new vis.DataSet(ents.map(x => noRede(x, vin, f.foco)));
+  const edges = new vis.DataSet(vin.map(v => arestaRede(v, f.rotulos)));
+  _redeDS = { nodes, edges };
+  document.getElementById('vnDL').innerHTML = ents.map(x => `<option value="${e(x.titulo)}">`).join('');
+  if (_rede) { try { _rede.destroy(); } catch (_) {} }
+  _rede = new vis.Network(el, { nodes, edges }, {
+    physics: { solver: 'forceAtlas2Based', forceAtlas2Based: { gravitationalConstant: -75, centralGravity: .012, springLength: 140, springConstant: .06, avoidOverlap: .6 }, maxVelocity: 40, minVelocity: .6, stabilization: { iterations: 300, fit: true } },
+    interaction: { hover: true, tooltipDelay: 150, hideEdgesOnDrag: false, multiselect: false, navigationButtons: false, zoomSpeed: .7 },
+    nodes: { chosen: true }, edges: { chosen: true } });
+  _rede.on('click', p => { if (p.nodes.length) vnSelecionar(p.nodes[0]); else if (p.edges.length) vnAresta(p.edges[0]); else vnLimpar(); });
+  _rede.on('doubleClick', p => { if (p.nodes.length) vnExpandir(p.nodes[0]); });
+  _rede.once('stabilizationIterationsDone', () => { _rede.setOptions({ physics: { stabilization: false } }); if (f.foco) vnSelecionar(f.foco); });
+  // fotos chegam depois e entram sem redesenhar tudo
+  fotosSicad(ents.filter(x => x.tipo === 'pessoa')).then(() => { if (_redeDS !== null && _redeDS.nodes === nodes) nodes.update(ents.filter(x => x.tipo === 'pessoa' && S.fotos[x.id]).map(x => ({ id: x.id, image: S.fotos[x.id] }))); });
+  aud('analise_vinculos', 'int_vinculos', null, { dossies: f.dos, foco: f.foco });
 };
+function vnVizinhos(id) { const s = new Set([id]); _redeDS.edges.get().forEach(ed => { if (ed.from === id) s.add(ed.to); if (ed.to === id) s.add(ed.from); }); return s; }
+function vnDestacar(ids) {
+  if (!_redeDS) return;
+  _redeDS.nodes.update(_redeDS.nodes.get().map(n => ({ id: n.id, opacity: !ids || ids.has(n.id) ? 1 : .14, font: Object.assign({}, n.font, { color: !ids || ids.has(n.id) ? '#0F172A' : 'rgba(15,23,42,.18)' }) })));
+  _redeDS.edges.update(_redeDS.edges.get().map(ed => { const v = byId(S.vinculos, ed.id); const ativo = !ids || (ids.has(ed.from) && ids.has(ed.to)); return { id: ed.id, color: { color: ativo ? (COR_SIT[v && v.situacao] || '#334155') : 'rgba(148,163,184,.15)', highlight: '#0F172A', hover: '#0F172A' } }; }));
+}
+function vnSelecionar(id) {
+  const x = ent(id); if (!x || !_rede) return;
+  const viz = vnVizinhos(id); vnDestacar(viz);
+  _rede.selectNodes([id]); _rede.focus(id, { scale: Math.max(.9, _rede.getScale()), animation: { duration: 450, easingFunction: 'easeInOutQuad' } });
+  const lig = S.vinculos.filter(v => (v.origem_id === id || v.destino_id === id) && S.filtros.rede.sit.includes(v.situacao));
+  const dos = dossiesDoEnt(id);
+  const side = document.getElementById('vnSide'); if (!side) return;
+  side.classList.add('on');
+  const foto = x.tipo === 'pessoa' ? (S.fotos[id] || avatarSVG(x.titulo, TIPOS.pessoa.cor)) : badgeTipo(x.tipo);
+  side.innerHTML = `<div class="int-card" style="position:relative;margin:0"><button class="tc-x" onclick="INT.vnLimpar()" title="Fechar">✕</button>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><img src="${foto}" style="width:56px;height:56px;border-radius:${x.tipo === 'pessoa' ? '10px' : '50%'};object-fit:cover;flex-shrink:0" ${x.tipo === 'pessoa' && S.fotos[id] ? 'onclick="lbOpen(this.src)"' : ''}>
+      <div style="min-width:0"><b style="font-size:14.5px;display:block">${e(x.titulo)}</b><span class="int-cod">${e(x.codigo)}</span> · <span style="font-size:12px;color:var(--neutral-500)">${e(TIPOS[x.tipo].rot)}</span><div style="margin-top:4px">${tagNat(x.natureza)}${x.dados && x.dados.faccionado_sicad ? ' <span class="int-tag sig">Faccionado</span>' : ''}</div></div></div>
+    ${dos.length ? `<div style="font-size:12px;color:var(--neutral-500);margin-bottom:8px">Dossiês: ${dos.map(d => e(d.numero)).join(', ')}</div>` : ''}
+    <div style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--neutral-500);margin:6px 0">Ligações (${lig.length})</div>
+    <div class="int-lista">${lig.map(v => { const o = ent(v.origem_id === id ? v.destino_id : v.origem_id); if (!o) return ''; return `<div class="int-item" onclick="INT.vnSel('${o.id}')" style="padding:8px 10px"><i style="width:8px;height:8px;border-radius:50%;background:${TIPOS[o.tipo].cor};flex-shrink:0;margin-top:6px"></i><div class="m"><b style="font-size:13px">${e(o.titulo)}</b><small>${e(v.tipo)} · <span style="color:${COR_SIT[v.situacao]}">${e(NATUREZA[v.situacao])}</span> · ${e(v.fonte)}</small></div></div>`; }).join('') || '<div class="int-vazio" style="padding:10px">Sem ligações nos filtros atuais.</div>'}</div>
+    <div class="row-btns" style="margin-top:12px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="INT.ficha('${id}')">Abrir ficha</button><button class="btn btn-outline btn-sm" onclick="INT.vnExp('${id}')">Expandir rede</button>${pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formVinculo('${id}')">Novo vínculo</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.vnFoco('${id}')">Só a rede dele</button></div></div>`;
+}
+function vnAresta(eid) {
+  const v = byId(S.vinculos, eid); if (!v) return;
+  vnDestacar(new Set([v.origem_id, v.destino_id]));
+  const side = document.getElementById('vnSide'); if (!side) return; side.classList.add('on');
+  side.innerHTML = `<div class="int-card" style="position:relative;margin:0"><button class="tc-x" onclick="INT.vnLimpar()" title="Fechar">✕</button><h3>Vínculo</h3>${tabelaVinculos([v])}</div>`;
+}
+function vnLimpar() { vnDestacar(null); if (_rede) _rede.unselectAll(); const s = document.getElementById('vnSide'); if (s) { s.classList.remove('on'); s.innerHTML = ''; } }
+function vnExpandir(id) {
+  if (!_redeDS) return;
+  const f = S.filtros.rede; let novos = 0;
+  S.vinculos.filter(v => (v.origem_id === id || v.destino_id === id) && f.sit.includes(v.situacao)).forEach(v => {
+    [v.origem_id, v.destino_id].forEach(nid => { const x = ent(nid); if (x && f.tipos.includes(x.tipo) && !_redeDS.nodes.get(nid)) { _redeDS.nodes.add(noRede(x, S.vinculos, null)); novos++; } });
+    if (!_redeDS.edges.get(v.id) && _redeDS.nodes.get(v.origem_id) && _redeDS.nodes.get(v.destino_id)) _redeDS.edges.add(arestaRede(v, f.rotulos));
+  });
+  const cont = document.getElementById('vnCont'); if (cont) cont.textContent = `${_redeDS.nodes.length} registros · ${_redeDS.edges.length} ligações`;
+  toast(novos ? novos + ' registro(s) adicionados à rede.' : 'Nenhuma ligação nova para mostrar.', 'info');
+  fotosSicad(_redeDS.nodes.get().map(n => ent(n.id)).filter(x => x && x.tipo === 'pessoa')).then(() => _redeDS && _redeDS.nodes.update(_redeDS.nodes.get().filter(n => S.fotos[n.id]).map(n => ({ id: n.id, image: S.fotos[n.id] }))));
+  vnSelecionar(id);
+}
+function vnLocalizar(txt) {
+  if (!_redeDS || !txt) return; const n = norm(txt);
+  const alvo = _redeDS.nodes.get().map(nd => ent(nd.id)).find(x => x && (norm(x.titulo) === n || norm(x.codigo) === n)) || _redeDS.nodes.get().map(nd => ent(nd.id)).find(x => x && norm(x.titulo).includes(n));
+  if (!alvo) return toast('Não está no diagrama atual. Ajuste os filtros ou use "Só a rede dele" pela ficha.', 'info');
+  vnSelecionar(alvo.id);
+}
+
+// ── Tela cheia (organograma e vínculos) ──
+function telaCheia(boxId) {
+  const box = document.getElementById(boxId); if (!box) return;
+  const entrar = !box.classList.contains('is-max');
+  box.classList.toggle('is-max', entrar);
+  document.body.classList.toggle('tc-aberta', entrar);
+  try {
+    if (entrar && box.requestFullscreen && !document.fullscreenElement) box.requestFullscreen().catch(() => {});
+    else if (!entrar && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  } catch (_) {}
+  setTimeout(() => {
+    if (boxId === 'ocBox') { _ocZoom = null; aplicarZoomOrg(); }
+    if (boxId === 'vnBox' && _rede) { _rede.setSize('100%', '100%'); _rede.redraw(); _rede.fit({ animation: { duration: 300 } }); }
+  }, 120);
+}
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) document.querySelectorAll('.tc-box.is-max').forEach(b => { b.classList.remove('is-max'); document.body.classList.remove('tc-aberta'); if (b.id === 'ocBox') { _ocZoom = null; aplicarZoomOrg(); } if (b.id === 'vnBox' && _rede) setTimeout(() => { _rede.setSize('100%', '100%'); _rede.redraw(); _rede.fit(); }, 100); });
+});
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') { const b = document.querySelector('.tc-box.is-max'); if (b && !document.fullscreenElement) telaCheia(b.id); } });
 
 // ── Organograma das organizações ────────────────────────────────────────
 // Faccionado = marcado como faccionado no SICAD, ou lançado pelo analista como integrante da organização
@@ -747,15 +921,20 @@ VIEWS.organograma = () => {
   if (!S.orgId || !ent(S.orgId)) { const comMembros = orgs.map(o => [o, membrosDe(o.id).length]).sort((a, b) => b[1] - a[1]); S.orgId = comMembros[0] ? comMembros[0][0].id : null; }
   const org = S.orgId ? ent(S.orgId) : null; const est = org ? estruturaOrg(org.id) : { membros: [], sub: [], com: [] };
   return cabecalho('Organograma', 'Estrutura da organização: função e nível de cada integrante, quem responde a quem e quem se comunica com quem',
-      (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')">${ICON('novo', { size: 15 })} Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
+      (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')"> Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
       (pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formEnt('organizacao')">Nova organização</button>` : '')) +
     `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados. <b>Só faccionados aparecem no organograma</b>; parentes, contatos e demais pessoas ligadas aparecem ao clicar no faccionado.</div>
     <div class="int-busca"><select onchange="INT.escolherOrg(this.value)">${orgs.map(o => `<option value="${o.id}" ${o.id === S.orgId ? 'selected' : ''}>${e(o.titulo)} (${membrosDe(o.id).length})</option>`).join('') || '<option>Nenhuma organização cadastrada</option>'}</select></div>
     ${org ? `<div class="int-kpis"><div class="int-kpi"><b>${est.membros.length}</b><span>Integrantes</span></div><div class="int-kpi"><b>${est.membros.filter(m => m.v.funcao).length}</b><span>Com função definida</span></div><div class="int-kpi"><b>${est.sub.length}</b><span>Ligações de hierarquia</span></div><div class="int-kpi"><b>${est.com.length}</b><span>Comunicações lançadas</span></div></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px"><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(-1)">−</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(0)">Ajustar à tela</button><button class="btn btn-outline btn-sm" onclick="INT.zoomOrg(1)">+</button></div>
-    <div id="intOrg" class="oc-wrap"></div>
+    <div id="ocBox" class="tc-box">
+      <div class="tc-bar"><b class="tc-tit">${e(org.titulo)}</b><span class="tc-esp"></span>
+        <button class="tc-btn" onclick="INT.zoomOrg(-1)" title="Diminuir">−</button><button class="tc-btn" onclick="INT.zoomOrg(0)">Ajustar</button><button class="tc-btn" onclick="INT.zoomOrg(1)" title="Aumentar">+</button>
+        <button class="tc-btn tc-max" onclick="INT.telaCheia('ocBox')"><span class="tc-a">Tela cheia</span><span class="tc-b">Sair da tela cheia</span></button></div>
+      <div id="intOrg" class="oc-wrap"></div>
+      <div id="intOrgInfo" class="tc-side"></div>
+    </div>
     <div class="int-legenda"><span><i class="int-ln"></i>Responde a (hierarquia)</span><span><i class="int-ln" style="border-top:2px dotted #7C3AED"></i>Comunica-se com</span><span><i style="width:14px;height:14px;border:2px solid #059669;border-radius:4px;display:inline-block"></i>Documentado</span><span><i style="width:14px;height:14px;border:2px solid #2563EB;border-radius:4px;display:inline-block"></i>Informado</span><span><i style="width:14px;height:14px;border:2px dashed #D97706;border-radius:4px;display:inline-block"></i>Hipótese</span></div>
-    <div id="intOrgInfo" style="margin-top:12px"></div>` : '<div class="int-vazio">Cadastre uma organização em Organizações.</div>'}`;
+` : '<div class="int-vazio">Cadastre uma organização em Organizações.</div>'}`;
 };
 // Layout hierárquico: faixa por nível (função) e a cadeia "responde a" sempre desce
 const OC = { W: 190, H: 76, GX: 22, ROW: 132, LBL: 170, TOP: 92, PAD: 28 };
@@ -865,7 +1044,8 @@ function infoIntegrante(orgId, pid, semRecarga) {
   const el = document.getElementById('intOrgInfo'); if (!el) return;
   el.dataset.pid = pid;
   const foto = S.fotos[pid];
-  el.innerHTML = `<div class="int-card"><div class="int-ficha-top">${foto ? `<img class="int-foto" style="width:96px;height:116px" src="${foto}" onclick="lbOpen(this.src)">` : ''}<div>
+  el.classList.add('on');
+  el.innerHTML = `<div class="int-card" style="position:relative"><button class="tc-x" onclick="document.getElementById('intOrgInfo').classList.remove('on')" title="Fechar">✕</button><div class="int-ficha-top">${foto ? `<img class="int-foto" style="width:96px;height:116px" src="${foto}" onclick="lbOpen(this.src)">` : ''}<div>
     <h3 style="justify-content:flex-start;gap:10px">${e(m.x.titulo)} <span class="int-cod">${e(m.x.codigo)}</span></h3>
     <div class="int-dl"><div><small>Função</small>${e(m.v.funcao || 'Não informada')}</div><div><small>Nível</small>${e(NIVEIS[m.nivel] || m.nivel)}</div>
     <div><small>Situação</small>${tagNat(m.v.situacao)}</div><div><small>Fonte</small>${e(m.v.fonte)}</div>
@@ -1027,7 +1207,7 @@ VIEWS.dossies = () => {
   if (f.q) { const q = norm(f.q); l = l.filter(d => norm([d.numero, d.titulo, d.descricao, d.objetivo, d.responsavel_nome].join(' ')).includes(q)); }
   const hoje = new Date().toISOString().slice(0, 10);
   return cabecalho('Dossiês de inteligência', 'Todos os usuários do módulo visualizam; alterações dependem de permissão',
-      pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()">${ICON('novo', { size: 15 })} Novo dossiê</button>` : '') +
+      pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()"> Novo dossiê</button>` : '') +
     `<div class="int-busca"><input placeholder="Buscar por número, título, responsável..." value="${e(f.q)}" oninput="INT.setFiltro('dossies','q',this.value)"><select onchange="INT.setFiltro('dossies','sit',this.value,true)">${opts(SITUACAO_DOS, f.sit, 'Toda situação')}</select></div>
     <div class="int-card" style="padding:0;overflow-x:auto" id="intTabDos">${l.length ? `<table class="int-tab"><thead><tr><th>Número</th><th>Título</th><th>Situação</th><th class="hm">Responsável</th><th class="hm">Abertura</th><th class="hm">Registros</th><th class="hm">Retenção</th></tr></thead><tbody>${l.map(d => `<tr class="cl" onclick="INT.abrirDossie('${d.id}')"><td class="int-cod">${e(d.numero)}</td><td><b>${e(d.titulo)}</b><div style="font-size:12px;color:var(--neutral-500)">${e(CLASSIF[d.classificacao])}</div></td><td><span class="int-tag">${e(SITUACAO_DOS[d.situacao])}</span></td><td class="hm">${e(d.responsavel_nome || '—')}</td><td class="hm">${dataBR(d.aberto_em)}</td><td class="hm">${entsDoDossie(d.id).length}</td><td class="hm" style="${d.reter_ate && d.reter_ate < hoje ? 'color:#B45309;font-weight:700' : ''}">${dataBR(d.reter_ate)}</td></tr>`).join('')}</tbody></table>` : '<div class="int-vazio">Nenhum dossiê.</div>'}</div>`;
 };
@@ -1089,23 +1269,23 @@ VIEWS.dossie = () => {
       <div class="int-kpis"><div class="int-kpi" onclick="INT.abaDossie('registros')"><b>${ents.length}</b><span>Registros</span></div><div class="int-kpi" onclick="INT.abaDossie('vinculos')"><b>${vin.length}</b><span>Vínculos</span></div><div class="int-kpi" onclick="INT.abaDossie('documentos')"><b>${docs.length}</b><span>Documentos</span></div><div class="int-kpi" onclick="INT.abaDossie('relatorios')"><b>${rels.length}</b><span>Relatórios</span></div><div class="int-kpi ${compart.length ? 'alerta' : ''}" onclick="INT.abaDossie('registros')"><b>${compart.length}</b><span>Em outros dossiês</span></div></div>
       ${compart.length ? `<div class="int-card"><h3>Conexões compartilhadas com outros dossiês</h3><div class="int-lista">${compart.map(x => `<div class="int-item" onclick="INT.ficha('${x.id}')"><div class="m"><b>${e(x.titulo)}</b><small>${dossiesDoEnt(x.id).filter(o => o.id !== d.id).map(o => e(o.numero + ' — ' + o.titulo)).join(' · ')}</small></div></div>`).join('')}</div></div>` : ''}`;
   } else if (aba === 'registros') {
-    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('')">${ICON('novo', { size: 15 })} Novo registro</button><button class="btn btn-outline btn-sm" onclick="INT.incluirExistente('${d.id}')">Incluir do banco central</button>` : ''}</div>
+    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('')"> Novo registro</button><button class="btn btn-outline btn-sm" onclick="INT.incluirExistente('${d.id}')">Incluir do banco central</button>` : ''}</div>
       ${Object.keys(TIPOS).map(t => { const l = ents.filter(x => x.tipo === t); return l.length ? `<div class="int-card"><h3>${e(TIPOS[t].plural)} (${l.length})</h3><div class="int-lista">${l.map(x => { const it = S.itens.find(i => i.dossie_id === d.id && i.entidade_id === x.id); return itemEnt(x).replace('</small>', (it && it.papel ? ' · ' + e(it.papel) : '') + '</small>'); }).join('')}</div></div>` : ''; }).join('') || '<div class="int-vazio">Nenhum registro neste dossiê.</div>'}`;
   } else if (aba === 'vinculos') {
-    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo(null,'${d.id}')">${ICON('novo', { size: 15 })} Novo vínculo</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.redeDoDossie('${d.id}')">${ICON('web', { size: 15 })} Abrir diagrama</button></div>${tabelaVinculos(vin)}`;
+    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo(null,'${d.id}')"> Novo vínculo</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.redeDoDossie('${d.id}')">${ICON('web', { size: 15 })} Abrir diagrama</button></div>${tabelaVinculos(vin)}`;
   } else if (aba === 'mapa') {
     corpo = `<div id="intMapaDos" class="int-map" style="height:440px"></div>`;
   } else if (aba === 'documentos') {
-    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({dossie_id:'${d.id}'})">${ICON('anexo', { size: 15 })} Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
+    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({dossie_id:'${d.id}'})"> Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
   } else if (aba === 'andamentos') {
     corpo = `${pode('cadastrar') ? `<div class="int-card"><textarea id="andTxt" style="width:100%;min-height:70px" placeholder="Registrar andamento / atualização do dossiê"></textarea><div style="text-align:right;margin-top:8px"><button class="btn btn-primary btn-sm" onclick="INT.salvarAndamento('${d.id}')">Registrar</button></div></div>` : ''}<div id="andLista" class="int-vazio">Carregando...</div><div class="int-card" style="margin-top:14px"><h3>Histórico de alterações do dossiê</h3><div id="dosHist" class="int-vazio">Carregando...</div></div>`;
   } else if (aba === 'relatorios') {
-    corpo = `${pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formRelatorio(null,['${d.id}'])">${ICON('pdf', { size: 15 })} Novo relatório deste dossiê</button>` : ''}${tabelaRels(rels)}`;
+    corpo = `${pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formRelatorio(null,['${d.id}'])"> Novo relatório deste dossiê</button>` : ''}${tabelaRels(rels)}`;
   }
   return `<div style="margin-bottom:10px"><a href="#" onclick="INT.ir('dossies');return false" style="font-size:13px">← Dossiês</a></div>` +
     cabecalho(`<span class="int-cod" style="font-size:13px">${e(d.numero)}</span> ${e(d.titulo)}`, `<span class="int-classif">${e(CLASSIF[d.classificacao].toUpperCase())}</span> · ${e(SITUACAO_DOS[d.situacao])} · responsável ${e(d.responsavel_nome || '—')}`,
-      (pode('editar') || (d.responsavel_id === CU.id && pode('criar_dossie')) ? `<button class="btn btn-outline btn-sm" onclick="INT.formDossie('${d.id}')">${ICON('editar', { size: 15 })} Editar</button>` : '') +
-      (pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio(null,['${d.id}'])">${ICON('pdf', { size: 15 })} Relatório</button>` : '') +
+      (pode('editar') || (d.responsavel_id === CU.id && pode('criar_dossie')) ? `<button class="btn btn-outline btn-sm" onclick="INT.formDossie('${d.id}')"> Editar</button>` : '') +
+      (pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio(null,['${d.id}'])"> Relatório</button>` : '') +
       (pode('editar') ? `<button class="btn btn-outline btn-sm" style="color:var(--danger)" onclick="INT.arquivar('int_dossies','${d.id}',()=>INT.ir('dossies'))">Arquivar</button>` : '')) +
     `<div class="int-tabs">${[['resumo', 'Resumo'], ['registros', 'Registros'], ['vinculos', 'Vínculos'], ['mapa', 'Mapa'], ['documentos', 'Documentos'], ['andamentos', 'Andamentos'], ['relatorios', 'Relatórios']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.abaDossie('${k}')">${r}</button>`).join('')}</div>${corpo}`;
 };
@@ -1156,7 +1336,7 @@ VIEWS.documentos = () => {
   if (f.cl) l = l.filter(d => d.classificacao === f.cl);
   if (f.q) { const q = norm(f.q); l = l.filter(d => norm([d.codigo, d.titulo, d.origem, d.descricao, d.nome_arquivo].join(' ')).includes(q)); }
   return cabecalho('Documentos e fontes', 'Arquivos guardados em área privada, com verificação de integridade (SHA-256) a cada abertura',
-      pode('anexar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDoc({})">${ICON('anexo', { size: 15 })} Anexar documento</button>` : '') +
+      pode('anexar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDoc({})"> Anexar documento</button>` : '') +
     `<div class="int-busca"><input placeholder="Buscar documento..." value="${e(f.q)}" oninput="INT.setFiltro('docs','q',this.value)"><select onchange="INT.setFiltro('docs','cl',this.value,true)">${opts(CLASSIF_DOC, f.cl, 'Toda classificação')}</select></div>
     <div class="int-card" style="padding:0">${tabelaDocs(l)}</div>`;
 };
@@ -1218,7 +1398,7 @@ async function abrirDoc(id) {
     ${versoes.length > 1 ? `<div class="int-card" style="margin-top:12px"><h3>Versões</h3>${versoes.map(v => `<div style="font-size:13px;padding:4px 0"><a href="#" onclick="INT.abrirDoc('${v.id}');return false">v${v.versao}</a> · ${dataHoraBR(v.criado_em)} · ${e(v.criado_por_nome)}</div>`).join('')}</div>` : ''}
     <div id="docVerif" style="margin-top:10px;font-size:13px"></div>
     <div class="row-btns" style="margin-top:12px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="INT.baixarDoc('${d.id}')">${ICON('importar', { size: 15 })} Abrir / baixar</button>
+      <button class="btn btn-primary" onclick="INT.baixarDoc('${d.id}')"> Abrir / baixar</button>
       ${pode('anexar') ? `<button class="btn btn-outline" onclick="INT.formDoc({}, '${d.id}')">Nova versão</button>` : ''}
       ${pode('editar') ? `<button class="btn btn-outline" style="color:var(--danger)" onclick="INT.arquivar('int_documentos','${d.id}')">Arquivar</button>` : ''}
     </div>`, true);
@@ -1244,7 +1424,7 @@ function tabelaRels(rels) {
   return `<div style="overflow-x:auto"><table class="int-tab"><thead><tr><th>Número</th><th>Título</th><th>Situação</th><th class="hm">Tipo</th><th class="hm">Versão</th><th class="hm">Elaboração</th></tr></thead><tbody>${rels.map(r => `<tr class="cl" onclick="INT.abrirRel('${r.id}')"><td class="int-cod">${e(r.numero)}</td><td><b>${e(r.titulo)}</b></td><td><span class="int-tag ${r.status === 'aprovado' ? 'doc' : r.status === 'devolvido' ? 'sig' : ''}">${e(STATUS_REL[r.status])}</span></td><td class="hm">${r.tipo === 'individual' ? 'Individual' : 'Consolidado'}</td><td class="hm">v${r.versao}</td><td class="hm" style="font-size:12px">${e(r.elaborado_por_nome || '—')}<br>${dataBR(r.criado_em)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 VIEWS.relatorios = () => cabecalho('Relatórios de inteligência', 'Fluxo: rascunho → revisão → aprovação. Quem elabora não revisa nem aprova o próprio relatório.',
-    pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio()">${ICON('pdf', { size: 15 })} Novo relatório</button>` : '') +
+    pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio()"> Novo relatório</button>` : '') +
   `<div class="int-card" style="padding:0">${tabelaRels(S.rels)}</div>`;
 
 function formRelatorio(id, dossiesPre, baseId) {
@@ -1293,9 +1473,9 @@ function abrirRel(id) {
   const meu = r.elaborado_por === CU.id;
   const versoes = S.rels.filter(x => (x.relatorio_raiz_id || x.id) === (r.relatorio_raiz_id || r.id)).sort((a, b) => b.versao - a.versao);
   const acoes = [];
-  acoes.push(`<button class="btn btn-primary" onclick="INT.gerarPDF('${id}')">${ICON('pdf', { size: 15 })} Gerar PDF</button>`);
+  acoes.push(`<button class="btn btn-primary" onclick="INT.gerarPDF('${id}')"> Gerar PDF</button>`);
   if (['rascunho', 'devolvido'].includes(r.status) && (meu || CU.role === 'admin')) {
-    acoes.push(`<button class="btn btn-outline" onclick="INT.formRelatorio('${id}')">${ICON('editar', { size: 15 })} Editar</button>`);
+    acoes.push(`<button class="btn btn-outline" onclick="INT.formRelatorio('${id}')"> Editar</button>`);
     acoes.push(`<button class="btn btn-outline" onclick="INT.fluxoRel('${id}','enviar_revisao')">Enviar para revisão</button>`);
   }
   if (r.status === 'em_revisao' && pode('revisar_relatorio') && !meu) acoes.push(`<button class="btn btn-outline" onclick="INT.fluxoRel('${id}','revisar')">Marcar como revisado</button>`);
@@ -1328,6 +1508,7 @@ async function fluxoRel(id, acao) {
 // PDF ─ imagens auxiliares
 async function imagemRede(dossies) {
   await carregarVis();
+  await fotosSicad(S.ents.filter(x => x.tipo === 'pessoa' && S.itens.some(i => dossies.includes(i.dossie_id) && i.entidade_id === x.id)));
   const { nodes, edges } = dadosRede(dossies, ['documentado', 'informado', 'hipotese']);
   if (!nodes.length) return null;
   const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-3000px;top:0;width:1100px;height:720px;background:#fff';
@@ -1529,14 +1710,20 @@ Object.assign(INT_API(), {
   abrir, ir: v => { S.view = v; fechar(); render(); document.querySelector('#shell .content')?.scrollTo?.(0, 0); },
   fechar, ficha, formEnt, salvarEnt, importarSicad, buscaSicad, usarSicad, addAoDossie, arquivar,
   formVinculo, salvarVinculo, formDossie, salvarDossie, abrirDossie, incluirExistente, confirmarInclusao, salvarAndamento,
-  abaDossie: a => { S.abaDossie = a; render(); }, redeDoDossie: id => { S.filtros.rede = { dos: [id], sit: ['documentado', 'informado', 'hipotese'] }; S.view = 'vinculos'; render(); },
+  abaDossie: a => { S.abaDossie = a; render(); }, redeDoDossie: id => { S.filtros.rede = Object.assign(S.filtros.rede || {}, { dos: [id], sit: ['documentado', 'informado', 'hipotese'], foco: null }); S.view = 'vinculos'; render(); },
   formIntegrante, salvarIntegrante, formComunicacao, salvarComunicacao, escolherOrg: id => { S.orgId = id; render(); },
   infoInt: (o, p) => infoIntegrante(o, p),
+  telaCheia, vnLocalizar, vnLimpar, vnSel: id => vnSelecionar(id), vnExp: id => vnExpandir(id),
+  vnFoco: id => { S.filtros.rede.foco = id; render(); },
+  vnTipo: k => { const f = S.filtros.rede; f.tipos = f.tipos.includes(k) ? f.tipos.filter(x => x !== k) : [...f.tipos, k]; render(); },
+  vnRotulos: () => { const f = S.filtros.rede; f.rotulos = !f.rotulos; if (_redeDS) _redeDS.edges.update(_redeDS.edges.get().map(ed => ({ id: ed.id, label: f.rotulos ? (byId(S.vinculos, ed.id) || {}).tipo : undefined }))); document.querySelectorAll('#vnBox .tc-btn').forEach(b => { if (b.textContent === 'Rótulos') b.classList.toggle('on', f.rotulos); }); },
+  vnReorganizar: () => { if (_rede) { _rede.setOptions({ physics: { enabled: true } }); _rede.stabilize(200); } },
+  vnAjustar: () => { if (_rede) _rede.fit({ animation: { duration: 400 } }); },
   zoomOrg: d => { if (d === 0) _ocZoom = null; else _ocZoom = Math.max(.35, Math.min(1.6, (_ocZoom || 1) + d * .15)); aplicarZoomOrg(); },
   nivelDaFuncao: f => { const el = document.getElementById('oNiv'); if (el) el.value = String(FUNCOES[f] || 4); },
   formDoc, salvarDoc, abrirDoc, baixarDoc, formRelatorio, salvarRel, abrirRel, fluxoRel, gerarPDF, salvarPerms, pesquisar, novaLocalidade,
   destravar, sairTrava, abaAud: a => { S.abaAud = a; render(); },
-  verRede: id => { _redeFoco = id; S.filtros.rede = { dos: [], sit: ['documentado', 'informado', 'hipotese'] }; S.view = 'vinculos'; render(); },
+  verRede: id => { S.filtros.rede = Object.assign(S.filtros.rede || {}, { dos: [], sit: ['documentado', 'informado', 'hipotese'], foco: id }); S.view = 'vinculos'; render(); },
   verMapa: id => { _mapaFoco = id; S.view = 'mapa'; render(); },
   filtrarCentral: f => { S.filtros.central = f; S.view = 'central'; render(); },
   redeDos: (id, on) => { const f = S.filtros.rede; f.dos = on ? [...f.dos, id] : f.dos.filter(x => x !== id); render(); },
