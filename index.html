@@ -3526,7 +3526,19 @@ const VINC_INVERSO = { 'Pai':'Filho(a)', 'Mãe':'Filho(a)', 'Filho(a)':'Pai / m�
 let _vcAtuais = [], _vcPend = [], _vcEscolhido = null;
 function vcRotulo(v, pid){ return v.pessoa_a === pid ? v.tipo : (VINC_INVERSO[v.tipo] || v.tipo); }
 function vcOutro(v, pid){ return v.pessoa_a === pid ? v.pessoa_b : v.pessoa_a; }
-const _vcCache = {};
+const _vcCache = {}, _vcFoto = {};
+async function vcFotos(ids){
+  const falta = [...new Set(ids.map(String))].filter(id => { if (id in _vcFoto) return false; const p = vcPessoa(id); if (p && p.foto) { _vcFoto[id] = p.foto; return false; } return !p || p.tem_foto !== false; });
+  if (!falta.length) return false;
+  for (let i = 0; i < falta.length; i += 20) {
+    const lote = falta.slice(i, i + 20);
+    try {
+      const r = await sbFetch('GET','sicad_pessoas',null,'select=id,foto&id=in.(' + encodeURIComponent(lote.map(id => '"' + id.replace(/"/g,'') + '"').join(',')) + ')');
+      lote.forEach(id => { const p = (r || []).find(z => String(z.id) === id); _vcFoto[id] = (p && p.foto) || null; });
+    } catch(_) { lote.forEach(id => { _vcFoto[id] = null; }); }
+  }
+  return true;
+}
 function vcPessoa(id){ return allP.find(x => String(x.id) === String(id)) || _vcCache[String(id)]; }
 async function vcGarantir(ids){
   const falta = [...new Set(ids.map(String))].filter(id => !vcPessoa(id)); if (!falta.length) return;
@@ -3540,9 +3552,10 @@ async function vcCarregar(pid){
   try { return await sbFetch('GET','sicad_vinculos',null,`select=*&removido_em=is.null&or=(pessoa_a.eq.${encodeURIComponent(pid)},pessoa_b.eq.${encodeURIComponent(pid)})&order=criado_em.asc`); }
   catch(e){ if(!/sicad_vinculos/.test(e.message)) console.warn('[vinculos]', e.message); return null; }
 }
-function vcAvatar(p, t){ t = t || 34; return p && p.foto ? `<img src="${p.foto}" style="width:${t}px;height:${t}px;border-radius:7px;object-fit:cover;flex-shrink:0">` : `<div style="width:${t}px;height:${t}px;border-radius:7px;background:var(--neutral-100);color:var(--neutral-500);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${esc(((p&&p.nome)||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join(''))}</div>`; }
-function vcRenderForm(){
+function vcAvatar(p, t){ t = t || 34; const f = p && (p.foto || _vcFoto[String(p.id)]); if (f) return `<img src="${f}" style="width:${t}px;height:${t}px;border-radius:7px;object-fit:cover;flex-shrink:0;cursor:zoom-in" onclick="event.stopPropagation();lbOpen(this.src)">`; return p && p.foto ? `<img src="${p.foto}" style="width:${t}px;height:${t}px;border-radius:7px;object-fit:cover;flex-shrink:0">` : `<div style="width:${t}px;height:${t}px;border-radius:7px;background:var(--neutral-100);color:var(--neutral-500);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${esc(((p&&p.nome)||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join(''))}</div>`; }
+function vcRenderForm(semFotos){
   const el = document.getElementById('cadVincLista'); if (!el) return;
+  if (!semFotos) { const pidF = editMode && editId ? String(editId) : null; vcFotos([..._vcAtuais.map(v => vcOutro(v, pidF)), ..._vcPend.map(v => v.pessoa_b)]).then(n => { if (n) vcRenderForm(true); }); }
   const pid = editMode && editId ? editId : null;
   const itens = [
     ..._vcAtuais.map(v => ({ v, outro: vcPessoa(vcOutro(v, pid)), rot: vcRotulo(v, pid), salvo: true })),
@@ -3558,6 +3571,7 @@ function vcBuscar(q){
   const ja = new Set([..._vcAtuais.map(v => vcOutro(v, pid)), ..._vcPend.map(v => v.pessoa_b)].map(String));
   const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const l = allP.filter(p => String(p.id) !== pid && !ja.has(String(p.id)) && (norm(p.nome).includes(n) || norm(p.apelido).includes(n) || (dg.length >= 4 && (p.cpf || '').replace(/\D/g,'').includes(dg)))).slice(0, 8);
+  if (l.length) vcFotos(l.map(p => p.id)).then(n => { if (n && document.getElementById('vcBusca').value.trim() === q) vcBuscar(q); });
   res.innerHTML = l.length ? l.map(p => `<div class="vc-op" onclick="vcEscolher('${p.id}')">${vcAvatar(p, 30)}<div class="vc-txt"><b>${esc(p.nome)}</b><span>${esc([p.apelido, p.bairro, p.cpf].filter(Boolean).join(' · ') || '—')}</span></div></div>`).join('') : '<div class="vc-vazio">Nenhum cadastro encontrado.</div>';
 }
 function vcEscolher(id){
@@ -3608,6 +3622,7 @@ async function vcFicha(pid){
   if (!document.getElementById('dVinc')) return;
   if (l === null) { el.innerHTML = ''; return; }
   await vcGarantir(l.map(v => vcOutro(v, String(pid))));
+  await vcFotos(l.map(v => vcOutro(v, String(pid))));
   if (!document.getElementById('dVinc')) return;
   const outros = l.map(v => ({ v, p: vcPessoa(vcOutro(v, String(pid))), id: vcOutro(v, String(pid)) }));
   el.innerHTML = `<div class="d-section-title">VÍNCULOS (${l.length})</div>` + (l.length ? `<div class="vc-lista">${outros.map(o => `<div class="vc-item vc-click" onclick="closePersonModal();setTimeout(()=>viewPerson('${o.id}'),120)">${vcAvatar(o.p)}<div class="vc-txt"><b>${esc(o.p ? o.p.nome : 'Cadastro')}</b><span>${esc(vcRotulo(o.v, String(pid)))}${o.v.observacao ? ' · ' + esc(o.v.observacao) : ''}</span></div></div>`).join('')}</div>` : '<div class="vc-vazio">Nenhum vínculo cadastrado.</div>');
