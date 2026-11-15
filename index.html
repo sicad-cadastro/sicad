@@ -359,6 +359,22 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .d-loc .ico{color:var(--neutral-500)}
 .d-loc:active{background:var(--neutral-100)}
 .ico-perfil{flex-shrink:0}
+.vc-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.vc-item,.vc-op{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}
+.vc-op{cursor:pointer;border-radius:0;border-width:0 0 1px 0}.vc-op:last-child{border-bottom:0}.vc-op:hover{background:var(--neutral-50)}
+.vc-click{cursor:pointer}.vc-click:hover{border-color:var(--neutral-400)}
+.vc-txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.vc-txt b{font-size:13px;color:var(--neutral-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vc-txt span{font-size:12px;color:var(--neutral-500)}
+.vc-x{border:1px solid var(--border);background:#fff;color:var(--neutral-500);border-radius:6px;width:28px;height:28px;cursor:pointer;flex-shrink:0}
+.vc-x:hover{color:var(--danger);border-color:#FECACA}
+.vc-res{border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-top:6px;background:var(--surface)}
+.vc-res:empty{display:none}
+.vc-escolha{border:1px solid var(--border);border-radius:9px;padding:10px;margin-top:8px;background:var(--neutral-50)}
+.vc-linha{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vc-linha select{flex:1;min-width:160px}
+.vc-lbl{font-size:13px;color:var(--neutral-600)}
+.vc-vazio{font-size:12.5px;color:var(--neutral-500);padding:6px 2px}
 .s-facc{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .s-facc-btn{border:1.5px solid #fecaca;background:#fff;color:#b91c1c;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;letter-spacing:.3px;cursor:pointer;min-height:38px;white-space:nowrap}
 .s-facc-btn b{font-weight:800;margin-left:2px}
@@ -1448,6 +1464,17 @@ body.no-didatico .field-hint{display:none}
               <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);min-width:24px;text-align:center">3</span>
               <input type="text" id="fVeiculo3" placeholder="Ex: Bicicleta — Azul" autocomplete="off" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);outline:none;font-family:'IBM Plex Sans',sans-serif">
             <button type="button" onclick="consultarVeiculoModal('fVeiculo3')" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:'IBM Plex Mono',monospace" title="Consultar placa no SINESP">SINESP</button></div>
+          </div>
+        </div>
+
+        <!-- Vínculos com outros cadastrados -->
+        <div class="fg" id="cadVincWrap" style="margin-top:4px">
+          <label>VÍNCULOS COM OUTROS CADASTRADOS</label>
+          <div id="cadVincLista" class="vc-lista"></div>
+          <div class="vc-add">
+            <input type="text" id="vcBusca" placeholder="Buscar cadastrado por nome, apelido ou CPF" autocomplete="off" oninput="vcBuscar(this.value)">
+            <div id="vcRes" class="vc-res"></div>
+            <div id="vcEscolha" class="vc-escolha" style="display:none"></div>
           </div>
         </div>
 
@@ -3469,6 +3496,7 @@ async function savePerson(){
       console.log('[SICAD] Editando id:', idParaEditar, 'campos:', JSON.stringify(Object.keys(campos)));
       await DB.updPerson(idParaEditar, campos);
       allP = allP.map(x => x.id===idParaEditar ? {...x,...campos} : x);
+      await vcSalvarPendentes(idParaEditar);
       toast('Atualizado! ','success');
     }
     if(!editMode){
@@ -3482,13 +3510,108 @@ async function savePerson(){
       const salvo = await DB.addPerson(d);
       const registroFinal = salvo && salvo.id ? salvo : d;
       allP.unshift(registroFinal);
-      toast('Cadastro salvo! ','success');
+      const nv = await vcSalvarPendentes(novoId);
+      toast('Cadastro salvo!' + (nv ? ' ' + nv + ' vínculo(s) incluído(s).' : ''),'success');
     }
     cadClear();renderList(allP);go('consultar');
   }catch(e){toast('Erro: '+e.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='Salvar cadastro';}
 }
 function gv(id){return document.getElementById(id).value.trim()||null;}
+
+// ══════════ VÍNCULOS ENTRE CADASTRADOS (migration v18) ══════════
+// tipo = o que a pessoa B é da pessoa A. Na ficha de B mostra-se o inverso.
+const VINC_TIPOS = ['Pai','Mãe','Filho(a)','Irmão(ã)','Cônjuge / companheiro(a)','Padrasto / madrasta','Enteado(a)','Avô / avó','Neto(a)','Tio(a)','Sobrinho(a)','Primo(a)','Cunhado(a)','Amigo(a)','Vizinho(a)','Comparsa / associado','Comunica-se com','Visto junto','Outro'];
+const VINC_INVERSO = { 'Pai':'Filho(a)', 'Mãe':'Filho(a)', 'Filho(a)':'Pai / mãe', 'Padrasto / madrasta':'Enteado(a)', 'Enteado(a)':'Padrasto / madrasta', 'Avô / avó':'Neto(a)', 'Neto(a)':'Avô / avó', 'Tio(a)':'Sobrinho(a)', 'Sobrinho(a)':'Tio(a)' };
+let _vcAtuais = [], _vcPend = [], _vcEscolhido = null;
+function vcRotulo(v, pid){ return v.pessoa_a === pid ? v.tipo : (VINC_INVERSO[v.tipo] || v.tipo); }
+function vcOutro(v, pid){ return v.pessoa_a === pid ? v.pessoa_b : v.pessoa_a; }
+const _vcCache = {};
+function vcPessoa(id){ return allP.find(x => String(x.id) === String(id)) || _vcCache[String(id)]; }
+async function vcGarantir(ids){
+  const falta = [...new Set(ids.map(String))].filter(id => !vcPessoa(id)); if (!falta.length) return;
+  const lista = falta.map(id => '"' + id.replace(/"/g,'') + '"').join(',');
+  let r = [];
+  try { r = await sbFetch('GET','sicad_pessoas_lista',null,'select=id,nome,apelido,bairro,cpf&id=in.(' + encodeURIComponent(lista) + ')'); }
+  catch(_) { try { r = await sbFetch('GET','sicad_pessoas',null,'select=id,nome,apelido,bairro,cpf&id=in.(' + encodeURIComponent(lista) + ')'); } catch(__) {} }
+  (r || []).forEach(p => { _vcCache[String(p.id)] = p; });
+}
+async function vcCarregar(pid){
+  try { return await sbFetch('GET','sicad_vinculos',null,`select=*&removido_em=is.null&or=(pessoa_a.eq.${encodeURIComponent(pid)},pessoa_b.eq.${encodeURIComponent(pid)})&order=criado_em.asc`); }
+  catch(e){ if(!/sicad_vinculos/.test(e.message)) console.warn('[vinculos]', e.message); return null; }
+}
+function vcAvatar(p, t){ t = t || 34; return p && p.foto ? `<img src="${p.foto}" style="width:${t}px;height:${t}px;border-radius:7px;object-fit:cover;flex-shrink:0">` : `<div style="width:${t}px;height:${t}px;border-radius:7px;background:var(--neutral-100);color:var(--neutral-500);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${esc(((p&&p.nome)||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join(''))}</div>`; }
+function vcRenderForm(){
+  const el = document.getElementById('cadVincLista'); if (!el) return;
+  const pid = editMode && editId ? editId : null;
+  const itens = [
+    ..._vcAtuais.map(v => ({ v, outro: vcPessoa(vcOutro(v, pid)), rot: vcRotulo(v, pid), salvo: true })),
+    ..._vcPend.map((v, i) => ({ v, outro: vcPessoa(v.pessoa_b), rot: v.tipo, salvo: false, i }))
+  ];
+  el.innerHTML = itens.length ? itens.map(it => `<div class="vc-item">${vcAvatar(it.outro)}<div class="vc-txt"><b>${esc(it.outro ? it.outro.nome : 'Cadastro não carregado')}</b><span>${esc(it.rot)}${it.v.observacao ? ' · ' + esc(it.v.observacao) : ''}${it.salvo ? '' : ' · será salvo junto com o cadastro'}</span></div>${it.salvo ? (podeCadastrarSICAD() ? `<button type="button" class="vc-x" title="Remover vínculo" onclick="vcRemover('${it.v.id}')">✕</button>` : '') : `<button type="button" class="vc-x" title="Tirar" onclick="vcTirarPend(${it.i})">✕</button>`}</div>`).join('') : '<div class="vc-vazio">Nenhum vínculo. Busque abaixo para ligar esta pessoa a outro cadastrado.</div>';
+}
+function vcBuscar(q){
+  const res = document.getElementById('vcRes'); q = (q || '').trim();
+  if (q.length < 2) { res.innerHTML = ''; return; }
+  const n = q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''), dg = q.replace(/\D/g,'');
+  const pid = editMode && editId ? String(editId) : null;
+  const ja = new Set([..._vcAtuais.map(v => vcOutro(v, pid)), ..._vcPend.map(v => v.pessoa_b)].map(String));
+  const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const l = allP.filter(p => String(p.id) !== pid && !ja.has(String(p.id)) && (norm(p.nome).includes(n) || norm(p.apelido).includes(n) || (dg.length >= 4 && (p.cpf || '').replace(/\D/g,'').includes(dg)))).slice(0, 8);
+  res.innerHTML = l.length ? l.map(p => `<div class="vc-op" onclick="vcEscolher('${p.id}')">${vcAvatar(p, 30)}<div class="vc-txt"><b>${esc(p.nome)}</b><span>${esc([p.apelido, p.bairro, p.cpf].filter(Boolean).join(' · ') || '—')}</span></div></div>`).join('') : '<div class="vc-vazio">Nenhum cadastro encontrado.</div>';
+}
+function vcEscolher(id){
+  const p = vcPessoa(id); if (!p) return;
+  _vcEscolhido = p.id;
+  document.getElementById('vcRes').innerHTML = ''; document.getElementById('vcBusca').value = '';
+  const nome = (document.getElementById('fNome').value || 'esta pessoa').trim();
+  const el = document.getElementById('vcEscolha'); el.style.display = 'block';
+  el.innerHTML = `<div class="vc-item" style="margin-bottom:8px">${vcAvatar(p)}<div class="vc-txt"><b>${esc(p.nome)}</b><span>${esc([p.apelido, p.bairro].filter(Boolean).join(' · ') || '—')}</span></div></div>
+    <div class="vc-linha"><span class="vc-lbl">${esc(p.nome.split(' ')[0])} é</span><select id="vcTipo">${VINC_TIPOS.map(t => `<option>${t}</option>`).join('')}</select><span class="vc-lbl">de ${esc(nome.split(' ')[0] || 'esta pessoa')}</span></div>
+    <input type="text" id="vcObs" placeholder="Observação (opcional)" autocomplete="off" style="margin-top:8px">
+    <div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn btn-outline btn-sm" onclick="vcCancelar()">Cancelar</button><button type="button" class="btn btn-primary btn-sm" onclick="vcAdicionar()">Adicionar vínculo</button></div>`;
+}
+function vcCancelar(){ _vcEscolhido = null; const el = document.getElementById('vcEscolha'); el.style.display = 'none'; el.innerHTML = ''; }
+async function vcAdicionar(){
+  if (!_vcEscolhido) return;
+  const v = { pessoa_b: String(_vcEscolhido), tipo: document.getElementById('vcTipo').value, observacao: (document.getElementById('vcObs').value || '').trim() || null };
+  if (editMode && editId) {
+    if (!podeCadastrarSICAD()) return toast('Seu perfil não altera cadastros existentes.','error');
+    try {
+      const r = await sbFetch('POST','sicad_vinculos',{ pessoa_a: String(editId), ...v });
+      _vcAtuais.push(r[0] || { ...v, pessoa_a: String(editId) });
+      logAudit('vinculo_criar','sicad_vinculos', r[0] && r[0].id, { a: editId, b: v.pessoa_b, tipo: v.tipo });
+      toast('Vínculo adicionado.','success');
+    } catch(e) { return toast(/duplicate|sicad_vinculos_uk/.test(e.message) ? 'Esse vínculo já existe.' : /sicad_vinculos/.test(e.message) ? 'Vínculos ainda não habilitados (migration v18).' : 'Erro: ' + e.message, 'error'); }
+  } else {
+    _vcPend.push(v);
+  }
+  vcCancelar(); vcRenderForm();
+}
+function vcTirarPend(i){ _vcPend.splice(i, 1); vcRenderForm(); }
+async function vcRemover(id){
+  if (!confirm('Remover este vínculo? Ele sai das duas fichas (fica registrado no histórico).')) return;
+  try { await sbFetch('PATCH','sicad_vinculos',{ removido_em: new Date().toISOString() },`id=eq.${id}`); _vcAtuais = _vcAtuais.filter(v => v.id !== id); logAudit('vinculo_remover','sicad_vinculos',id); vcRenderForm(); toast('Vínculo removido.','info'); }
+  catch(e) { toast('Erro: ' + e.message,'error'); }
+}
+async function vcSalvarPendentes(pid){
+  if (!_vcPend.length) return 0; let ok = 0;
+  for (const v of _vcPend) { try { const r = await sbFetch('POST','sicad_vinculos',{ pessoa_a: String(pid), ...v }); ok++; logAudit('vinculo_criar','sicad_vinculos', r[0] && r[0].id, { a: pid, b: v.pessoa_b, tipo: v.tipo }); } catch(e) { console.warn('[vinculo]', e.message); } }
+  _vcPend = []; return ok;
+}
+async function vcAbrirEdicao(pid){ _vcAtuais = (await vcCarregar(pid)) || []; _vcPend = []; vcCancelar(); vcRenderForm(); await vcGarantir(_vcAtuais.map(v => vcOutro(v, String(pid)))); vcRenderForm(); }
+function vcLimpar(){ _vcAtuais = []; _vcPend = []; vcCancelar(); const r = document.getElementById('vcRes'); if (r) r.innerHTML = ''; const b = document.getElementById('vcBusca'); if (b) b.value = ''; vcRenderForm(); }
+// Ficha: lista de vínculos (carrega depois de abrir)
+async function vcFicha(pid){
+  const el = document.getElementById('dVinc'); if (!el) return;
+  const l = await vcCarregar(pid);
+  if (!document.getElementById('dVinc')) return;
+  if (l === null) { el.innerHTML = ''; return; }
+  await vcGarantir(l.map(v => vcOutro(v, String(pid))));
+  if (!document.getElementById('dVinc')) return;
+  const outros = l.map(v => ({ v, p: vcPessoa(vcOutro(v, String(pid))), id: vcOutro(v, String(pid)) }));
+  el.innerHTML = `<div class="d-section-title">VÍNCULOS (${l.length})</div>` + (l.length ? `<div class="vc-lista">${outros.map(o => `<div class="vc-item vc-click" onclick="closePersonModal();setTimeout(()=>viewPerson('${o.id}'),120)">${vcAvatar(o.p)}<div class="vc-txt"><b>${esc(o.p ? o.p.nome : 'Cadastro')}</b><span>${esc(vcRotulo(o.v, String(pid)))}${o.v.observacao ? ' · ' + esc(o.v.observacao) : ''}</span></div></div>`).join('')}</div>` : '<div class="vc-vazio">Nenhum vínculo cadastrado.</div>');
+}
 
 function cadClear(){
   ['fNome','fMae','fApelido','fNasc','fCpf','fCep','fLat','fLng','fTelefone','fInsta1','fInsta2','fFacebook','fEnd','fQuadra','fBairro','fSenhaNum','fSenhaAlf','fVeiculo1','fVeiculo2','fVeiculo3'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -3507,6 +3630,7 @@ function cadClear(){
   _tipoSenha=null;window._tipoSenha=null;
   document.getElementById('cadTitle').textContent='NOVO CADASTRO';
   { const b = document.getElementById('btnCadForagido'); if (b) b.style.display = 'none'; }
+  vcLimpar();
 }
 
 
@@ -3586,8 +3710,10 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
+      <div id="dVinc" style="margin-top:14px"></div>
       <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">Editar</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">Foragido</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">Excluir</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
+    vcFicha(id);
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
 }
@@ -3603,6 +3729,7 @@ async function editPerson(){
   go('cadastrar');
   document.getElementById('cadTitle').textContent='EDITAR CADASTRO';
   _atualizarBtnCadForagido(idSalvo);
+  vcAbrirEdicao(idSalvo);
   document.getElementById('fNome').value=p.nome||'';document.getElementById('fMae').value=p.mae||'';
   document.getElementById('fApelido').value=p.apelido||'';document.getElementById('fNasc').value=p.nascimento||'';
   document.getElementById('fCpf').value=p.cpf||'';
