@@ -387,10 +387,11 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .ab-l1{font-size:13px;color:var(--neutral-900);font-weight:600}
 .ab-l2{font-size:12.5px;color:var(--neutral-600);margin-top:2px}
 .ab-l3{font-size:11.5px;color:var(--neutral-400);margin-top:4px}
-.off-bar{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F;font-size:12.5px;line-height:1.4;padding:9px 12px;border-radius:9px;margin-bottom:12px}
-.off-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:0 0 14px}
-.off-card b{display:block;font-size:13.5px;color:var(--neutral-900)}
-.off-card span{font-size:12px;color:var(--neutral-500)}
+.pg-banner{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--brand-navy);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.pg-banner-ico{padding-top:2px;flex-shrink:0}
+.pg-banner-t{font-size:18px;font-weight:800;color:var(--neutral-900);letter-spacing:-.01em}
+.pg-banner-s{font-size:13px;color:var(--neutral-500);margin-top:3px;line-height:1.45}
+@media(max-width:360px){.hdr-logo small{display:none}}
 .map-c3-btn{border-style:dashed}
 .map-c3-btn.on{background:#EEF2FF;border-color:#1E3A8A;border-style:solid;color:#1E3A8A}
 .vc-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
@@ -428,7 +429,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 @media(min-width:600px){.mhandle{display:none}}
 .mi{padding:20px 20px 32px}
 .mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.mtitle{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#000}
+.mtitle{font-size:16px;font-weight:700;color:var(--neutral-900)}
 .mclose{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text-dim);flex-shrink:0}
 .mclose:active{border-color:var(--danger);color:var(--danger)}
 
@@ -459,9 +460,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .d-nick{font-family:'IBM Plex Mono',monospace;color:#000;font-size:13px;margin-top:3px}
 .d-flds{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:360px){.d-flds{grid-template-columns:1fr}}
-.d-fld label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:2px}
+.d-fld label{font-size:10.5px;font-family:var(--font-sans);font-weight:600;color:var(--neutral-500);letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:2px}
 .d-fld span{font-size:14px;color:var(--text);word-break:break-word}
-.d-section-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#000;padding:14px 0 2px;font-weight:700;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
+.d-section-title{font-family:var(--font-sans);font-size:11.5px;letter-spacing:.06em;color:var(--neutral-800);padding:14px 0 2px;font-weight:700;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
 .d-obs{grid-column:1/-1}
 .d-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .d-photo{width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
@@ -504,7 +505,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .pdot:active{transform:scale(.9)}
 .pdot.ativo{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;font-size:13px}
 .pdot.ativo::after{content:attr(data-order);color:#fff;font-weight:700;font-size:13px}
-.link-card:hover{transform:translateY(-2px);filter:brightness(1.1)}.link-card:active{transform:scale(.98)}
+.link-card:hover{border-color:var(--neutral-400) !important}.link-card:active{transform:scale(.98)}
 #mapaContainer{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative;z-index:1}
 @media(max-width:600px){#mapaContainer{height:320px}}
 .sicad-marker{background:transparent !important;border:0 !important}
@@ -524,8 +525,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .map-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .map-stat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .map-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex:1;min-width:100px;text-align:center}
-.map-stat-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#000;line-height:1}
-.map-stat-l{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:2px}
+.map-stat-n{font-family:var(--font-sans);font-weight:800;font-size:24px;color:var(--neutral-900);line-height:1;font-variant-numeric:tabular-nums}
+.map-stat-l{font-size:10.5px;font-family:var(--font-sans);font-weight:600;color:var(--neutral-500);letter-spacing:.05em;margin-top:2px}
 .fcard{background:var(--card);border:2px solid rgba(255,61,61,.4);border-radius:14px;padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
 .fcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--danger)}
 .fcard:active{border-color:var(--danger);background:rgba(255,61,61,.08)}
@@ -551,7 +552,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 
 /* ── RECONHECIMENTO FACIAL — TABS ── */
 .face-tabs{display:flex;gap:6px;margin-bottom:14px;background:#f1f5f9;padding:5px;border-radius:12px}
-.face-tab{flex:1;padding:11px 12px;border:none;background:transparent;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--text-mid);cursor:pointer;transition:all .2s}
+.face-tab{flex:1;padding:11px 12px;border:none;background:transparent;border-radius:8px;font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;transition:all .2s}
 .face-tab:hover{color:#000}
 .face-tab.active{background:#fff;color:#000;box-shadow:var(--shadow)}
 
@@ -567,7 +568,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .face-match-name{font-weight:700;font-size:14px;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .face-match-meta{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;margin-top:2px}
 .face-match-score{text-align:right;flex-shrink:0}
-.face-match-pct{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;color:#000}
+.face-match-pct{font-family:var(--font-sans);font-weight:800;font-size:20px;line-height:1;color:var(--neutral-900)}
 .face-match-pct.match{color:#10b981}.face-match-pct.maybe{color:#f59e0b}.face-match-pct.no{color:var(--text-dim)}
 .face-match-lbl{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:2px}
 
@@ -602,7 +603,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .face-bar-labels{display:flex;justify-content:space-between;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text-dim);letter-spacing:1px;margin-top:4px}
 .face-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .face-metric{background:var(--surface2);border-radius:8px;padding:10px 6px}
-.face-metric-n{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:#000}
+.face-metric-n{font-family:var(--font-sans);font-weight:800;font-size:19px;line-height:1;color:var(--neutral-900)}
 .face-metric-l{font-size:9px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:3px}
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1211,7 +1212,6 @@ body.no-didatico .field-hint{display:none}
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">CARREGANDO</div></div>
       </div>
-      <div id="offPainel"></div>
 
       <!-- FORAGIDOS -->
       <div class="hi-card hi-danger hi-pulse" onclick="go('foragidos')">
@@ -1273,20 +1273,20 @@ body.no-didatico .field-hint{display:none}
       <div class="sec-title" id="cadTitle">NOVO CADASTRO</div>
       <button type="button" id="btnCadForagido" class="btn btn-danger" style="display:none;width:100%;margin-bottom:14px;font-weight:800" onclick="marcarComoForagido(editId, true)">Adicionar como foragido</button>
       <!-- OCR de documento (RG/CPF/CNH) -->
-      <div class="card" style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:1px solid rgba(124,58,237,.35);margin-bottom:16px;padding:14px">
+      <div class="card" style="background:var(--surface);border:1px solid var(--border);margin-bottom:16px;padding:14px">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <div style="font-size:28px;flex-shrink:0"><span data-icon="pdf" data-size="24"></span></div>
           <div style="flex:1;min-width:180px">
-            <div style="font-weight:700;font-size:13px;color:#000;margin-bottom:2px">LEITURA AUTOMÁTICA DE DOCUMENTO</div>
-            <div style="font-size:11px;color:var(--text-mid)">Tire foto do RG/CPF/CNH — o sistema lê e preenche os campos.</div>
+            <div style="font-weight:700;font-size:13.5px;color:var(--neutral-900);margin-bottom:2px">Ler documento</div>
+            <div style="font-size:12px;color:var(--text-mid)">Foto do RG, CPF ou CNH: o sistema lê e preenche os campos.</div>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
-            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
-              GALERIA
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer">
+              Galeria
               <input type="file" accept="image/*" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
-            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;background:rgba(255,255,255,.7);border-color:#7c3aed;color:#7c3aed;font-weight:700">
-              CÂMERA
+            <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer">
+              Câmera
               <input type="file" accept="image/*" capture="environment" onchange="ocrDocumento(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
           </div>
@@ -1308,15 +1308,15 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap" id="faceBtnsWrap">
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">GALERIA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-mid);pointer-events:none">Galeria</span>
               <input type="file" id="faceFileGal" accept="image/*" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">CÂMERA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-mid);pointer-events:none">Câmera</span>
               <input type="file" id="faceFileCam" accept="image/*" capture="user" onchange="onFaceFile(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px dashed var(--border);overflow:hidden;background:transparent;cursor:pointer" onclick="document.getElementById('facePasteHelper').focus()">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">COLAR (CTRL+V)</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-mid);pointer-events:none">Colar (Ctrl+V)</span>
               <input type="text" id="facePasteHelper" onpaste="onFacePaste(event)" placeholder="" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;background:transparent" readonly>
             </div>
           </div>
@@ -1468,11 +1468,11 @@ body.no-didatico .field-hint{display:none}
           <label>FOTOS DE TATUAGENS</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
             <div style="flex:1;min-width:130px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">GALERIA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-mid);pointer-events:none">Galeria</span>
               <input type="file" id="tatFileGal" accept="image/*" multiple onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
             <div style="flex:1;min-width:110px;position:relative;min-height:48px;border-radius:10px;border:1.5px solid var(--border);overflow:hidden;background:transparent">
-              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--text-mid);pointer-events:none">CÂMERA</span>
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:var(--text-mid);pointer-events:none">Câmera</span>
               <input type="file" id="tatFileCam" accept="image/*" capture="environment" onchange="onTatFiles(this)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
             </div>
           </div>
@@ -1805,17 +1805,16 @@ body.no-didatico .field-hint{display:none}
 
     <!-- RECONHECIMENTO FACIAL -->
     <div class="page" id="page-face">
-      <div style="background:linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%);border:2px solid rgba(139,92,246,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px"><span data-icon="face" data-size="27"></span></div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">RECONHECIMENTO FACIAL</div>
-        <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">COMPARAR 2 FOTOS — IA 100% OFFLINE — DADO NÃO SAI DO DISPOSITIVO</div>
+      <div class="pg-banner" style="border-left-color:#4338CA">
+        <div class="pg-banner-ico" style="color:#4338CA"><span data-icon="face" data-size="24"></span></div>
+        <div><div class="pg-banner-t">Reconhecimento facial</div><div class="pg-banner-s">Compare duas fotos ou procure no banco. A análise roda no próprio aparelho: a foto não é enviada a terceiros.</div></div>
       </div>
 
       <!-- TABS de modo -->
       <div class="face-tabs">
-        <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">COMPARAR 1 vs 1</button>
-        <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">BUSCAR NO BANCO</button>
-        <button class="face-tab" id="faceTabWeb" onclick="setFaceMode('web')">BUSCAR NA WEB</button>
+        <button class="face-tab active" id="faceTab1v1" onclick="setFaceMode('1v1')">Comparar 2 fotos</button>
+        <button class="face-tab" id="faceTabBanco" onclick="setFaceMode('banco')">Buscar no banco</button>
+        <button class="face-tab" id="faceTabWeb" onclick="setFaceMode('web')">Buscar na web</button>
       </div>
 
       <!-- Status dos modelos -->
@@ -1842,11 +1841,11 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              GALERIA
+              Galeria
               <input type="file" accept="image/*" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              FOTO
+              Foto
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('A', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <button class="btn btn-outline btn-sm" onclick="startLiveCam('A')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
@@ -1867,11 +1866,11 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              GALERIA
+              Galeria
               <input type="file" accept="image/*" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              FOTO
+              Foto
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('B', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <button class="btn btn-outline btn-sm" onclick="startLiveCam('B')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
@@ -1904,11 +1903,11 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              GALERIA
+              Galeria
               <input type="file" accept="image/*" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              FOTO
+              Foto
               <input type="file" accept="image/*" capture="environment" onchange="onFacePick('Q', this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <button class="btn btn-outline btn-sm" onclick="startLiveCam('Q')" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">LIVE</button>
@@ -1947,11 +1946,11 @@ body.no-didatico .field-hint{display:none}
           </div>
           <div class="face-slot-btns" style="max-width:420px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              GALERIA
+              Galeria
               <input type="file" accept="image/*" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <label class="btn btn-outline btn-sm" style="position:relative;cursor:pointer;font-size:11px;padding:8px 4px">
-              FOTO
+              Foto
               <input type="file" accept="image/*" capture="environment" onchange="onFaceWebPick(this.files[0])" style="position:absolute;inset:0;opacity:0;cursor:pointer">
             </label>
             <button class="btn btn-outline btn-sm" onclick="usarFotoDoBancoNaWeb()" style="font-size:11px;padding:8px 4px;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.35)">Do banco</button>
@@ -2003,10 +2002,9 @@ body.no-didatico .field-hint{display:none}
 
     <!-- BUSCA REVERSA DE TATUAGENS -->
     <div class="page" id="page-tatuagens">
-      <div style="background:linear-gradient(135deg,#fdf4ff 0%,#fae8ff 100%);border:2px solid rgba(168,85,247,.35);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px"><span data-icon="tatuagens" data-size="27"></span></div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#000">BUSCA REVERSA DE TATUAGENS</div>
-        <div style="font-size:11px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">DIGITE TAGS OU PALAVRAS-CHAVE — ACHA QUEM TEM</div>
+      <div class="pg-banner" style="border-left-color:#7C3AED">
+        <div class="pg-banner-ico" style="color:#7C3AED"><span data-icon="tatuagens" data-size="24"></span></div>
+        <div><div class="pg-banner-t">Busca reversa de tatuagens</div><div class="pg-banner-s">Digite palavras-chave ou escolha o local do corpo para achar quem tem a tatuagem.</div></div>
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
@@ -2023,50 +2021,49 @@ body.no-didatico .field-hint{display:none}
 
     <!-- SITES DE PESQUISA -->
     <div class="page" id="page-pesquisa">
-      <div style="background:rgba(255,107,53,.08);border:2px solid var(--accent2);border-radius:14px;padding:20px;margin-bottom:24px;text-align:center">
-        <div style="font-size:32px;margin-bottom:6px"><span data-icon="anexo" data-size="27"></span></div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--accent2)">SITES DE PESQUISA</div>
-        <div style="font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;letter-spacing:1px;margin-top:4px">ACESSO RÁPIDO AOS SISTEMAS</div>
+      <div class="pg-banner" style="border-left-color:#C2410C">
+        <div class="pg-banner-ico" style="color:#C2410C"><span data-icon="web" data-size="24"></span></div>
+        <div><div class="pg-banner-t">Sites de pesquisa</div><div class="pg-banner-s">Acesso rápido aos sistemas de consulta.</div></div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:14px">
 
-        <a href="https://portalbnmp.cnj.jus.br/#/captcha/" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a6fa8;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+        <a href="https://portalbnmp.cnj.jus.br/#/captcha/" target="_blank" class="link-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
           <div style="width:52px;height:52px;background:rgba(26,111,168,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="shield" data-size="22"></span></div>
           <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4db8ff">BNMP</div>
+            <div style="font-size:16px;font-weight:700;color:var(--neutral-900)">BNMP</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Banco Nacional de Mandados de Prisão — CNJ</div>
-            <div style="font-size:10px;color:#1a6fa8;font-family:'IBM Plex Mono',monospace;margin-top:4px">portalbnmp.cnj.jus.br</div>
+            <div style="font-size:11.5px;color:var(--neutral-400);margin-top:3px">portalbnmp.cnj.jus.br</div>
           </div>
           <div style="color:var(--text-dim);font-size:20px">›</div>
         </a>
 
-        <a href="https://auth2.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=nexus-pmdf&redirect_uri=https%3A%2F%2Fnexus.pm.df.gov.br%2F&state=9419fdaa-0d42-4dc0-882b-cf5740f279fa&response_mode=fragment&response_type=code&scope=openid&nonce=c9fe45ab-80e1-4efe-82e3-db128596162f&code_challenge=x7U2mILgus8ex_hk6fCyXzlHNn8BUKNBjNtA4EQgihk&code_challenge_method=S256" target="_blank" class="link-card" style="background:var(--card);border:1px solid #1a5c1a;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+        <a href="https://auth2.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=nexus-pmdf&redirect_uri=https%3A%2F%2Fnexus.pm.df.gov.br%2F&state=9419fdaa-0d42-4dc0-882b-cf5740f279fa&response_mode=fragment&response_type=code&scope=openid&nonce=c9fe45ab-80e1-4efe-82e3-db128596162f&code_challenge=x7U2mILgus8ex_hk6fCyXzlHNn8BUKNBjNtA4EQgihk&code_challenge_method=S256" target="_blank" class="link-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
           <div style="width:52px;height:52px;background:rgba(26,92,26,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="shield" data-size="22"></span></div>
           <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#4dff88">NEXUS</div>
+            <div style="font-size:16px;font-weight:700;color:var(--neutral-900)">NEXUS</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema NEXUS — Polícia Militar DF</div>
-            <div style="font-size:10px;color:#1a5c1a;font-family:'IBM Plex Mono',monospace;margin-top:4px">nexus.pm.df.gov.br</div>
+            <div style="font-size:11.5px;color:var(--neutral-400);margin-top:3px">nexus.pm.df.gov.br</div>
           </div>
           <div style="color:var(--text-dim);font-size:20px">›</div>
         </a>
 
-        <a href="https://auth.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=genesis-app&redirect_uri=https%3A%2F%2Fgenesis.pm.df.gov.br%2Fsignin-oidc&response_type=code&scope=openid%20profile&code_challenge=frNtMDKzlAU5o5yTcrUF3aJronRcQmrIRI-RGYMdSQA&code_challenge_method=S256&response_mode=form_post&nonce=639082571488975056.ZmM1YmYwM2MtODY3YS00YmEyLWJhMzktZDYyYTUxMjk5ZTRhMzM3MTk2YTItZjczOC00YmI0LTljNDctYmY2YjliYzg5YmVj&state=CfDJ8BJm6v3R8WRGuMVFriNhiT2LKbhG6holwOrCoDvOrxrbNkgg2mdInbien3dVEEFS4S8HVuQrYw2gG-be5gAM0IDeOomDsaOtvk0D11sZXJ0NEeoiQtT8-NBJ-fj6p0puQcTBl9HUPayzPgUFLYszN16Zk4o9rGnpILD_IpqG-GykS8X2H_WDLMyHFW8gz-1TixlsTOg4YJ5r5TwuYYRWH2S9eYkzWXUf1L13C_42c1RPfn5C590UEKvFvTIdjDU4ey8TlUmeKOMeoK96QAUz9L5K5daT9Cwu9t8j1U4oPBFxiYNZu6bi6CenbDOPDeWNhngVfE-AGfUjsKaJQUyJy9ah5OWIHSZxODKg9CjX5hUWs5u1Yrkb80lTVY-S4UCLkg&x-client-SKU=ID_NET8_0&x-client-ver=7.5.1.0" target="_blank" class="link-card" style="background:var(--card);border:1px solid #4a1a6e;border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+        <a href="https://auth.policia.df.gov.br/realms/pmdf/protocol/openid-connect/auth?client_id=genesis-app&redirect_uri=https%3A%2F%2Fgenesis.pm.df.gov.br%2Fsignin-oidc&response_type=code&scope=openid%20profile&code_challenge=frNtMDKzlAU5o5yTcrUF3aJronRcQmrIRI-RGYMdSQA&code_challenge_method=S256&response_mode=form_post&nonce=639082571488975056.ZmM1YmYwM2MtODY3YS00YmEyLWJhMzktZDYyYTUxMjk5ZTRhMzM3MTk2YTItZjczOC00YmI0LTljNDctYmY2YjliYzg5YmVj&state=CfDJ8BJm6v3R8WRGuMVFriNhiT2LKbhG6holwOrCoDvOrxrbNkgg2mdInbien3dVEEFS4S8HVuQrYw2gG-be5gAM0IDeOomDsaOtvk0D11sZXJ0NEeoiQtT8-NBJ-fj6p0puQcTBl9HUPayzPgUFLYszN16Zk4o9rGnpILD_IpqG-GykS8X2H_WDLMyHFW8gz-1TixlsTOg4YJ5r5TwuYYRWH2S9eYkzWXUf1L13C_42c1RPfn5C590UEKvFvTIdjDU4ey8TlUmeKOMeoK96QAUz9L5K5daT9Cwu9t8j1U4oPBFxiYNZu6bi6CenbDOPDeWNhngVfE-AGfUjsKaJQUyJy9ah5OWIHSZxODKg9CjX5hUWs5u1Yrkb80lTVY-S4UCLkg&x-client-SKU=ID_NET8_0&x-client-ver=7.5.1.0" target="_blank" class="link-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
           <div style="width:52px;height:52px;background:rgba(74,26,110,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="web" data-size="22"></span></div>
           <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#c084fc">GENESIS</div>
+            <div style="font-size:16px;font-weight:700;color:var(--neutral-900)">GENESIS</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Sistema Genesis — Polícia Militar DF</div>
-            <div style="font-size:10px;color:#4a1a6e;font-family:'IBM Plex Mono',monospace;margin-top:4px">genesis.pm.df.gov.br</div>
+            <div style="font-size:11.5px;color:var(--neutral-400);margin-top:3px">genesis.pm.df.gov.br</div>
           </div>
           <div style="color:var(--text-dim);font-size:20px">›</div>
         </a>
 
-        <a href="https://seape.df.gov.br/foragidos/" target="_blank" class="link-card" style="background:var(--card);border:1px solid rgba(255,61,61,.4);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
+        <a href="https://seape.df.gov.br/foragidos/" target="_blank" class="link-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:all .2s">
           <div style="width:52px;height:52px;background:rgba(255,61,61,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0"><span data-icon="foragidos" data-size="22"></span></div>
           <div style="flex:1">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--danger)">FORAGIDOS PPDF</div>
+            <div style="font-size:16px;font-weight:700;color:var(--neutral-900)">Foragidos PPDF</div>
             <div style="font-size:12px;color:var(--text-dim);margin-top:2px">Lista oficial de foragidos — SEAPE DF</div>
-            <div style="font-size:10px;color:rgba(255,61,61,.6);font-family:'IBM Plex Mono',monospace;margin-top:4px">seape.df.gov.br/foragidos</div>
+            <div style="font-size:11.5px;color:var(--neutral-400);margin-top:3px">seape.df.gov.br/foragidos</div>
           </div>
           <div style="color:var(--text-dim);font-size:20px">›</div>
         </a>
@@ -2213,7 +2210,7 @@ body.no-didatico .field-hint{display:none}
         <select id="uRole" onchange="atualizarDicaPerfil()">
           <optgroup label="Perfis operacionais">
             <option value="gtop">GTOP — acesso total (cadastra, edita, consulta)</option>
-            <option value="rp">RP — consulta e cadastra pessoas (Consultar, Cadastrar, Capãozinho 3, Face, Foragidos)</option>
+            <option value="rp">RP — consulta e cadastra pessoas (Consultar, Cadastrar, Mapa, Capãozinho 3, Face, Foragidos)</option>
           </optgroup>
           <optgroup label="Administração">
             <option value="inteligencia">Inteligência — tudo, menos excluir membros</option>
@@ -2413,89 +2410,15 @@ async function fotoDataURL(src){
   try { const b = await (await fetch(src)).blob(); return await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = () => ok(null); fr.readAsDataURL(b); }); } catch(_) { return null; }
 }
 
-// ══════════ MODO OFFLINE (consulta sem internet) ══════════
-// Durante o uso normal, listas de pessoas, foragidos e Capãozinho 3 ficam guardadas no aparelho
-// (IndexedDB). Sem conexão, as consultas usam essa cópia; salvar fica bloqueado. Sair apaga tudo.
-const OFF = { db: null, ativo: false };
-const OFF_TABELAS = { sicad_pessoas_lista: 'pessoas', sicad_alertas: 'alertas', c3_chacaras: 'c3_ch', c3_moradores: 'c3_mo', c3_passagens: 'c3_pa', c3_ocorrencias: 'c3_oc' };
-function offIdb(){ return new Promise((ok, falha) => { if (OFF.db) return ok(OFF.db); if (!window.indexedDB) return falha(new Error('sem IndexedDB')); const r = indexedDB.open('sicad_offline', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => { OFF.db = r.result; ok(OFF.db); }; r.onerror = () => falha(r.error); }); }
-async function offSet(k, v){ try { const db = await offIdb(); await new Promise((ok, f) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = ok; tx.onerror = () => f(tx.error); }); } catch(_) {} }
-async function offGet(k){ try { const db = await offIdb(); return await new Promise(ok => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result); q.onerror = () => ok(undefined); }); } catch(_) { return undefined; } }
-async function offLimpar(){ try { const db = await offIdb(); await new Promise(ok => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').clear(); tx.oncomplete = ok; tx.onerror = ok; }); } catch(_) {} try { localStorage.removeItem('sicad_off_perfil'); } catch(_) {} }
-function _offQsFiltro(qs){ const q = qs || ''; return /(^|&)(id|pessoa_id|chacara_id|morador_id)=/.test(q) || /(^|&)or=/.test(q); }
-async function offGuardar(table, qs, json){
-  const k = OFF_TABELAS[table]; if (!k || _offQsFiltro(qs) || !Array.isArray(json)) return;
-  const linhas = k === 'alertas' ? json.map(a => { const c = { ...a }; delete c.foto; return c; }) : json;
-  await offSet(k, linhas); await offSet('quando', new Date().toISOString());
+// Modo offline foi retirado (pedido em 16/11/2026): apaga qualquer cópia que tenha ficado no aparelho.
+function limparDadosDoAparelho(){
+  try { if (window.indexedDB) indexedDB.deleteDatabase('sicad_offline'); } catch(_) {}
+  try { localStorage.removeItem('sicad_off_perfil'); } catch(_) {}
 }
-async function offResponder(method, table, qs){
-  if (method !== 'GET') return undefined;
-  const q = qs || '';
-  const filtra = l => {
-    let m = q.match(/(?:^|&)id=eq\.([^&]+)/); if (m) { const v = decodeURIComponent(m[1]); return l.filter(x => String(x.id) === v); }
-    m = q.match(/(?:^|&)id=in\.\(([^)]*)\)/); if (m) { const ids = decodeURIComponent(m[1]).split(',').map(s => s.replace(/"/g, '')); return l.filter(x => ids.includes(String(x.id))); }
-    m = q.match(/(?:^|&)pessoa_id=eq\.([^&]+)/); if (m) { const v = decodeURIComponent(m[1]); return l.filter(x => String(x.pessoa_id) === v); }
-    return l;
-  };
-  const comMini = async l => { const mini = (await offGet('miniaturas')) || {}; return l.map(x => ({ ...x, foto: mini[x.id] || null })); };
-  let r;
-  if (table === 'sicad_pessoas_lista' || table === 'sicad_pessoas') { const l = await offGet('pessoas'); if (!l) return undefined; r = filtra(l); if (table === 'sicad_pessoas') r = await comMini(r); else r = r.map(x => ({ ...x, _offline: true })); }
-  else if (table === 'sicad_alertas') { const l = await offGet('alertas'); if (!l) return undefined; r = await comMini(filtra(l)); }
-  else if (OFF_TABELAS[table]) { const l = await offGet(OFF_TABELAS[table]); if (!l) return undefined; r = filtra(l); }
-  else if (table === 'sicad_perfis') { try { const p = JSON.parse(localStorage.getItem('sicad_off_perfil') || 'null'); r = p ? [p] : []; } catch(_) { r = []; } }
-  else if (table === 'sicad_vinculos' || table === 'sicad_abordagens' || table === 'sicad_audit') r = [];
-  else return undefined;
-  offMarcar(true);
-  return JSON.parse(JSON.stringify(r));
-}
-async function offMarcar(sem){
-  OFF.ativo = sem; document.body.classList.toggle('modo-offline', sem);
-  let bar = document.getElementById('offBar');
-  if (!sem) { if (bar) bar.remove(); return; }
-  const quando = await offGet('quando');
-  if (!bar) { bar = document.createElement('div'); bar.id = 'offBar'; bar.className = 'off-bar'; const c = document.querySelector('#shell .content'); if (c) c.prepend(bar); else document.body.prepend(bar); }
-  bar.textContent = 'Sem internet · consultando dados guardados no aparelho' + (quando ? ' (atualizados em ' + new Date(quando).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) + ')' : '') + '. Cadastrar e editar voltam quando a conexão voltar.';
-}
-window.addEventListener('online', async () => {
-  if (!OFF.ativo) return;
-  try { await supabase.auth.refreshSession(); } catch(_) {}
-  offMarcar(false); toast('Conexão restabelecida.','success');
-});
-// Miniaturas das fotos para identificar sem internet (botão no painel)
-async function offPreparar(){
-  if (!navigator.onLine) return toast('Conecte-se à internet para preparar.','error');
-  showOv('PREPARANDO USO SEM INTERNET...');
-  try {
-    const pessoas = await DB.getPersons(); allP = pessoas;
-    await DBA.get();
-    if (rotaPermitida('capaozinho3')) await Promise.all(['c3_chacaras','c3_moradores','c3_passagens','c3_ocorrencias'].map(t => sbFetch('GET', t, null, 'select=*').catch(() => null)));
-    const mini = (await offGet('miniaturas')) || {};
-    const fazer = async src => { if (!src) return null; return await new Promise(ok => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 120; const g = c.getContext('2d'); const s = Math.max(120 / im.width, 120 / im.height); g.drawImage(im, (120 - im.width * s) / 2, (120 - im.height * s) / 2, im.width * s, im.height * s); ok(c.toDataURL('image/jpeg', .72)); } catch(_) { ok(null); } }; im.onerror = () => ok(null); im.src = src; }); };
-    const ids = pessoas.filter(p => p.tem_foto || p.foto).map(p => p.id);
-    let feitos = 0;
-    for (let i = 0; i < ids.length; i += 25) {
-      const lote = ids.slice(i, i + 25);
-      const rows = await sbFetch('GET','sicad_pessoas',null,'select=id,foto&id=in.(' + encodeURIComponent(lote.map(id => '"' + id + '"').join(',')) + ')').catch(() => []);
-      for (const r of rows) { const m = await fazer(r.foto); if (m) { mini[r.id] = m; feitos++; } }
-      const ov = document.getElementById('ov'); if (ov) { const t = ov.querySelector('div:last-child'); if (t) t.textContent = 'MINIATURAS ' + Math.min(i + 25, ids.length) + '/' + ids.length; }
-    }
-    const al = await sbFetch('GET','sicad_alertas',null,'select=id,foto').catch(() => []);
-    for (const a of al) { const m = await fazer(a.foto); if (m) { mini[a.id] = m; feitos++; } }
-    await offSet('miniaturas', mini); await offSet('quando', new Date().toISOString());
-    toast('Pronto para uso sem internet: ' + pessoas.length + ' cadastros e ' + feitos + ' fotos guardados no aparelho.','success');
-    offPainel();
-  } catch(e) { toast('Erro ao preparar: ' + e.message,'error'); } finally { hideOv(); }
-}
-async function offPainel(){
-  const el = document.getElementById('offPainel'); if (!el) return;
-  const [q, p, m] = await Promise.all([offGet('quando'), offGet('pessoas'), offGet('miniaturas')]);
-  const nm = m ? Object.keys(m).length : 0;
-  el.innerHTML = `<div class="off-card"><div><b>Uso sem internet</b><span>${p ? p.length + ' cadastros' + (nm ? ' e ' + nm + ' fotos' : ' (sem fotos)') + ' guardados neste aparelho' + (q ? ' · ' + new Date(q).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '') : 'Nada guardado ainda neste aparelho.'}</span></div><button class="btn btn-outline btn-sm" onclick="offPreparar()">${nm ? 'Atualizar' : 'Preparar'}</button></div>`;
-}
+limparDadosDoAparelho();
 
 // sbFetch — usa anon key + JWT do usuário logado (RLS controla acesso)
 async function sbFetch(method, table, body, qs) {
-  if (OFF.ativo && method === 'GET' && !navigator.onLine) { const o = await offResponder(method, table, qs); if (o !== undefined) return o; }
   if (FOTO_TABELAS[table] && (method === 'POST' || method === 'PATCH') && body) body = await prepararFotosGravar(table, body, qs);
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token || SB_ANON;
@@ -2510,10 +2433,8 @@ async function sbFetch(method, table, body, qs) {
     },
     body: body ? JSON.stringify(body) : undefined
   }); } catch(errRede) {
-    const o = await offResponder(method, table, qs); if (o !== undefined) return o;
-    throw new Error(method === 'GET' ? 'Sem internet e este dado não está guardado no aparelho.' : 'Sem internet: não é possível salvar agora. Tente quando a conexão voltar.');
+    throw new Error('Sem conexão com a internet. Tente novamente quando o sinal voltar.');
   }
-  if (OFF.ativo) offMarcar(false);
   const t = await r.text();
   if (!r.ok) {
     let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{}
@@ -2524,7 +2445,6 @@ async function sbFetch(method, table, body, qs) {
     throw new Error(m);
   }
   let _json; try{ _json = JSON.parse(t); }catch{ return []; }
-  if (method === 'GET' && OFF_TABELAS[table]) offGuardar(table, qs, _json);
   if (FOTO_TABELAS[table] && method !== 'DELETE' && Array.isArray(_json) && _json.length) await resolverFotos(_json);
   return _json;
 }
@@ -3135,8 +3055,7 @@ async function aplicarPerfilLogado(user){
     profile = r[0] || null;
   } catch(e) { console.warn('[perfil]', e); }
 
-  if (profile && !OFF.ativo) { try { localStorage.setItem('sicad_off_perfil', JSON.stringify(profile)); } catch(_) {} }
-  if (!profile && !navigator.onLine) { errLg('Sem internet. Conecte-se para entrar pela primeira vez neste aparelho.'); return; }
+  if (!profile && !navigator.onLine) { errLg('Sem conexão com a internet. Conecte-se e tente de novo.'); return; }
   if (!profile) {
     // Usuário excluído que voltou a entrar: reabre o pedido de acesso (fica pendente)
     let r = null;
@@ -3181,7 +3100,7 @@ async function aplicarPerfilLogado(user){
 // GTOP = acesso total (exclusão só se o admin liberar) · RP = somente consulta em 4 abas.
 // A regra de verdade está no banco (migration_v5_perfis_gtop_rp.sql); aqui só espelhamos na tela.
 const PERFIL_LABEL = { admin:'ADMIN', inteligencia:'INTELIGÊNCIA', gtop:'GTOP', rp:'RP', supervisor:'SUPERVISOR', operator:'OPERADOR', auditor:'AUDITOR' };
-const RP_ROTAS = ['consultar','cadastrar','capaozinho3','face','foragidos'];
+const RP_ROTAS = ['consultar','cadastrar','mapa','capaozinho3','face','foragidos'];
 // Marcar foragido como PRESO: quem cadastra + RP (migration v9)
 function podeMarcarPreso(){ return podeCadastrarSICAD() || isRP(); }
 // Cadastro NOVO de pessoa: quem cadastra + RP (migration v13). RP não edita.
@@ -3291,7 +3210,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 async function logout(){
   await logAudit('logout', 'auth', CU?.id);
   await supabase.auth.signOut();
-  await offLimpar();
+  limparDadosDoAparelho();
   CU=null; allP=[];
   document.getElementById('shell').style.display='none';
   document.getElementById('loginWrap').style.display='flex';
@@ -3319,15 +3238,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
       await aplicarPerfilLogado(session.user);
-    } else if (!navigator.onLine) {
-      // sem internet e token vencido: entra em modo consulta com o usuário guardado
-      try {
-        const k = Object.keys(localStorage).find(x => /^sb-.*-auth-token$/.test(x));
-        const salvo = k && JSON.parse(localStorage.getItem(k));
-        const perfil = JSON.parse(localStorage.getItem('sicad_off_perfil') || 'null');
-        const u = salvo && (salvo.user || (salvo.currentSession && salvo.currentSession.user));
-        if (u && perfil && perfil.id === u.id) { OFF.ativo = true; await aplicarPerfilLogado(u); offMarcar(true); }
-      } catch(_) {}
     }
   } catch(e) { console.warn('[boot]', e); }
 });
@@ -3394,7 +3304,7 @@ function abrirInteligencia(){
   const root = document.getElementById('intRoot');
   if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
   if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
-    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261116a';
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261116b';
     s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
     document.head.appendChild(s);
   });
@@ -3524,7 +3434,6 @@ function buscarTatuagens(){
 
 // ── DASHBOARD ──
 async function loadDash(){
-  offPainel();
   showOv('CARREGANDO...');
   try{
     const ps=await DB.getPersons();allP=ps;
@@ -4399,7 +4308,7 @@ function atualizarDicaPerfil(){
   const r = document.getElementById('uRole').value;
   const dicas = {
     gtop: 'Acessa todas as abas. Cadastra, edita e consulta. Exclusão só se autorizada abaixo.',
-    rp: 'Vê Consultar, Cadastrar, Capãozinho 3, Face e Foragidos. Cadastra pessoas novas e, em Foragidos, pode marcar PRESO. Não edita e não exclui nada.',
+    rp: 'Vê Consultar, Cadastrar, Mapa, Capãozinho 3, Face e Foragidos. Cadastra pessoas novas e, em Foragidos, pode marcar PRESO. Não edita e não exclui nada.',
     inteligencia: 'Acessa tudo: cadastra, edita, exclui registros, vê auditoria e aprova/edita usuários. NÃO exclui membros e não mexe em administradores.',
     admin: 'Acesso total, inclusive exclusão e gestão de usuários.',
     supervisor: 'Perfil anterior: cadastra e edita.', operator: 'Perfil anterior: cadastra e consulta.', auditor: 'Perfil anterior: só leitura.'

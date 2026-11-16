@@ -351,8 +351,8 @@ VIEWS.painel = () => {
   const porMes = meses.map(([k]) => S.ents.filter(x => (x.criado_em || '').slice(0, 7) === k).length);
   const mxM = Math.max(1, ...porMes);
   return cabecalho('Painel de Inteligência', 'Banco central, dossiês e produção de conhecimento',
-      (pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()"> Novo dossiê</button>` : '') +
-      (pode('gerar_relatorio') ? `<button class="btn btn-outline btn-sm" onclick="INT.formRelatorio()"> Gerar relatório</button>` : '')) +
+      (pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()">Novo dossiê</button>` : '') +
+      (pode('gerar_relatorio') ? `<button class="btn btn-outline btn-sm" onclick="INT.formRelatorio()">Gerar relatório</button>` : '')) +
     `<div class="int-busca"><input id="intBuscaG" placeholder="Pesquisa central: nome, CPF, placa, telefone, código, dossiê..." onkeydown="if(event.key==='Enter')INT.pesquisar(this.value)"><button class="btn btn-primary btn-sm" onclick="INT.pesquisar(document.getElementById('intBuscaG').value)">Pesquisar</button></div>
     <div class="int-kpis">
       <div class="int-kpi" onclick="INT.ir('dossies')"><b>${ativos.length}</b><span>Dossiês ativos</span></div>
@@ -394,7 +394,7 @@ function viewLista(tipo) {
   const chave = tipo || 'central';
   const titulo = tipo ? TIPOS[tipo].plural : 'Banco central de informações';
   const sub = tipo ? 'Registro único no banco central — o mesmo registro pode estar em vários dossiês' : 'Base unificada: cada pessoa, veículo, telefone, ocorrência, localidade e organização tem um código único';
-  return cabecalho(titulo, sub, pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('${tipo || ''}')"> Novo ${tipo ? e(TIPOS[tipo].rot.toLowerCase()) : 'registro'}</button>` : '') +
+  return cabecalho(titulo, sub, pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('${tipo || ''}')">${tipo ? ({ pessoa: 'Nova pessoa', veiculo: 'Novo veículo', telefone: 'Novo telefone / ID', ocorrencia: 'Nova ocorrência', localidade: 'Nova localidade', organizacao: 'Nova organização' })[tipo] : 'Novo registro'}</button>` : '') +
     (tipo === 'organizacao' ? `<div class="int-aviso">Cadastro de <b>organizações e grupos sob análise</b>. Incluir uma pessoa num grupo exige vínculo lançado com fonte e situação (documentado, informado ou hipótese). O sistema <b>não classifica ninguém automaticamente</b> como integrante de organização criminosa.</div>` : '') +
     `<div class="int-busca">
       <input placeholder="Buscar por nome, código, CPF, placa, número, fonte..." value="${e(f.q)}" oninput="INT.setFiltro('${chave}','q',this.value)">
@@ -590,9 +590,9 @@ async function ficha(id, aba) {
     corpo = `${pode('cadastrar') ? `<div class="int-busca"><select id="iAddDos">${opts(Object.fromEntries(S.dossies.filter(dd => !dos.includes(dd)).map(dd => [dd.id, dd.numero + ' — ' + dd.titulo])), '', 'Escolha o dossiê')}</select><input id="iAddPapel" placeholder="Papel no dossiê (opcional)"><button class="btn btn-primary btn-sm" onclick="INT.addAoDossie('${id}')">Incluir</button></div>` : ''}
       ${dos.length ? listaDossies(dos) : '<div class="int-vazio">Este registro ainda não está em nenhum dossiê.</div>'}`;
   } else if (aba === 'vinculos') {
-    corpo = `${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formVinculo('${id}')"> Novo vínculo</button>` : ''}${tabelaVinculos(vin, id)}`;
+    corpo = `${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formVinculo('${id}')">Novo vínculo</button>` : ''}${tabelaVinculos(vin, id)}`;
   } else if (aba === 'docs') {
-    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({entidade_id:'${id}'})"> Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
+    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({entidade_id:'${id}'})">Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
   } else if (aba === 'hist') {
     corpo = '<div id="iHist" class="int-vazio">Carregando histórico...</div>';
   } else if (aba === 'fotos') {
@@ -931,7 +931,7 @@ VIEWS.organograma = () => {
   if (!S.orgId || !ent(S.orgId)) { const comMembros = orgs.map(o => [o, membrosDe(o.id).length]).sort((a, b) => b[1] - a[1]); S.orgId = comMembros[0] ? comMembros[0][0].id : null; }
   const org = S.orgId ? ent(S.orgId) : null; const est = org ? estruturaOrg(org.id) : { membros: [], sub: [], com: [] };
   return cabecalho('Organograma', 'Estrutura da organização: função e nível de cada integrante, quem responde a quem e quem se comunica com quem',
-      (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')"> Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
+      (org && pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formIntegrante('${org.id}')">Integrante / posição</button><button class="btn btn-outline btn-sm" onclick="INT.formComunicacao('${org.id}')">Lançar comunicação</button>` : '') +
       (pode('cadastrar') ? `<button class="btn btn-outline btn-sm" onclick="INT.formEnt('organizacao')">Nova organização</button>` : '')) +
     `<div class="int-aviso">Função, hierarquia e comunicação só entram com <b>fonte</b>. Cor da borda: <b style="color:#059669">verde</b> documentado · <b style="color:#2563EB">azul</b> informado · <b style="color:#D97706">laranja tracejado</b> hipótese. Integrantes vindos do campo "faccionado" do SICAD entram como <b>informado</b> até serem confirmados. <b>Só faccionados aparecem no organograma</b>; parentes, contatos e demais pessoas ligadas aparecem ao clicar no faccionado.</div>
     <div class="int-busca"><select onchange="INT.escolherOrg(this.value)">${orgs.map(o => `<option value="${o.id}" ${o.id === S.orgId ? 'selected' : ''}>${e(o.titulo)} (${membrosDe(o.id).length})</option>`).join('') || '<option>Nenhuma organização cadastrada</option>'}</select></div>
@@ -1217,7 +1217,7 @@ VIEWS.dossies = () => {
   if (f.q) { const q = norm(f.q); l = l.filter(d => norm([d.numero, d.titulo, d.descricao, d.objetivo, d.responsavel_nome].join(' ')).includes(q)); }
   const hoje = new Date().toISOString().slice(0, 10);
   return cabecalho('Dossiês de inteligência', 'Todos os usuários do módulo visualizam; alterações dependem de permissão',
-      pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()"> Novo dossiê</button>` : '') +
+      pode('criar_dossie') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDossie()">Novo dossiê</button>` : '') +
     `<div class="int-busca"><input placeholder="Buscar por número, título, responsável..." value="${e(f.q)}" oninput="INT.setFiltro('dossies','q',this.value)"><select onchange="INT.setFiltro('dossies','sit',this.value,true)">${opts(SITUACAO_DOS, f.sit, 'Toda situação')}</select></div>
     <div class="int-card" style="padding:0;overflow-x:auto" id="intTabDos">${l.length ? `<table class="int-tab"><thead><tr><th>Número</th><th>Título</th><th>Situação</th><th class="hm">Responsável</th><th class="hm">Abertura</th><th class="hm">Registros</th><th class="hm">Retenção</th></tr></thead><tbody>${l.map(d => `<tr class="cl" onclick="INT.abrirDossie('${d.id}')"><td class="int-cod">${e(d.numero)}</td><td><b>${e(d.titulo)}</b><div style="font-size:12px;color:var(--neutral-500)">${e(CLASSIF[d.classificacao])}</div></td><td><span class="int-tag">${e(SITUACAO_DOS[d.situacao])}</span></td><td class="hm">${e(d.responsavel_nome || '—')}</td><td class="hm">${dataBR(d.aberto_em)}</td><td class="hm">${entsDoDossie(d.id).length}</td><td class="hm" style="${d.reter_ate && d.reter_ate < hoje ? 'color:#B45309;font-weight:700' : ''}">${dataBR(d.reter_ate)}</td></tr>`).join('')}</tbody></table>` : '<div class="int-vazio">Nenhum dossiê.</div>'}</div>`;
 };
@@ -1279,18 +1279,18 @@ VIEWS.dossie = () => {
       <div class="int-kpis"><div class="int-kpi" onclick="INT.abaDossie('registros')"><b>${ents.length}</b><span>Registros</span></div><div class="int-kpi" onclick="INT.abaDossie('vinculos')"><b>${vin.length}</b><span>Vínculos</span></div><div class="int-kpi" onclick="INT.abaDossie('documentos')"><b>${docs.length}</b><span>Documentos</span></div><div class="int-kpi" onclick="INT.abaDossie('relatorios')"><b>${rels.length}</b><span>Relatórios</span></div><div class="int-kpi ${compart.length ? 'alerta' : ''}" onclick="INT.abaDossie('registros')"><b>${compart.length}</b><span>Em outros dossiês</span></div></div>
       ${compart.length ? `<div class="int-card"><h3>Conexões compartilhadas com outros dossiês</h3><div class="int-lista">${compart.map(x => `<div class="int-item" onclick="INT.ficha('${x.id}')"><div class="m"><b>${e(x.titulo)}</b><small>${dossiesDoEnt(x.id).filter(o => o.id !== d.id).map(o => e(o.numero + ' — ' + o.titulo)).join(' · ')}</small></div></div>`).join('')}</div></div>` : ''}`;
   } else if (aba === 'registros') {
-    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('')"> Novo registro</button><button class="btn btn-outline btn-sm" onclick="INT.incluirExistente('${d.id}')">Incluir do banco central</button>` : ''}</div>
+    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formEnt('')">Novo registro</button><button class="btn btn-outline btn-sm" onclick="INT.incluirExistente('${d.id}')">Incluir do banco central</button>` : ''}</div>
       ${Object.keys(TIPOS).map(t => { const l = ents.filter(x => x.tipo === t); return l.length ? `<div class="int-card"><h3>${e(TIPOS[t].plural)} (${l.length})</h3><div class="int-lista">${l.map(x => { const it = S.itens.find(i => i.dossie_id === d.id && i.entidade_id === x.id); return itemEnt(x).replace('</small>', (it && it.papel ? ' · ' + e(it.papel) : '') + '</small>'); }).join('')}</div></div>` : ''; }).join('') || '<div class="int-vazio">Nenhum registro neste dossiê.</div>'}`;
   } else if (aba === 'vinculos') {
-    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo(null,'${d.id}')"> Novo vínculo</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.redeDoDossie('${d.id}')">${ICON('web', { size: 15 })} Abrir diagrama</button></div>${tabelaVinculos(vin)}`;
+    corpo = `<div class="int-acoes" style="margin-bottom:10px">${pode('cadastrar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formVinculo(null,'${d.id}')">Novo vínculo</button>` : ''}<button class="btn btn-outline btn-sm" onclick="INT.redeDoDossie('${d.id}')">${ICON('web', { size: 15 })} Abrir diagrama</button></div>${tabelaVinculos(vin)}`;
   } else if (aba === 'mapa') {
     corpo = `<div id="intMapaDos" class="int-map" style="height:440px"></div>`;
   } else if (aba === 'documentos') {
-    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({dossie_id:'${d.id}'})"> Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
+    corpo = `${pode('anexar') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formDoc({dossie_id:'${d.id}'})">Anexar documento</button>` : ''}${tabelaDocs(docs)}`;
   } else if (aba === 'andamentos') {
     corpo = `${pode('cadastrar') ? `<div class="int-card"><textarea id="andTxt" style="width:100%;min-height:70px" placeholder="Registrar andamento / atualização do dossiê"></textarea><div style="text-align:right;margin-top:8px"><button class="btn btn-primary btn-sm" onclick="INT.salvarAndamento('${d.id}')">Registrar</button></div></div>` : ''}<div id="andLista" class="int-vazio">Carregando...</div><div class="int-card" style="margin-top:14px"><h3>Histórico de alterações do dossiê</h3><div id="dosHist" class="int-vazio">Carregando...</div></div>`;
   } else if (aba === 'relatorios') {
-    corpo = `${pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formRelatorio(null,['${d.id}'])"> Novo relatório deste dossiê</button>` : ''}${tabelaRels(rels)}`;
+    corpo = `${pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" style="margin-bottom:10px" onclick="INT.formRelatorio(null,['${d.id}'])">Novo relatório deste dossiê</button>` : ''}${tabelaRels(rels)}`;
   }
   return `<div style="margin-bottom:10px"><a href="#" onclick="INT.ir('dossies');return false" style="font-size:13px">← Dossiês</a></div>` +
     cabecalho(`<span class="int-cod" style="font-size:13px">${e(d.numero)}</span> ${e(d.titulo)}`, `<span class="int-classif">${e(CLASSIF[d.classificacao].toUpperCase())}</span> · ${e(SITUACAO_DOS[d.situacao])} · responsável ${e(d.responsavel_nome || '—')}`,
@@ -1346,7 +1346,7 @@ VIEWS.documentos = () => {
   if (f.cl) l = l.filter(d => d.classificacao === f.cl);
   if (f.q) { const q = norm(f.q); l = l.filter(d => norm([d.codigo, d.titulo, d.origem, d.descricao, d.nome_arquivo].join(' ')).includes(q)); }
   return cabecalho('Documentos e fontes', 'Arquivos guardados em área privada, com verificação de integridade (SHA-256) a cada abertura',
-      pode('anexar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDoc({})"> Anexar documento</button>` : '') +
+      pode('anexar') ? `<button class="btn btn-primary btn-sm" onclick="INT.formDoc({})">Anexar documento</button>` : '') +
     `<div class="int-busca"><input placeholder="Buscar documento..." value="${e(f.q)}" oninput="INT.setFiltro('docs','q',this.value)"><select onchange="INT.setFiltro('docs','cl',this.value,true)">${opts(CLASSIF_DOC, f.cl, 'Toda classificação')}</select></div>
     <div class="int-card" style="padding:0">${tabelaDocs(l)}</div>`;
 };
@@ -1434,7 +1434,7 @@ function tabelaRels(rels) {
   return `<div style="overflow-x:auto"><table class="int-tab"><thead><tr><th>Número</th><th>Título</th><th>Situação</th><th class="hm">Tipo</th><th class="hm">Versão</th><th class="hm">Elaboração</th></tr></thead><tbody>${rels.map(r => `<tr class="cl" onclick="INT.abrirRel('${r.id}')"><td class="int-cod">${e(r.numero)}</td><td><b>${e(r.titulo)}</b></td><td><span class="int-tag ${r.status === 'aprovado' ? 'doc' : r.status === 'devolvido' ? 'sig' : ''}">${e(STATUS_REL[r.status])}</span></td><td class="hm">${r.tipo === 'individual' ? 'Individual' : 'Consolidado'}</td><td class="hm">v${r.versao}</td><td class="hm" style="font-size:12px">${e(r.elaborado_por_nome || '—')}<br>${dataBR(r.criado_em)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 VIEWS.relatorios = () => cabecalho('Relatórios de inteligência', 'Fluxo: rascunho → revisão → aprovação. Quem elabora não revisa nem aprova o próprio relatório.',
-    pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio()"> Novo relatório</button>` : '') +
+    pode('gerar_relatorio') ? `<button class="btn btn-primary btn-sm" onclick="INT.formRelatorio()">Novo relatório</button>` : '') +
   `<div class="int-card" style="padding:0">${tabelaRels(S.rels)}</div>`;
 
 function formRelatorio(id, dossiesPre, baseId) {
@@ -1483,7 +1483,7 @@ function abrirRel(id) {
   const meu = r.elaborado_por === CU.id;
   const versoes = S.rels.filter(x => (x.relatorio_raiz_id || x.id) === (r.relatorio_raiz_id || r.id)).sort((a, b) => b.versao - a.versao);
   const acoes = [];
-  acoes.push(`<button class="btn btn-primary" onclick="INT.gerarPDF('${id}')"> Gerar PDF</button>`);
+  acoes.push(`<button class="btn btn-primary" onclick="INT.gerarPDF('${id}')">Gerar PDF</button>`);
   if (['rascunho', 'devolvido'].includes(r.status) && (meu || CU.role === 'admin')) {
     acoes.push(`<button class="btn btn-outline" onclick="INT.formRelatorio('${id}')"> Editar</button>`);
     acoes.push(`<button class="btn btn-outline" onclick="INT.fluxoRel('${id}','enviar_revisao')">Enviar para revisão</button>`);
