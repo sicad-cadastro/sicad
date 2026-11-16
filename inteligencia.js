@@ -79,7 +79,10 @@ async function req(method, path, body, prefer) {
   });
   const t = await r.text();
   if (!r.ok) { let m = t; try { const j = JSON.parse(t); m = j.message || j.hint || t; } catch (_) {} throw new Error(traduzErro(m)); }
-  try { return JSON.parse(t); } catch (_) { return []; }
+  let j; try { j = JSON.parse(t); } catch (_) { return []; }
+  // fotos do SICAD guardadas no Storage viram link assinado
+  if (/^sicad_pessoas\?/.test(path) && Array.isArray(j) && window.sicadResolverFotos) await window.sicadResolverFotos(j);
+  return j;
 }
 function traduzErro(m) {
   if (/int_entidades_chave_uk|duplicate key/i.test(m)) return 'Já existe registro com este CPF / placa / número no banco central. Use o registro existente.';
@@ -594,10 +597,12 @@ async function ficha(id, aba) {
     corpo = '<div id="iHist" class="int-vazio">Carregando histórico...</div>';
   } else if (aba === 'fotos') {
     corpo = '<div id="iGaleria" class="int-vazio">Carregando fotos...</div>';
+  } else if (aba === 'abord') {
+    corpo = '<div id="iAbord" class="int-vazio">Carregando abordagens...</div>';
   }
   modal(`<span class="int-cod">${e(x.codigo)}</span> ${e(x.titulo)}`, `
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">${tipoTag(x.tipo)} ${tagNat(x.natureza)} <span class="int-tag">${dos.length} dossiê(s)</span> <span class="int-tag">${vin.length} vínculo(s)</span></div>
-    <div class="int-tabs">${[['dados', 'Dados'], ...(x.tipo === 'pessoa' ? [['fotos', 'Fotos']] : []), ['dossies', 'Dossiês'], ['vinculos', 'Vínculos'], ['docs', 'Documentos'], ['hist', 'Histórico']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.ficha('${id}','${k}')">${r}</button>`).join('')}</div>
+    <div class="int-tabs">${[['dados', 'Dados'], ...(x.tipo === 'pessoa' ? [['fotos', 'Fotos']] : []), ...(x.tipo === 'pessoa' && x.sicad_pessoa_id ? [['abord', 'Abordagens']] : []), ['dossies', 'Dossiês'], ['vinculos', 'Vínculos'], ['docs', 'Documentos'], ['hist', 'Histórico']].map(([k, r]) => `<button class="${aba === k ? 'on' : ''}" onclick="INT.ficha('${id}','${k}')">${r}</button>`).join('')}</div>
     ${corpo}
     <div class="row-btns" style="margin-top:14px;flex-wrap:wrap">
       ${pode('editar') ? `<button class="btn btn-outline" onclick="INT.formEnt('${x.tipo}','${id}')"> Editar</button>` : ''}
@@ -608,6 +613,11 @@ async function ficha(id, aba) {
   if (aba === 'hist') carregarHistorico(id, 'iHist');
   if (aba === 'dados' && x.tipo === 'pessoa') preencherFotoFicha(x);
   if (aba === 'fotos') preencherGaleria(x);
+  if (aba === 'abord') req('GET', 'sicad_abordagens?select=*&pessoa_id=eq.' + encodeURIComponent(x.sicad_pessoa_id) + '&removido_em=is.null&order=data_hora.desc').then(l => {
+    const el = document.getElementById('iAbord'); if (!el) return; el.className = '';
+    el.innerHTML = l.length ? `<table class="int-tab"><thead><tr><th>Data</th><th>Local</th><th>Motivo / resultado</th><th class="hm">Com / veículo</th><th class="hm">Policial</th></tr></thead><tbody>${l.map(a => `<tr><td style="white-space:nowrap">${dataHoraBR(a.data_hora)}</td><td>${e(a.local || '—')}${a.lat != null ? ` · <a href="https://www.google.com/maps?q=${a.lat},${a.lng}" target="_blank" rel="noopener">mapa</a>` : ''}</td><td>${e([a.motivo, a.resultado].filter(Boolean).join(' · '))}${a.ocorrencia ? '<div style="font-size:12px;color:var(--neutral-500)">Ocorrência ' + e(a.ocorrencia) + '</div>' : ''}</td><td class="hm">${e([a.acompanhantes, a.veiculo].filter(Boolean).join(' · ') || '—')}</td><td class="hm">${e(a.policial_nome || '—')}</td></tr>`).join('')}</tbody></table>` : '<div class="int-vazio">Nenhuma abordagem registrada no SICAD.</div>';
+    aud('ver_abordagens', 'sicad_abordagens', x.sicad_pessoa_id);
+  }).catch(err => { const el = document.getElementById('iAbord'); if (el) el.textContent = /sicad_abordagens/.test(err.message) ? 'Abordagens ainda não habilitadas (migration v19).' : err.message; });
 }
 async function carregarHistorico(id, alvo) {
   try {
@@ -1121,7 +1131,7 @@ async function salvarComunicacao(orgId) {
 }
 async function imagemOrg(orgId) {
   const org = ent(orgId); const est = estruturaOrg(orgId); if (!org || !est.membros.length) return null;
-  await fotosSicad(est.membros.map(m => m.x));
+  await fotosSicad(est.membros.map(m => m.x)); await fotosEmbutidas();
   const L = layoutOrg(org, est); const K = 2;
   const cv = document.createElement('canvas'); cv.width = L.W * K; cv.height = L.H * K; const g = cv.getContext('2d'); g.scale(K, K);
   g.fillStyle = '#fff'; g.fillRect(0, 0, L.W, L.H);
@@ -1133,7 +1143,7 @@ async function imagemOrg(orgId) {
   est.membros.forEach(m => { const p = L.pos[m.x.id]; if (topo && L.niv[m.x.id] === topo.k && !L.supDe[m.x.id]) traco(`M${tx},56 V${(56 + p.y) / 2} H${p.x + OC.W / 2} V${p.y}`, '#CBD5E1', 1.5); });
   est.sub.forEach(v => { const a = L.pos[v.destino_id], b = L.pos[v.origem_id]; if (a && b) traco(caminhoHier(a, b), '#334155', 2, DASH[v.situacao]); });
   est.com.forEach(v => { const a = L.pos[v.origem_id], b = L.pos[v.destino_id]; if (!a || !b) return; const c = caminhoCom(a, b); traco(c.d, '#7C3AED', 2, '2 5'); if (v.observacoes) { g.font = '10px Arial'; g.fillStyle = '#6D28D9'; g.textAlign = 'center'; g.fillText(v.observacoes, c.lx, c.ly); g.textAlign = 'left'; } });
-  const carregaImg = src => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
+  const carregaImg = src => new Promise(ok => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
   for (const m of est.membros) {
     const p = L.pos[m.x.id]; const cor = SIT_COR[m.v.situacao] || '#94A3B8';
     g.save(); g.fillStyle = '#fff'; g.strokeStyle = cor; g.lineWidth = 2; g.setLineDash(m.v.situacao === 'hipotese' ? [5, 4] : []);
@@ -1506,9 +1516,11 @@ async function fluxoRel(id, acao) {
 }
 
 // PDF ─ imagens auxiliares
+async function fotosEmbutidas() { if (typeof fotoDataURL !== 'function') return; for (const k of Object.keys(S.fotos)) { const v = S.fotos[k]; if (v && /^https?:/.test(v)) S.fotos[k] = (await fotoDataURL(v)) || v; } }
 async function imagemRede(dossies) {
   await carregarVis();
   await fotosSicad(S.ents.filter(x => x.tipo === 'pessoa' && S.itens.some(i => dossies.includes(i.dossie_id) && i.entidade_id === x.id)));
+  await fotosEmbutidas();
   const { nodes, edges } = dadosRede(dossies, ['documentado', 'informado', 'hipotese']);
   if (!nodes.length) return null;
   const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-3000px;top:0;width:1100px;height:720px;background:#fff';

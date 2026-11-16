@@ -359,6 +359,40 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var
 .d-loc .ico{color:var(--neutral-500)}
 .d-loc:active{background:var(--neutral-100)}
 .ico-perfil{flex-shrink:0}
+.bg-btn{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid var(--neutral-200);background:var(--neutral-50);color:var(--neutral-500);border-radius:8px;cursor:pointer;font-size:13px;font-family:var(--font-sans);min-width:200px}
+.bg-btn:hover{border-color:var(--neutral-400);color:var(--neutral-700)}
+.bg-btn kbd{margin-left:auto;font-family:var(--font-mono);font-size:10.5px;border:1px solid var(--neutral-200);border-radius:4px;padding:1px 5px;background:#fff;color:var(--neutral-400)}
+.bg-ov{position:fixed;inset:0;z-index:2100;background:rgba(15,23,42,.45);display:none;align-items:flex-start;justify-content:center;padding:70px 16px 16px}
+.bg-ov.on{display:flex}
+.bg-box{width:100%;max-width:620px;background:#fff;border-radius:14px;box-shadow:0 30px 60px -20px rgba(15,23,42,.5);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 100px)}
+.bg-topo{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);color:var(--neutral-400)}
+.bg-topo input{flex:1;border:0;outline:none;font-size:16px;background:transparent;color:var(--neutral-900);padding:6px 0}
+.bg-fechar{border:1px solid var(--border);background:#fff;border-radius:6px;font-size:11px;color:var(--neutral-500);padding:3px 7px;cursor:pointer}
+.bg-res{overflow:auto;padding:6px 0 10px}
+.bg-grupo{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--neutral-400);padding:12px 16px 4px}
+.bg-item{display:grid;grid-template-columns:1fr auto;column-gap:10px;padding:9px 16px;cursor:pointer}
+.bg-item:hover{background:var(--neutral-50)}
+.bg-t{font-size:14px;font-weight:600;color:var(--neutral-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bg-s{grid-column:1;font-size:12px;color:var(--neutral-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bg-tag{grid-column:2;grid-row:1/3;align-self:center;font-size:11px;font-weight:600;color:#B91C1C;background:#FEF2F2;border:1px solid #FECACA;border-radius:999px;padding:2px 8px}
+.bg-dica{padding:18px 16px;font-size:13px;color:var(--neutral-500)}
+.bg-destaque{outline:3px solid #F59E0B;outline-offset:2px;transition:outline-color .3s}
+@media(max-width:767px){.bg-btn{min-width:0;width:38px;padding:0;justify-content:center}.bg-btn .bg-txt,.bg-btn kbd{display:none}.bg-ov{padding:0}.bg-box{max-width:none;height:100dvh;max-height:none;border-radius:0}}
+.ab-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.ab-lista{display:flex;flex-direction:column;gap:8px}
+.ab-item{display:flex;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}
+.ab-data{display:flex;flex-direction:column;min-width:74px;border-right:1px solid var(--border);padding-right:10px}
+.ab-data b{font-size:13px;color:var(--neutral-900)}.ab-data span{font-size:12px;color:var(--neutral-500)}
+.ab-corpo{flex:1;min-width:0}
+.ab-l1{font-size:13px;color:var(--neutral-900);font-weight:600}
+.ab-l2{font-size:12.5px;color:var(--neutral-600);margin-top:2px}
+.ab-l3{font-size:11.5px;color:var(--neutral-400);margin-top:4px}
+.off-bar{background:#FFFBEB;border:1px solid #FDE68A;color:#78350F;font-size:12.5px;line-height:1.4;padding:9px 12px;border-radius:9px;margin-bottom:12px}
+.off-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+.off-card b{display:block;font-size:13.5px;color:var(--neutral-900)}
+.off-card span{font-size:12px;color:var(--neutral-500)}
+.map-c3-btn{border-style:dashed}
+.map-c3-btn.on{background:#EEF2FF;border-color:#1E3A8A;border-style:solid;color:#1E3A8A}
 .vc-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
 .vc-item,.vc-op{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}
 .vc-op{cursor:pointer;border-radius:0;border-width:0 0 1px 0}.vc-op:last-child{border-bottom:0}.vc-op:hover{background:var(--neutral-50)}
@@ -1149,6 +1183,7 @@ body.no-didatico .field-hint{display:none}
     <div class="hdr-logo">SICAD <small>Sistema de Cadastro</small></div>
     <div class="hdr-right" id="hdrRight">
       <button id="backDashBtn" class="btn btn-ghost btn-sm" onclick="go('dashboard')" title="Voltar ao Dashboard" style="display:none;align-items:center;gap:6px"><span data-icon="dashboard" data-size="14"></span>Dashboard</button>
+      <button class="bg-btn" id="btnBuscaGeral" onclick="abrirBuscaGeral()" title="Buscar em todo o sistema (Ctrl+K)"><span data-icon="consultar" data-size="16"></span><span class="bg-txt">Buscar em tudo</span><kbd>Ctrl K</kbd></button>
       <div class="user-chip" id="userChip"></div>
       <button class="btn btn-ghost btn-sm" onclick="logout()" title="Sair" style="display:flex;align-items:center;gap:6px"><span data-icon="logout" data-size="14"></span>Sair</button>
     </div>
@@ -1176,6 +1211,7 @@ body.no-didatico .field-hint{display:none}
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">CARREGANDO</div></div>
       </div>
+      <div id="offPainel"></div>
 
       <!-- FORAGIDOS -->
       <div class="hi-card hi-danger hi-pulse" onclick="go('foragidos')">
@@ -1692,6 +1728,7 @@ body.no-didatico .field-hint{display:none}
         <button class="btn btn-outline btn-sm" onclick="resetMapFilter()" style="min-width:44px">✕</button>
         <button class="btn btn-outline btn-sm" onclick="centerMap()" style="min-width:44px"><span data-icon="pin" data-size="18"></span></button>
         <button class="btn btn-outline btn-sm" id="btnHeatmap" onclick="toggleHeatmap()" style="min-width:80px">Calor</button>
+        <button class="btn btn-outline btn-sm map-c3-btn on" id="btnMapaC3" onclick="toggleMapaC3()" title="Mostrar/ocultar as chácaras do Capãozinho 3">Capãozinho 3</button>
       </div>
 
       <div style="position:relative">
@@ -2308,11 +2345,162 @@ const supabase = window.supabase.createClient(SB, SB_ANON, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' }
 });
 
+// ══════════ FOTOS NO STORAGE (migration v19) ══════════
+// O banco guarda "sb:caminho". Ao LER, vira link assinado (6 h). Ao GRAVAR, imagem nova sobe
+// para o bucket privado "sicad-fotos" e o banco recebe só a referência. Fotos antigas (data:)
+// continuam funcionando até a migração.
+const FOTO_BUCKET = 'sicad-fotos', FOTO_TABELAS = { sicad_pessoas: 'pessoas', sicad_alertas: 'alertas' };
+const _fotoUrl = new Map(), _fotoRef = new Map(); // ref → {url, exp} · url → ref
+const ehRefFoto = v => typeof v === 'string' && v.startsWith('sb:');
+function _tatsDe(v){ try { const t = typeof v === 'string' ? JSON.parse(v) : v; return Array.isArray(t) ? t : null; } catch(_) { return null; } }
+async function resolverFotos(rows){
+  if (!Array.isArray(rows) || !rows.length) return rows;
+  const refs = new Set(), agora = Date.now();
+  rows.forEach(r => {
+    if (!r || typeof r !== 'object') return;
+    if (ehRefFoto(r.foto)) refs.add(r.foto);
+    const t = _tatsDe(r.tatuagens); if (t) t.forEach(it => { const s = typeof it === 'string' ? it : it && it.img; if (ehRefFoto(s)) refs.add(s); });
+  });
+  const pedir = [...refs].filter(ref => { const c = _fotoUrl.get(ref); return !c || c.exp < agora + 300000; });
+  for (let i = 0; i < pedir.length; i += 100) {
+    const lote = pedir.slice(i, i + 100);
+    try {
+      const { data } = await supabase.storage.from(FOTO_BUCKET).createSignedUrls(lote.map(r => r.slice(3)), 21600);
+      (data || []).forEach((d, j) => { if (d && d.signedUrl) { const url = /^https?:/.test(d.signedUrl) ? d.signedUrl : SB + '/storage/v1' + d.signedUrl; _fotoUrl.set(lote[j], { url, exp: agora + 21600000 }); _fotoRef.set(url, lote[j]); } });
+    } catch(e) { console.warn('[fotos] links', e.message); }
+  }
+  const troca = s => (ehRefFoto(s) && _fotoUrl.get(s)) ? _fotoUrl.get(s).url : (ehRefFoto(s) ? null : s);
+  rows.forEach(r => {
+    if (!r || typeof r !== 'object') return;
+    if (ehRefFoto(r.foto)) r.foto = troca(r.foto);
+    if (r.tatuagens != null) { const t = _tatsDe(r.tatuagens); if (t && t.some(it => ehRefFoto(typeof it === 'string' ? it : it && it.img))) {
+      const novo = t.map(it => typeof it === 'string' ? troca(it) : (it ? { ...it, img: troca(it.img) } : it));
+      r.tatuagens = typeof r.tatuagens === 'string' ? JSON.stringify(novo) : novo; } }
+  });
+  return rows;
+}
+window.sicadResolverFotos = resolverFotos;
+function _blobDeDataURL(d){ const [cab, b64] = d.split(','); const mime = (cab.match(/data:([^;]+)/) || [])[1] || 'image/jpeg'; const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Blob([u], { type: mime }); }
+async function fotoParaRef(v, pasta){
+  if (!v || typeof v !== 'string' || ehRefFoto(v)) return v;
+  if (_fotoRef.has(v)) return _fotoRef.get(v);
+  let blob;
+  if (v.startsWith('data:')) blob = _blobDeDataURL(v);
+  else if (/^https?:/.test(v)) { try { blob = await (await fetch(v)).blob(); } catch(_) { return v; } }
+  else return v;
+  const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z]/g, '') || 'jpg';
+  const caminho = `${pasta}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabase.storage.from(FOTO_BUCKET).upload(caminho, blob, { contentType: blob.type || 'image/jpeg', upsert: false });
+  if (error) throw new Error('Falha ao enviar foto: ' + error.message);
+  return 'sb:' + caminho;
+}
+async function prepararFotosGravar(table, body, qs){
+  const pasta0 = FOTO_TABELAS[table]; if (!pasta0 || !body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const id = body.id || ((qs || '').match(/id=eq\.([^&]+)/) || [])[1] || ('novo-' + Date.now().toString(36));
+  const out = { ...body };
+  if ('foto' in out) out.foto = await fotoParaRef(out.foto, `${pasta0}/${decodeURIComponent(id)}`);
+  if ('tatuagens' in out && out.tatuagens != null) {
+    const t = _tatsDe(out.tatuagens);
+    if (t) { const novo = []; for (const it of t) { if (typeof it === 'string') novo.push(await fotoParaRef(it, `tatuagens/${decodeURIComponent(id)}`)); else if (it && it.img) novo.push({ ...it, img: await fotoParaRef(it.img, `tatuagens/${decodeURIComponent(id)}`) }); else novo.push(it); }
+      out.tatuagens = typeof out.tatuagens === 'string' ? JSON.stringify(novo) : novo; }
+  }
+  return out;
+}
+// Para PDF, envio a busca facial na web etc.: garante imagem embutida (data:)
+async function fotoDataURL(src){
+  if (!src || typeof src !== 'string' || src.startsWith('data:')) return src;
+  if (ehRefFoto(src)) { await resolverFotos([{ foto: src }]); const c = _fotoUrl.get(src); if (!c) return null; src = c.url; }
+  try { const b = await (await fetch(src)).blob(); return await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = () => ok(null); fr.readAsDataURL(b); }); } catch(_) { return null; }
+}
+
+// ══════════ MODO OFFLINE (consulta sem internet) ══════════
+// Durante o uso normal, listas de pessoas, foragidos e Capãozinho 3 ficam guardadas no aparelho
+// (IndexedDB). Sem conexão, as consultas usam essa cópia; salvar fica bloqueado. Sair apaga tudo.
+const OFF = { db: null, ativo: false };
+const OFF_TABELAS = { sicad_pessoas_lista: 'pessoas', sicad_alertas: 'alertas', c3_chacaras: 'c3_ch', c3_moradores: 'c3_mo', c3_passagens: 'c3_pa', c3_ocorrencias: 'c3_oc' };
+function offIdb(){ return new Promise((ok, falha) => { if (OFF.db) return ok(OFF.db); if (!window.indexedDB) return falha(new Error('sem IndexedDB')); const r = indexedDB.open('sicad_offline', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => { OFF.db = r.result; ok(OFF.db); }; r.onerror = () => falha(r.error); }); }
+async function offSet(k, v){ try { const db = await offIdb(); await new Promise((ok, f) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = ok; tx.onerror = () => f(tx.error); }); } catch(_) {} }
+async function offGet(k){ try { const db = await offIdb(); return await new Promise(ok => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result); q.onerror = () => ok(undefined); }); } catch(_) { return undefined; } }
+async function offLimpar(){ try { const db = await offIdb(); await new Promise(ok => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').clear(); tx.oncomplete = ok; tx.onerror = ok; }); } catch(_) {} try { localStorage.removeItem('sicad_off_perfil'); } catch(_) {} }
+function _offQsFiltro(qs){ const q = qs || ''; return /(^|&)(id|pessoa_id|chacara_id|morador_id)=/.test(q) || /(^|&)or=/.test(q); }
+async function offGuardar(table, qs, json){
+  const k = OFF_TABELAS[table]; if (!k || _offQsFiltro(qs) || !Array.isArray(json)) return;
+  const linhas = k === 'alertas' ? json.map(a => { const c = { ...a }; delete c.foto; return c; }) : json;
+  await offSet(k, linhas); await offSet('quando', new Date().toISOString());
+}
+async function offResponder(method, table, qs){
+  if (method !== 'GET') return undefined;
+  const q = qs || '';
+  const filtra = l => {
+    let m = q.match(/(?:^|&)id=eq\.([^&]+)/); if (m) { const v = decodeURIComponent(m[1]); return l.filter(x => String(x.id) === v); }
+    m = q.match(/(?:^|&)id=in\.\(([^)]*)\)/); if (m) { const ids = decodeURIComponent(m[1]).split(',').map(s => s.replace(/"/g, '')); return l.filter(x => ids.includes(String(x.id))); }
+    m = q.match(/(?:^|&)pessoa_id=eq\.([^&]+)/); if (m) { const v = decodeURIComponent(m[1]); return l.filter(x => String(x.pessoa_id) === v); }
+    return l;
+  };
+  const comMini = async l => { const mini = (await offGet('miniaturas')) || {}; return l.map(x => ({ ...x, foto: mini[x.id] || null })); };
+  let r;
+  if (table === 'sicad_pessoas_lista' || table === 'sicad_pessoas') { const l = await offGet('pessoas'); if (!l) return undefined; r = filtra(l); if (table === 'sicad_pessoas') r = await comMini(r); else r = r.map(x => ({ ...x, _offline: true })); }
+  else if (table === 'sicad_alertas') { const l = await offGet('alertas'); if (!l) return undefined; r = await comMini(filtra(l)); }
+  else if (OFF_TABELAS[table]) { const l = await offGet(OFF_TABELAS[table]); if (!l) return undefined; r = filtra(l); }
+  else if (table === 'sicad_perfis') { try { const p = JSON.parse(localStorage.getItem('sicad_off_perfil') || 'null'); r = p ? [p] : []; } catch(_) { r = []; } }
+  else if (table === 'sicad_vinculos' || table === 'sicad_abordagens' || table === 'sicad_audit') r = [];
+  else return undefined;
+  offMarcar(true);
+  return JSON.parse(JSON.stringify(r));
+}
+async function offMarcar(sem){
+  OFF.ativo = sem; document.body.classList.toggle('modo-offline', sem);
+  let bar = document.getElementById('offBar');
+  if (!sem) { if (bar) bar.remove(); return; }
+  const quando = await offGet('quando');
+  if (!bar) { bar = document.createElement('div'); bar.id = 'offBar'; bar.className = 'off-bar'; const c = document.querySelector('#shell .content'); if (c) c.prepend(bar); else document.body.prepend(bar); }
+  bar.textContent = 'Sem internet · consultando dados guardados no aparelho' + (quando ? ' (atualizados em ' + new Date(quando).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) + ')' : '') + '. Cadastrar e editar voltam quando a conexão voltar.';
+}
+window.addEventListener('online', async () => {
+  if (!OFF.ativo) return;
+  try { await supabase.auth.refreshSession(); } catch(_) {}
+  offMarcar(false); toast('Conexão restabelecida.','success');
+});
+// Miniaturas das fotos para identificar sem internet (botão no painel)
+async function offPreparar(){
+  if (!navigator.onLine) return toast('Conecte-se à internet para preparar.','error');
+  showOv('PREPARANDO USO SEM INTERNET...');
+  try {
+    const pessoas = await DB.getPersons(); allP = pessoas;
+    await DBA.get();
+    if (rotaPermitida('capaozinho3')) await Promise.all(['c3_chacaras','c3_moradores','c3_passagens','c3_ocorrencias'].map(t => sbFetch('GET', t, null, 'select=*').catch(() => null)));
+    const mini = (await offGet('miniaturas')) || {};
+    const fazer = async src => { if (!src) return null; return await new Promise(ok => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 120; const g = c.getContext('2d'); const s = Math.max(120 / im.width, 120 / im.height); g.drawImage(im, (120 - im.width * s) / 2, (120 - im.height * s) / 2, im.width * s, im.height * s); ok(c.toDataURL('image/jpeg', .72)); } catch(_) { ok(null); } }; im.onerror = () => ok(null); im.src = src; }); };
+    const ids = pessoas.filter(p => p.tem_foto || p.foto).map(p => p.id);
+    let feitos = 0;
+    for (let i = 0; i < ids.length; i += 25) {
+      const lote = ids.slice(i, i + 25);
+      const rows = await sbFetch('GET','sicad_pessoas',null,'select=id,foto&id=in.(' + encodeURIComponent(lote.map(id => '"' + id + '"').join(',')) + ')').catch(() => []);
+      for (const r of rows) { const m = await fazer(r.foto); if (m) { mini[r.id] = m; feitos++; } }
+      const ov = document.getElementById('ov'); if (ov) { const t = ov.querySelector('div:last-child'); if (t) t.textContent = 'MINIATURAS ' + Math.min(i + 25, ids.length) + '/' + ids.length; }
+    }
+    const al = await sbFetch('GET','sicad_alertas',null,'select=id,foto').catch(() => []);
+    for (const a of al) { const m = await fazer(a.foto); if (m) { mini[a.id] = m; feitos++; } }
+    await offSet('miniaturas', mini); await offSet('quando', new Date().toISOString());
+    toast('Pronto para uso sem internet: ' + pessoas.length + ' cadastros e ' + feitos + ' fotos guardados no aparelho.','success');
+    offPainel();
+  } catch(e) { toast('Erro ao preparar: ' + e.message,'error'); } finally { hideOv(); }
+}
+async function offPainel(){
+  const el = document.getElementById('offPainel'); if (!el) return;
+  const [q, p, m] = await Promise.all([offGet('quando'), offGet('pessoas'), offGet('miniaturas')]);
+  const nm = m ? Object.keys(m).length : 0;
+  el.innerHTML = `<div class="off-card"><div><b>Uso sem internet</b><span>${p ? p.length + ' cadastros' + (nm ? ' e ' + nm + ' fotos' : ' (sem fotos)') + ' guardados neste aparelho' + (q ? ' · ' + new Date(q).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '') : 'Nada guardado ainda neste aparelho.'}</span></div><button class="btn btn-outline btn-sm" onclick="offPreparar()">${nm ? 'Atualizar' : 'Preparar'}</button></div>`;
+}
+
 // sbFetch — usa anon key + JWT do usuário logado (RLS controla acesso)
 async function sbFetch(method, table, body, qs) {
+  if (OFF.ativo && method === 'GET' && !navigator.onLine) { const o = await offResponder(method, table, qs); if (o !== undefined) return o; }
+  if (FOTO_TABELAS[table] && (method === 'POST' || method === 'PATCH') && body) body = await prepararFotosGravar(table, body, qs);
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token || SB_ANON;
-  const r = await fetch(`${SB}/rest/v1/${table}${qs?'?'+qs:''}`, {
+  let r;
+  try { r = await fetch(`${SB}/rest/v1/${table}${qs?'?'+qs:''}`, {
     method,
     headers: {
       'apikey': SB_ANON,
@@ -2321,7 +2509,11 @@ async function sbFetch(method, table, body, qs) {
       'Prefer': 'return=representation'
     },
     body: body ? JSON.stringify(body) : undefined
-  });
+  }); } catch(errRede) {
+    const o = await offResponder(method, table, qs); if (o !== undefined) return o;
+    throw new Error(method === 'GET' ? 'Sem internet e este dado não está guardado no aparelho.' : 'Sem internet: não é possível salvar agora. Tente quando a conexão voltar.');
+  }
+  if (OFF.ativo) offMarcar(false);
   const t = await r.text();
   if (!r.ok) {
     let m=t; try{const j=JSON.parse(t);m=j.message||j.hint||j.details||t;}catch{}
@@ -2331,7 +2523,10 @@ async function sbFetch(method, table, body, qs) {
     }
     throw new Error(m);
   }
-  try{return JSON.parse(t);}catch{return [];}
+  let _json; try{ _json = JSON.parse(t); }catch{ return []; }
+  if (method === 'GET' && OFF_TABELAS[table]) offGuardar(table, qs, _json);
+  if (FOTO_TABELAS[table] && method !== 'DELETE' && Array.isArray(_json) && _json.length) await resolverFotos(_json);
+  return _json;
 }
 
 // ── AUDIT LOG ── grava ações importantes em sicad_audit
@@ -2940,6 +3135,8 @@ async function aplicarPerfilLogado(user){
     profile = r[0] || null;
   } catch(e) { console.warn('[perfil]', e); }
 
+  if (profile && !OFF.ativo) { try { localStorage.setItem('sicad_off_perfil', JSON.stringify(profile)); } catch(_) {} }
+  if (!profile && !navigator.onLine) { errLg('Sem internet. Conecte-se para entrar pela primeira vez neste aparelho.'); return; }
   if (!profile) {
     // Usuário excluído que voltou a entrar: reabre o pedido de acesso (fica pendente)
     let r = null;
@@ -3094,6 +3291,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 async function logout(){
   await logAudit('logout', 'auth', CU?.id);
   await supabase.auth.signOut();
+  await offLimpar();
   CU=null; allP=[];
   document.getElementById('shell').style.display='none';
   document.getElementById('loginWrap').style.display='flex';
@@ -3121,6 +3319,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
       await aplicarPerfilLogado(session.user);
+    } else if (!navigator.onLine) {
+      // sem internet e token vencido: entra em modo consulta com o usuário guardado
+      try {
+        const k = Object.keys(localStorage).find(x => /^sb-.*-auth-token$/.test(x));
+        const salvo = k && JSON.parse(localStorage.getItem(k));
+        const perfil = JSON.parse(localStorage.getItem('sicad_off_perfil') || 'null');
+        const u = salvo && (salvo.user || (salvo.currentSession && salvo.currentSession.user));
+        if (u && perfil && perfil.id === u.id) { OFF.ativo = true; await aplicarPerfilLogado(u); offMarcar(true); }
+      } catch(_) {}
     }
   } catch(e) { console.warn('[boot]', e); }
 });
@@ -3187,7 +3394,7 @@ function abrirInteligencia(){
   const root = document.getElementById('intRoot');
   if (root) root.innerHTML = '<div style="padding:40px;text-align:center;color:var(--neutral-500)">Carregando módulo de inteligência...</div>';
   if (!_intCarregando) _intCarregando = new Promise((ok, falha) => {
-    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261113a';
+    const s = document.createElement('script'); s.src = 'inteligencia.js?v=20261116a';
     s.onload = ok; s.onerror = () => { _intCarregando = null; falha(new Error('Falha ao carregar o módulo. Verifique a internet.')); };
     document.head.appendChild(s);
   });
@@ -3317,6 +3524,7 @@ function buscarTatuagens(){
 
 // ── DASHBOARD ──
 async function loadDash(){
+  offPainel();
   showOv('CARREGANDO...');
   try{
     const ps=await DB.getPersons();allP=ps;
@@ -3650,6 +3858,157 @@ function cadClear(){
 
 
 // ── VIEW PERSON ──
+// ══════════ HISTÓRICO DE ABORDAGENS (migration v19) ══════════
+const AB_MOTIVOS = ['Fundada suspeita','Patrulhamento de rotina','Denúncia','Blitz / operação','Cumprimento de mandado','Ocorrência em andamento','Outro'];
+const AB_RESULTADOS = ['Liberado após consulta','Conduzido à delegacia','Preso em flagrante','Mandado cumprido','Termo circunstanciado','Notificado','Outro'];
+async function abCarregar(pid){
+  try { return await sbFetch('GET','sicad_abordagens',null,`select=*&pessoa_id=eq.${encodeURIComponent(pid)}&removido_em=is.null&order=data_hora.desc`); }
+  catch(e){ return null; }
+}
+async function abFicha(pid){
+  const el = document.getElementById('dAbord'); if (!el) return;
+  const l = await abCarregar(pid);
+  if (!document.getElementById('dAbord')) return;
+  if (l === null) { el.innerHTML = ''; return; }
+  const pode = typeof podeCadastrarPessoa === 'function' ? podeCadastrarPessoa() : podeCadastrarSICAD();
+  el.innerHTML = `<div class="ab-cab"><div class="d-section-title" style="margin:0">ABORDAGENS (${l.length})</div>${pode ? `<button class="btn btn-outline btn-sm" onclick="abNova('${pid}')">Registrar abordagem</button>` : ''}</div>` +
+    (l.length ? `<div class="ab-lista">${l.map(a => {
+      const dt = new Date(a.data_hora);
+      const mapa = a.lat != null ? `<a href="https://www.google.com/maps?q=${a.lat},${a.lng}" target="_blank" rel="noopener">ver no mapa</a>` : '';
+      return `<div class="ab-item"><div class="ab-data"><b>${dt.toLocaleDateString('pt-BR')}</b><span>${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+        <div class="ab-corpo"><div class="ab-l1">${esc(a.local || 'Local não informado')}${mapa ? ' · ' + mapa : ''}</div>
+        <div class="ab-l2">${[a.motivo, a.resultado].filter(Boolean).map(esc).join(' · ') || '—'}</div>
+        ${a.acompanhantes || a.veiculo || a.ocorrencia ? `<div class="ab-l2">${[a.acompanhantes && 'Com: ' + esc(a.acompanhantes), a.veiculo && 'Veículo: ' + esc(a.veiculo), a.ocorrencia && 'Ocorrência ' + esc(a.ocorrencia)].filter(Boolean).join(' · ')}</div>` : ''}
+        ${a.observacao ? `<div class="ab-l2">${esc(a.observacao)}</div>` : ''}
+        <div class="ab-l3">${esc(a.policial_nome || '—')}${podeCadastrarSICAD() ? ` · <a href="#" onclick="abRemover('${a.id}','${pid}');return false">remover</a>` : ''}</div></div></div>`; }).join('')}</div>`
+      : '<div class="vc-vazio">Nenhuma abordagem registrada.</div>');
+}
+function abNova(pid){
+  const p = allP.find(x => String(x.id) === String(pid)) || window._pessoaAberta || {};
+  const agora = new Date(); const local = new Date(agora.getTime() - agora.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  let sh = document.getElementById('abSheet'); if (sh) sh.remove();
+  sh = document.createElement('div'); sh.id = 'abSheet'; sh.className = 'more-sheet-backdrop'; sh.style.zIndex = '1300';
+  sh.onclick = ev => { if (ev.target === sh) sh.remove(); };
+  sh.innerHTML = `<div class="more-sheet" style="max-height:92dvh;overflow:auto"><div class="more-sheet-title">Registrar abordagem · ${esc(p.nome || '')}</div>
+    <div class="fg"><label>Data e hora</label><input type="datetime-local" id="abData" value="${local}"></div>
+    <div class="fg"><label>Local</label><input type="text" id="abLocal" placeholder="Ex.: Qd 45 Vila São José, em frente ao mercado" autocomplete="off">
+      <button type="button" class="btn btn-outline btn-sm" style="margin-top:6px" onclick="abGps()">Usar minha localização</button><span id="abGpsInfo" style="font-size:12px;color:var(--neutral-500);margin-left:8px"></span>
+      <input type="hidden" id="abLat"><input type="hidden" id="abLng"></div>
+    <div class="fg"><label>Motivo</label><select id="abMotivo">${AB_MOTIVOS.map(m => `<option>${m}</option>`).join('')}</select></div>
+    <div class="fg"><label>Resultado</label><select id="abResultado">${AB_RESULTADOS.map(m => `<option>${m}</option>`).join('')}</select></div>
+    <div class="fg"><label>Estava com</label><input type="text" id="abAcomp" placeholder="Nomes / apelidos de quem estava junto" autocomplete="off"></div>
+    <div class="fg"><label>Veículo</label><input type="text" id="abVeic" placeholder="Placa, modelo, cor" autocomplete="off"></div>
+    <div class="fg"><label>Nº da ocorrência (se houver)</label><input type="text" id="abOcor" autocomplete="off"></div>
+    <div class="fg"><label>Observação</label><textarea id="abObs" rows="3"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px"><button class="btn btn-outline" onclick="document.getElementById('abSheet').remove()">Cancelar</button><button class="btn btn-primary" id="abSalvarBtn" onclick="abSalvar('${pid}')">Salvar abordagem</button></div></div>`;
+  document.body.appendChild(sh);
+}
+function abGps(){
+  const info = document.getElementById('abGpsInfo');
+  if (!navigator.geolocation) { info.textContent = 'Sem GPS neste aparelho.'; return; }
+  info.textContent = 'Localizando...';
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById('abLat').value = pos.coords.latitude; document.getElementById('abLng').value = pos.coords.longitude;
+    info.textContent = 'Localização marcada (±' + Math.round(pos.coords.accuracy) + ' m)';
+  }, () => { info.textContent = 'Não foi possível obter a localização.'; }, { enableHighAccuracy: true, timeout: 12000 });
+}
+async function abSalvar(pid){
+  const v = id => (document.getElementById(id).value || '').trim() || null;
+  const lat = parseFloat(v('abLat')), lng = parseFloat(v('abLng'));
+  const reg = { pessoa_id: String(pid), data_hora: v('abData') ? new Date(v('abData')).toISOString() : new Date().toISOString(),
+    local: v('abLocal'), lat: isNaN(lat) ? null : lat, lng: isNaN(lng) ? null : lng, motivo: v('abMotivo'), resultado: v('abResultado'),
+    acompanhantes: v('abAcomp'), veiculo: v('abVeic'), ocorrencia: v('abOcor'), observacao: v('abObs') };
+  if (!reg.local && reg.lat == null) return toast('Informe o local ou use a localização.','error');
+  const b = document.getElementById('abSalvarBtn'); b.disabled = true; b.textContent = 'Salvando...';
+  try {
+    const r = await sbFetch('POST','sicad_abordagens',reg);
+    logAudit('abordagem_registrar','sicad_abordagens', r[0] && r[0].id, { pessoa: pid, resultado: reg.resultado });
+    document.getElementById('abSheet').remove(); toast('Abordagem registrada.','success'); abFicha(pid);
+  } catch(e) { b.disabled = false; b.textContent = 'Salvar abordagem'; toast(/sicad_abordagens/.test(e.message) ? 'Abordagens ainda não habilitadas (migration v19).' : 'Erro: ' + e.message, 'error'); }
+}
+async function abRemover(id, pid){
+  if (!confirm('Remover esta abordagem do histórico? (fica guardada na auditoria)')) return;
+  try { await sbFetch('PATCH','sicad_abordagens',{ removido_em: new Date().toISOString() },`id=eq.${id}`); logAudit('abordagem_remover','sicad_abordagens',id); abFicha(pid); }
+  catch(e) { toast('Erro: ' + e.message,'error'); }
+}
+
+// ══════════ BUSCA ÚNICA (pessoas, veículos, foragidos, Capãozinho 3) ══════════
+let _bgDados = null, _bgTimer = null;
+const _bgNorm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const _bgDig = s => String(s || '').replace(/\D/g, '');
+async function _bgCarregar(){
+  const tarefas = [];
+  if (!allP.length && rotaPermitida('consultar')) tarefas.push(DB.getPersons().then(l => { allP = l || []; }).catch(() => {}));
+  let al = null, c3 = null;
+  if (rotaPermitida('foragidos')) tarefas.push(sbFetch('GET','sicad_alertas',null,'select=id,nome,cpf,processo,endereco,status,periculosidade').then(l => { al = l; }).catch(() => { al = []; }));
+  if (rotaPermitida('capaozinho3')) {
+    if (typeof C3 !== 'undefined' && C3.ok) c3 = { ch: C3.ch, mo: C3.mo };
+    else if (_mapaC3Dados) c3 = _mapaC3Dados;
+    else tarefas.push(Promise.all([sbFetch('GET','c3_chacaras',null,'select=id,nome,identificacao,categoria,endereco,proprietario,lat,lng'), sbFetch('GET','c3_moradores',null,'select=id,chacara_id,nome,cpf,vinculo,apelido')]).then(([ch, mo]) => { c3 = { ch: ch || [], mo: mo || [] }; }).catch(() => { c3 = { ch: [], mo: [] }; }));
+  }
+  await Promise.all(tarefas);
+  _bgDados = { al: al || [], c3: c3 || { ch: [], mo: [] } };
+}
+function abrirBuscaGeral(){
+  let ov = document.getElementById('buscaGeral');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'buscaGeral'; ov.className = 'bg-ov';
+    ov.innerHTML = `<div class="bg-box"><div class="bg-topo"><span data-icon="consultar" data-size="18"></span><input id="bgInput" placeholder="Nome, apelido, mãe, CPF, telefone, placa, processo, chácara..." autocomplete="off" oninput="buscaGeralDigitar(this.value)" onkeydown="if(event.key==='Escape')fecharBuscaGeral();if(event.key==='Enter'){const a=document.querySelector('#bgRes .bg-item');if(a)a.click();}"><button class="bg-fechar" onclick="fecharBuscaGeral()">Esc</button></div><div id="bgRes" class="bg-res"><div class="bg-dica">Procure em pessoas, veículos, foragidos e Capãozinho 3 de uma vez.</div></div></div>`;
+    ov.addEventListener('click', e => { if (e.target === ov) fecharBuscaGeral(); });
+    document.body.appendChild(ov);
+  }
+  ov.classList.add('on');
+  const inp = document.getElementById('bgInput'); inp.value = ''; setTimeout(() => inp.focus(), 30);
+  document.getElementById('bgRes').innerHTML = '<div class="bg-dica">Procure em pessoas, veículos, foragidos e Capãozinho 3 de uma vez.</div>';
+  _bgDados = null; _bgCarregar().then(() => { const v = document.getElementById('bgInput').value; if (v) buscaGeralDigitar(v); });
+}
+function fecharBuscaGeral(){ const ov = document.getElementById('buscaGeral'); if (ov) ov.classList.remove('on'); }
+function buscaGeralDigitar(v){ clearTimeout(_bgTimer); _bgTimer = setTimeout(() => buscaGeral(v), 150); }
+function buscaGeral(q){
+  const res = document.getElementById('bgRes'); if (!res) return;
+  q = (q || '').trim(); const n = _bgNorm(q), d = _bgDig(q), placa = q.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (q.length < 2) { res.innerHTML = '<div class="bg-dica">Digite ao menos 2 letras.</div>'; return; }
+  const tem = s => _bgNorm(s).includes(n);
+  const soNum = !/[a-zà-ÿ]/i.test(q);
+  const dig = s => soNum && d.length >= 4 && _bgDig(s).includes(d);
+  const grupos = [];
+  // Pessoas
+  if (rotaPermitida('consultar')) {
+    const ps = allP.filter(p => tem(p.nome) || tem(p.apelido) || tem(p.mae) || dig(p.cpf) || dig(p.telefone)).slice(0, 8);
+    if (ps.length) grupos.push(['Pessoas', ps.map(p => ({ t: p.nome, s: [p.apelido && '"' + p.apelido + '"', p.cpf, p.bairro].filter(Boolean).join(' · '), tag: p.faccionado ? 'Faccionado' : '', a: `fecharBuscaGeral();viewPerson('${p.id}')` }))]);
+    // Veículos (campos de veículo das pessoas)
+    if (placa.length >= 3 || n.length >= 3) {
+      const vs = [];
+      allP.forEach(p => ['veiculo1','veiculo2','veiculo3'].forEach(k => { const v = p[k]; if (v && (_bgNorm(v).includes(n) || (placa.length >= 3 && String(v).toUpperCase().replace(/[^A-Z0-9]/g, '').includes(placa)))) vs.push({ t: v, s: 'Veículo de ' + p.nome, a: `fecharBuscaGeral();viewPerson('${p.id}')` }); }));
+      if (vs.length) grupos.push(['Veículos', vs.slice(0, 6)]);
+    }
+  }
+  // Foragidos
+  const al = (_bgDados && _bgDados.al) || [];
+  const fs_ = al.filter(a => tem(a.nome) || dig(a.cpf) || dig(a.processo) || tem(a.endereco)).slice(0, 6);
+  if (fs_.length) grupos.push(['Foragidos', fs_.map(a => ({ t: a.nome, s: [a.cpf, a.processo && 'Proc. ' + a.processo].filter(Boolean).join(' · '), tag: a.status === 'preso' ? 'Preso' : 'Procurado', a: `fecharBuscaGeral();buscaIrForagido('${a.id}')` }))]);
+  // Capãozinho 3
+  const c3 = (_bgDados && _bgDados.c3) || { ch: [], mo: [] };
+  const chs = c3.ch.filter(c => tem(c.nome) || tem(c.identificacao) || tem(c.proprietario) || tem(c.endereco)).slice(0, 5);
+  const mos = c3.mo.filter(m => tem(m.nome) || tem(m.apelido) || dig(m.cpf)).slice(0, 5);
+  if (chs.length || mos.length) grupos.push(['Capãozinho 3', [
+    ...chs.map(c => ({ t: c.nome, s: ['Chácara', c.identificacao, c.proprietario && 'prop. ' + c.proprietario].filter(Boolean).join(' · '), a: `fecharBuscaGeral();mapaAbrirChacara('${c.id}')` })),
+    ...mos.map(m => { const ch = c3.ch.find(c => c.id === m.chacara_id); return { t: m.nome, s: ['Morador', ch && ch.nome].filter(Boolean).join(' · '), a: `fecharBuscaGeral();buscaIrMorador('${m.id}')` }; })]]);
+  const total = grupos.reduce((s, g) => s + g[1].length, 0);
+  res.innerHTML = total ? grupos.map(([nome, itens]) => `<div class="bg-grupo">${nome}</div>` + itens.map(it => `<div class="bg-item" onclick="logAudit('busca_geral','sistema',null,{termo:${JSON.stringify(q).replace(/"/g, '&quot;')}});${it.a}"><div class="bg-t">${esc(it.t)}</div><div class="bg-s">${esc(it.s || '')}</div>${it.tag ? `<span class="bg-tag">${esc(it.tag)}</span>` : ''}</div>`).join('')).join('')
+    : `<div class="bg-dica">Nada encontrado para "${esc(q)}".${_bgDados ? '' : ' Carregando dados...'}</div>`;
+}
+async function buscaIrForagido(id){
+  go('foragidos');
+  for (let i = 0; i < 30; i++) { await new Promise(r => setTimeout(r, 150)); const el = document.querySelector(`[data-alerta="${id}"]`); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('bg-destaque'); setTimeout(() => el.classList.remove('bg-destaque'), 2200); return; } }
+}
+async function buscaIrMorador(id){
+  go('capaozinho3');
+  for (let i = 0; i < 40 && !(C3.ok && C3.mo.find(m => m.id === id)); i++) await new Promise(r => setTimeout(r, 150));
+  if (C3.mo.find(m => m.id === id)) c3FichaMorador(id); else toast('Morador não encontrado.','error');
+}
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && CU) { e.preventDefault(); abrirBuscaGeral(); } });
+
 // ── Ir até o endereço do cadastrado (Google Maps ou Waze) ──
 function destinoPessoa(p){
   if (!p) return null;
@@ -3725,10 +4084,12 @@ async function viewPerson(id){
         <div class="d-fld"><label>Cadastrado por</label><span>${esc(p.criado_por||'—')}</span></div>
         <div class="d-fld"><label>Data</label><span>${p.criado_em?new Date(p.criado_em).toLocaleDateString('pt-BR'):'—'}</span></div>
       </div>${tatH}
+      <div id="dAbord" style="margin-top:14px"></div>
       <div id="dVinc" style="margin-top:14px"></div>
       <div class="d-actions"><button class="btn btn-outline" onclick="exportPDF()">PDF</button>${canEdit?'<button class="btn btn-outline" onclick="editPerson()">Editar</button>':''}${podeCadastrarSICAD()?`<button class="btn btn-outline" style="color:var(--danger);border-color:rgba(220,38,38,.45);font-weight:700" onclick="marcarComoForagido('${id}')">Foragido</button>`:''}${canDelete?'<button class="btn btn-danger" onclick="deletePerson()">Excluir</button>':''}</div>`;
     document.getElementById('personModal').classList.add('open');
     vcFicha(id);
+    abFicha(id);
   }catch(e){toast('Erro.','error');}
   finally{hideOv();}
 }
@@ -5076,7 +5437,57 @@ async function loadMapa() {
     renderMapLegend();
     renderMapMarkers(allP);
     hideOv();
+    mapaC3Carregar();
   } catch(e) { toast('Erro ao carregar mapa: '+e.message,'error'); hideOv(); }
+}
+
+// ── Capãozinho 3 no mapa geral (camada própria, liga/desliga) ──
+let _mapaC3Layer = null, _mapaC3On = true, _mapaC3Dados = null;
+async function mapaC3Carregar(forcar){
+  if (!mapaInst) return;
+  try {
+    if (!_mapaC3Dados || forcar) {
+      if (typeof C3 !== 'undefined' && C3.ok && C3.ch.length) _mapaC3Dados = { ch: C3.ch, mo: C3.mo };
+      else {
+        const [ch, mo] = await Promise.all([
+          sbFetch('GET','c3_chacaras',null,'select=id,nome,identificacao,categoria,endereco,proprietario,lat,lng'),
+          sbFetch('GET','c3_moradores',null,'select=id,chacara_id,nome,vinculo')
+        ]);
+        _mapaC3Dados = { ch: ch || [], mo: mo || [] };
+      }
+    }
+  } catch(e) { _mapaC3Dados = { ch: [], mo: [] }; console.warn('[mapa c3]', e.message); }
+  if (_mapaC3Layer) { mapaInst.removeLayer(_mapaC3Layer); _mapaC3Layer = null; }
+  const grupo = L.layerGroup();
+  _mapaC3Dados.ch.filter(c => c.lat != null && c.lng != null).forEach(c => {
+    const cat = (typeof C3_CAT !== 'undefined' && C3_CAT[c.categoria]) || { l: 'Chácara', c: '#1E3A8A' };
+    const mor = _mapaC3Dados.mo.filter(m => m.chacara_id === c.id);
+    const icon = L.divIcon({ className: 'sicad-marker', iconSize: [20, 20], iconAnchor: [10, 10],
+      html: `<div style="width:18px;height:18px;border-radius:4px;background:${cat.c};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></div>` });
+    const g = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`, w = `https://www.waze.com/ul?ll=${c.lat},${c.lng}&navigate=yes`;
+    L.marker([c.lat, c.lng], { icon, title: c.nome }).bindPopup(`<div style="font-family:var(--font-sans);min-width:220px">
+      <div style="font-size:11px;color:#64748b;font-weight:600">CAPÃOZINHO 3 · ${esc(cat.l)}</div>
+      <div style="font-weight:700;font-size:14px;color:#0f172a;margin:2px 0">${esc(c.nome)}${c.identificacao ? ' <span style="color:#94a3b8;font-weight:500">' + esc(c.identificacao) + '</span>' : ''}</div>
+      ${c.proprietario ? `<div style="font-size:12px;color:#334155">Proprietário: ${esc(c.proprietario)}</div>` : ''}
+      ${c.endereco ? `<div style="font-size:12px;color:#334155">${esc(c.endereco)}</div>` : ''}
+      <div style="font-size:12px;color:#334155;margin-top:4px">${mor.length} morador(es)${mor.length ? ': ' + mor.slice(0, 5).map(m => esc(m.nome)).join(', ') + (mor.length > 5 ? '…' : '') : ''}</div>
+      <div style="display:flex;gap:6px;margin-top:10px"><a href="${g}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1;text-decoration:none">Google Maps</a><a href="${w}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1;text-decoration:none">Waze</a></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin-top:6px" onclick="mapaAbrirChacara('${c.id}')">Abrir no Capãozinho 3</button></div>`).addTo(grupo);
+  });
+  _mapaC3Layer = grupo;
+  if (_mapaC3On) grupo.addTo(mapaInst);
+  const b = document.getElementById('btnMapaC3'); if (b) b.textContent = 'Capãozinho 3 (' + _mapaC3Dados.ch.filter(c => c.lat != null).length + ')';
+}
+function toggleMapaC3(){
+  _mapaC3On = !_mapaC3On;
+  const b = document.getElementById('btnMapaC3'); if (b) b.classList.toggle('on', _mapaC3On);
+  if (!_mapaC3Layer) return mapaC3Carregar();
+  if (_mapaC3On) _mapaC3Layer.addTo(mapaInst); else mapaInst.removeLayer(_mapaC3Layer);
+}
+async function mapaAbrirChacara(id){
+  go('capaozinho3');
+  for (let i = 0; i < 40 && !(C3.ok && c3Ch(id)); i++) await new Promise(r => setTimeout(r, 150));
+  if (c3Ch(id)) c3FichaChacara(id); else toast('Chácara não encontrada no módulo.','error');
 }
 
 function applyMapFilter() {
@@ -5329,6 +5740,7 @@ function updateMapStats(persons) {
 }
 
 function renderMapLegend() {
+  setTimeout(() => { const lg = document.getElementById('mapaLegend'); if (lg && !lg.querySelector('.leg-c3')) lg.insertAdjacentHTML('beforeend', '<div class="map-legend-item leg-c3"><div class="map-legend-dot" style="background:#1E3A8A;border-radius:3px"></div><span>Chácara (Capãozinho 3)</span></div>'); }, 0);
   const bairrosUsados = [...new Set(allMapPersons.map(p=>p.bairro).filter(Boolean))];
   const legendEl = document.getElementById('mapaLegend');
   let html = bairrosUsados.slice(0,8).map(b => {
@@ -5398,7 +5810,7 @@ function _cardForagido(a, preso){
   if (!preso && podeMarcarPreso()) acoes.push(`<button class="btn btn-success btn-sm" onclick="marcarPreso('${a.id}')" style="flex:1;font-weight:800">Preso</button>`);
   if (preso && ['admin','inteligencia','gtop','supervisor'].includes(CU?.role)) acoes.push(`<button class="btn btn-outline btn-sm" onclick="desfazerPreso('${a.id}')" style="flex:1">Desfazer</button>`);
   if (podeExcluirSICAD()) acoes.push(`<button class="btn btn-danger btn-sm" onclick="delAlerta('${a.id}')" style="flex:0 0 44px;padding:0"><span data-icon="excluir" data-size="18"></span></button>`);
-  return `<div class="fcard" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
+  return `<div class="fcard" data-alerta="${a.id}" style="margin-bottom:12px;flex-wrap:wrap;${preso?'opacity:.85;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)':''}">
     ${av}
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
@@ -5750,6 +6162,13 @@ async function exportPDF(){
   const p=allP.find(x=>x.id===id)||await DB.getPerson(id);
   if(!p){toast('Cadastro não encontrado.','error');return;}
   if(p._leve){ try{ await hidratarPessoas([p]); }catch(e){ toast('Falha ao carregar o cadastro completo.','error'); return; } }
+  // fotos do Storage viram imagem embutida para o PDF (sem alterar o cadastro)
+  const _pPdf = { ...p, foto: await fotoDataURL(p.foto) };
+  { const t = _tatsDe(p.tatuagens); if (t) { const n = []; for (const it of t) n.push(typeof it === 'string' ? await fotoDataURL(it) : (it ? { ...it, img: await fotoDataURL(it.img) } : it)); _pPdf.tatuagens = JSON.stringify(n); } }
+  return exportPDFPessoa(_pPdf);
+}
+async function exportPDFPessoa(p){
+  const id = p.id;
   logAudit('export_pdf','sicad_pessoas',id,{ nome: p.nome });
   toast('Gerando PDF...','info');
   const {jsPDF}=window.jspdf;
@@ -6277,7 +6696,7 @@ async function usarFotoDoBancoNaWeb(){
   if(!alvo){ toast('Pessoa não encontrada.','error'); return; }
   try { await hidratarPessoas([alvo], true); } catch(e){}
   if(!alvo.foto){ toast('Não foi possível carregar a foto.','error'); return; }
-  _faceWebData = alvo.foto;
+  _faceWebData = await fotoDataURL(alvo.foto);
   const img = document.getElementById('faceImgWeb');
   img.src = _faceWebData; img.style.display = 'block';
   const frame = document.getElementById('faceFrameWeb');
